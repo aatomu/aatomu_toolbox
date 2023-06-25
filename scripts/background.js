@@ -18,13 +18,16 @@ function init() {
     // 常時表示
     { parentId: "master", id: 'copy_link', title: 'Copy URL', contexts: ["all"] },
     // Shortのページのみ
-    { parentId: "master", id: 'separator1', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
+    { parentId: "master", id: 'separator_short', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
     { parentId: "master", id: 'short2movie', title: 'Short To Movie', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
     // Live 自動更新
-    { parentId: "master", id: 'separator2', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/watch?v=*"] },
+    { parentId: "master", id: 'separator_live', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/watch?v=*"] },
     { parentId: "master", id: 'live_no_delay', type: 'checkbox', title: 'Live No Delay Mode', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/watch?v=*"] },
+    // Amazon
+    { parentId: "master", id: 'separator_amazon', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
+    { parentId: "master", id: 'open_amazon', type: 'checkbox', title: 'Open Amazon Mode', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
     // 選択時のみ
-    { parentId: "master", id: 'separator3', type: 'separator', contexts: ["selection"] },
+    { parentId: "master", id: 'separator_select', type: 'separator', contexts: ["selection"] },
     { parentId: "master", id: 'amazon', title: 'amazon', contexts: ["selection"] },
     { parentId: "master", id: 'yahoo_auction', title: 'ヤフオク', contexts: ["selection"] },
     { parentId: "master", id: 'yahoo_shop', title: 'ヤフーshop', contexts: ["selection"] },
@@ -72,6 +75,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         }
       })
       return;
+
     case "short2movie":
       // shortのページ以外で実行しない
       if (!tab.url.includes("youtube.com/shorts/")) {
@@ -84,6 +88,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         index: tab.index + 1
       });
       return
+
     case "live_no_delay":
       chrome.tabs.query({}, (tabs) => {
         tabs.forEach((tab, index) => {
@@ -93,7 +98,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
           chrome.scripting.executeScript({
             target: { tabId: tab.id },
             function: function (checked) {
-              console.log("Change To Live Speedup Mode",checked)
+              console.log("Change To Live Speedup Mode", checked)
               isLiveSpeedupMode = checked
             },
             args: [info.checked]
@@ -102,6 +107,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       })
       chrome.storage.sync.set({ isLiveSpeedupMode: info.checked })
       return
+
+    case "open_amazon":
+      chrome.storage.sync.set({ isOpenAmazonMode: info.checked })
+      return
+
     case "amazon":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
