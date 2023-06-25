@@ -189,11 +189,3 @@ function UpdateShortButton() {
     document.getElementById("aatomuShortSpeed").innerText = `Speed: x${(Math.floor(parseFloat(shortSpeed.value) * 100) / 100).toFixed(2)}`
   })
 }
-
-if (window.location.host == "www.amazon.co.jp") {
-  chrome.storage.sync.get(["disableAddon"]).then((result) => {
-    if (!result.disableAddon) {
-      document.querySelector(`head`).insertAdjacentHTML('beforeend', `<link href="` + chrome.runtime.getURL('css/amazon.js') + `" rel="stylesheet">`);
-    }
-  });
-}

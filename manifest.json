@@ -36,7 +36,8 @@
       "matches": [
          "https://www.amazon.co.jp/*"
       ],
-      "css": ["css/amazon.css"]
+      "js": ["scripts/amazon.js"],
+      "run_at":"document_start"
    },
    {
     "matches": [
@@ -53,7 +54,8 @@
     {
       "resources":[
         "images/creeper.webp",
-        "scripts/contents_insert.js"
+        "scripts/contents_insert.js",
+        "css/amazon.css"
       ],
       "matches":["<all_urls>"]
     }
