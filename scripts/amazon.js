@@ -11,13 +11,13 @@ chrome.storage.sync.get(["isOpenAmazonMode"]).then(async (result) => {
     let amazonCss = await fetch(chrome.runtime.getURL('css/amazon.css'))
       .then(r => { return r.text() })
     // 置換
-    amazonCss = amazonCss.replaceAll('${User}',user)
-    amazonCss = amazonCss.replaceAll('${Address}',address)
-    amazonCss = amazonCss.replaceAll('${PostCode}',postCode)
-    amazonCss = amazonCss.replaceAll('${Greeting}',greeting)
+    amazonCss = amazonCss.replaceAll('${User}', user)
+    amazonCss = amazonCss.replaceAll('${Address}', address)
+    amazonCss = amazonCss.replaceAll('${PostCode}', postCode)
+    amazonCss = amazonCss.replaceAll('${Greeting}', greeting)
     console.log(amazonCss)
     // 設置
-    document.querySelector(`head`).insertAdjacentHTML("beforeend",`<style>${amazonCss}</style`)
+    document.querySelector(`head`).insertAdjacentHTML("beforeend", `<style>${amazonCss}</style`)
     document.getElementById("secretDummy").remove()
   }
 })
