@@ -49,9 +49,10 @@
       "matches": [
         "https://www.google.com/*"
       ],
-      "css": [
-        "css/google.css"
-      ]
+      "js": [
+        "scripts/google.js"
+      ],
+      "run_at": "document_start"
     },
     {
       "matches": [
@@ -71,7 +72,8 @@
       "resources": [
         "images/creeper.webp",
         "scripts/contents_insert.js",
-        "css/amazon.css"
+        "css/amazon.css",
+        "css/google.css"
       ],
       "matches": [
         "<all_urls>"

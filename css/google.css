@@ -1,25 +1,61 @@
-.uU7dJb,.Q8LRLc,.dfB0uf,.aGNm3Qb {
-  font-size: 0 !important;
+/* トップ 左下 国
+   検索結果 上 市区町村
+   検索結果 左下 国
+   検索結果 左下 市区町村
+ */
+.uU7dJb,
+.eKPi4>.BBwThe,
+.Q8LRLc,
+.dfB0uf {
+  display: inline-block;
+  text-indent: -100vw;
 }
-div#taw {
+
+/* 検索結果 上 地域を選択
+   検索結果 上 縦三点リーダー
+   検索結果 左下 -
+   検索結果 左下 ソース...
+   検索結果 左下 -
+   検索結果 左下 現在地...
+ */
+.eakexd,
+.bWHbab,
+#VdZal,
+.KwU3F,
+#RYW0de,
+.xSQxL {
   display: none !important;
 }
-.uU7dJb::before { /* メイン左下 国名 */
-  content: "Minecraft" !important;
-  font-size: 15px !important;
+
+/* 検索結果 左下 市区町村-ソース-現在地 */
+.GNm3Qb {
+  pointer-events: none;
 }
-.Q8LRLc::before { /* 検索画面左下 国名 */
-  content: "Minecraft" !important;
-  font-size: 14px !important;
+
+.uU7dJb::before,
+.eKPi4>.BBwThe::before,
+.Q8LRLc::before,
+.dfB0uf::before {
+  text-indent: 0px;
+  float: left;
 }
-.dfB0uf::before { /* 検索画面左下 市区町村 */
-  content: "minecraft:over_world" !important;
-  font-size: 14px !important;
-  pointer-events: none !important;
+
+.uU7dJb::before {
+  /* トップ 左下 国 */
+  content: "${Address}";
 }
-.GNm3Qb { /* 検索画面左下 クリックイベント */
-  pointer-events: none !important;
+
+.eKPi4>.BBwThe::before {
+  /* 検索結果 上 市区町村 */
+  content: "${Address}-${PostCode}";
 }
-#VdZal,.KwU3F,#RYW0de,.xSQxL.HDOrGf { /* 検索画面左下 " - ソース: あなたの IP アドレス - 現在地を更新" */
-  font-size: 0px !important;
+
+.Q8LRLc::before {
+  /* 検索結果 左下 国 */
+  content: "${Address}";
+}
+
+.dfB0uf::before {
+  /* 検索結果 左下 市区町村 */
+  content: "${PostCode}";
 }
