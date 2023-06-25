@@ -1,0 +1,61 @@
+{
+  "name": "aatomu's Toolbox",
+  "description": "Create by aatomu",
+  "version": "0.1",
+  "manifest_version": 3,
+  "icons": {
+    "64": "images/icon.png"
+  },
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "clipboardWrite",
+    "history",
+    "scripting",
+    "storage"
+  ],
+  "action": {
+    "default_icon": {
+      "64": "images/icon.png"
+    },
+    "default_title": "aatomu's Toolbox",
+    "default_popup": "popup/index.html"
+  },
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "content_scripts": [
+    {
+       "matches": [
+          "<all_urls>"
+       ],
+       "css": ["css/contents.css"],
+       "js": ["scripts/contents.js"]
+    },
+    {
+      "matches": [
+         "https://www.amazon.co.jp/*"
+      ],
+      "css": ["css/amazon.css"]
+   },
+   {
+    "matches": [
+       "https://www.google.com/*"
+    ],
+    "css": ["css/google.css"]
+ }
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources":[
+        "images/creeper.webp",
+        "scripts/contents_insert.js"
+      ],
+      "matches":["<all_urls>"]
+    }
+  ]
+}

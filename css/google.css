@@ -1,0 +1,25 @@
+.uU7dJb,.Q8LRLc,.dfB0uf,.aGNm3Qb {
+  font-size: 0 !important;
+}
+div#taw {
+  display: none !important;
+}
+.uU7dJb::before { /* メイン左下 国名 */
+  content: "Minecraft" !important;
+  font-size: 15px !important;
+}
+.Q8LRLc::before { /* 検索画面左下 国名 */
+  content: "Minecraft" !important;
+  font-size: 14px !important;
+}
+.dfB0uf::before { /* 検索画面左下 市区町村 */
+  content: "minecraft:over_world" !important;
+  font-size: 14px !important;
+  pointer-events: none !important;
+}
+.GNm3Qb { /* 検索画面左下 クリックイベント */
+  pointer-events: none !important;
+}
+#VdZal,.KwU3F,#RYW0de,.xSQxL.HDOrGf { /* 検索画面左下 " - ソース: あなたの IP アドレス - 現在地を更新" */
+  font-size: 0px !important;
+}

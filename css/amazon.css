@@ -1,0 +1,57 @@
+#glow-ingress-line1,
+#glow-ingress-line2,
+#nav-link-accountList-nav-line-1,
+#contextualIngressPtLabel_deliveryShortLine,
+.a-popover-trigger,
+#hmenu-customer-name > b,
+.shippingAddress
+{
+  font-size: 0 !important;
+}
+
+#glow-ingress-line1::before { /* メイン左上 お届け先 */
+  content: "お届け先 とむ の 家" !important;
+  font-size: 12px !important;
+}
+#glow-ingress-line2::before { /* メイン左上 郵便番号 */
+  content: "〒021-263 どこか" !important;
+  font-size: 14px !important;
+}
+
+#nav-link-accountList-nav-line-1::before { /* メイン右上 ログインユーザー */
+  content: "aatomu" !important;
+  font-size: 12px !important;
+}
+
+#contextualIngressPtLabel_deliveryShortLine::before { /* 商品ページ => お届け先 */
+  content: "〒021-263 とむ" !important;
+  font-size: 12px !important;
+}
+
+.a-popover-trigger.insert-encrypted-trigger-text::before, /* 注文履歴 => お届け先 */
+.shippingAddress::before /* 注文履歴 => 注文の詳細 => 配達状況の確認 => お届け先*/
+ {
+  content: "とむ の 家" !important;
+  font-size: 14px !important;
+  color: #565959;
+}
+
+.a-popover-content, /* 注文履歴 => ポップアップ */
+.pmts-payments-instrument-details /* 注文履歴 => 注文の詳細 => 支払方法 */
+{ 
+  display: none !important;
+}
+.displayAddressLI /* 注文履歴 => 注文の詳細 => お届け先住所 */
+{
+  color: white !important;
+}
+
+#hmenu-customer-name > b::before { /* サイドバーの上 */
+  content: "こんにちは、とむ" !important;
+  font-size: 14px !important;
+}
+
+/* 商品ページ => 今すぐ買う => ポップアップ内 なんかうごか */
+.a-color-base {
+  color: white !important;
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  body {
+    width: 720px;
+    height: 480px;
+    font-size: 15px;
+  }
+
+  .title {
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .historyArea {
+    height: 15lh;
+    overflow: scroll;
+    white-space: nowrap;
+  }
+
+  .historyArea>a {
+    color: black;
+  }
+  
+</style>
+
+<body>
+  <h1 class="title" style="white-space: nowrap;">aatomu's Toolbox</h1>
+  Extension Buffer Use:<span id="ExtensionBufferUseValue">????</span>/1,024,000[Byte] <s><a href="chrome://extensions/" target="_blank">Jump Chrome Extension</a></s><br>
+  WebSite History <input id="searchInput" type="text" placeholder="Search Word"><br>
+  <div class="historyArea" id="history">
+  </div>
+  <label class="disableAddonArea">Disable "aatomu's Toolbox"<input type="checkbox" id="disableAddon"></label>
+</body>
+<script src="./index.js"></script>
