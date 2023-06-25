@@ -20,14 +20,16 @@ function str2HTML(html) {
 }
 
 //// いろんなサイトのクリーパー
-let creeperElement = document.createElement("img")
-creeperElement.classList.add("creeper")
-creeperElement.id = "creeper"
-creeperElement.src = chrome.runtime.getURL("images/creeper.webp")
-document.getElementsByTagName("body")[0].appendChild(creeperElement)
-document.getElementById("creeper").addEventListener("mouseover", function (e) {
-  document.getElementById("creeper").classList.add("creeper_fade")
-})
+if (/https?/.test(location.protocol)) {
+  let creeperElement = document.createElement("img")
+  creeperElement.classList.add("creeper")
+  creeperElement.id = "creeper"
+  creeperElement.src = chrome.runtime.getURL("images/creeper.webp")
+  document.getElementsByTagName("body")[0].appendChild(creeperElement)
+  document.getElementById("creeper").addEventListener("mouseover", function (e) {
+    document.getElementById("creeper").classList.add("creeper_fade")
+  })
+}
 
 //// 変数チェック
 let s = document.createElement('script');
@@ -42,12 +44,12 @@ document.getElementsByTagName("body")[0].appendChild(s);
 //// 変数
 let shortNumber = -1
 let isLiveSpeedupMode = false
-let isLiveSpeedup = false 
+let isLiveSpeedup = false
 let LiveSpeeduped = 3
 //// Speedup
 chrome.storage.sync.get(["isLiveSpeedupMode"]).then((result) => {
   isLiveSpeedupMode = result.isLiveSpeedupMode
-  console.log("Load Live Speedup Mode:",isLiveSpeedupMode)
+  console.log("Load Live Speedup Mode:", isLiveSpeedupMode)
 });
 //// クロック
 setInterval(function () {
@@ -187,39 +189,6 @@ function UpdateShortButton() {
     document.getElementById("aatomuShortSpeed").innerText = `Speed: x${(Math.floor(parseFloat(shortSpeed.value) * 100) / 100).toFixed(2)}`
   })
 }
-
-
-//// pixiv
-window.addEventListener("keydown", async function (e) {
-  if (window.location.origin + window.location.pathname == "https://www.pixiv.net/users/40324802/following" && e.key == "Shift") {
-    // チェック終了
-    document.querySelector("button.sc-1ow64s0-1.fkxxRJ").style.backgroundColor = "gray"
-
-    console.log("Pixiv Following Page!")
-    let artWorks = document.querySelectorAll("div.sc-11m5zdr-2.eCoDTv")
-    let buttons = document.querySelectorAll("button.sc-bdnxRM.jvCTkj.sc-dlnjwi.cnpwVx.sc-1obql3d-0.Rlftz.gtm-undefined.sc-1obql3d-0.Rlftz.gtm-undefined")
-    const now = (new Date()).getTime()
-    for (let i = 0; i < artWorks.length; i++) {
-      let artWork = artWorks[i].querySelector("a.sc-d98f2c-0.sc-rp5asc-16.iUsZyY.sc-dFRpbK.kJZXgj").href
-      console.log(artWork)
-      let timestamp
-      await fetch(artWork)
-        .then((r) => {
-          return r.text()
-        }).then((r) => {
-          timestamp = (new Date(r.match(/"updateDate":"(.+?)"/)[1])).getTime()
-        })
-      if (now - timestamp > 1000 * 60 * 60 * 24 * 30) {// 1000[ms] * 60[min] * 60[hour] * 24[day] * 30[month]
-        console.log("Longer than 30day")
-        buttons[i].setAttribute("style", "background-color: pink;")
-        buttons[i].click()
-        artWorks[i].parentElement.setAttribute("style", "opacity:0.2;")
-      }
-    }
-    // チェック終了
-    document.querySelector("button.sc-1ow64s0-1.fkxxRJ").style.backgroundColor = "red"
-  }
-})
 
 if (window.location.host == "www.amazon.co.jp") {
   chrome.storage.sync.get(["disableAddon"]).then((result) => {
