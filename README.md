@@ -20,5 +20,6 @@
   * Extension Buffer Use: 拡張機能が使用しているストレージ量
   * WebSite History: 過去1週間のを表示(タイムスタンプあり), URLやタイトルで検索可能
   * SecretSetting: GoogleやAmazonの住所等を置換 GreetingはAmazonのみ
+
 ## その他
 Issue Pullrequests とか募集中!
