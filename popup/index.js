@@ -5,30 +5,35 @@ chrome.storage.sync.getBytesInUse(function (result) {
 });
 // History
 updateHistory("")
-// 匿名モードの読み込み
+// LiveSpeed
+chrome.storage.sync.get(["liveSpeed"]).then((result) => {
+  document.getElementById("liveSpeedValue").value = result.liveSpeed
+  document.getElementById("liveSpeed").innerText = result.liveSpeed
+})
+// SecretSettings
 chrome.storage.sync.get(["secretSettings"]).then((result) => {
   let setting = result.secretSettings
-  if (setting == undefined) {
-    setting = {
-      User: "Atomu",
-      Address: "Minecraft",
-      PostCode: "minecraft:over_world",
-      Greeting: "おはー"
-    }
-    chrome.storage.sync.set({ secretSettings: setting })
-  }
   document.getElementById("User").value = setting.User
   document.getElementById("Address").value = setting.Address
   document.getElementById("PostCode").value = setting.PostCode
   document.getElementById("Greeting").value = setting.Greeting
 });
 
+
+document.getElementById("liveSpeedValue").addEventListener("change",function() {
+  const speed = document.getElementById("liveSpeedValue").value
+  chrome.storage.sync.set({ liveSpeed: speed })
+  document.getElementById("liveSpeed").innerText = speed + " Saved!"
+})
+document.getElementById("liveSpeedValue").addEventListener("input",function() {
+  document.getElementById("liveSpeed").innerText = document.getElementById("liveSpeedValue").value
+})
+
 // 検索
 document.getElementById("searchInput").addEventListener("input", function () {
   let keyword = document.getElementById("searchInput").value
   updateHistory(keyword)
 })
-
 function updateHistory(keyword) {
   const searchDate = new Date();
   searchDate.setDate(searchDate.getDate() - 7);
@@ -52,7 +57,19 @@ function updateHistory(keyword) {
   })
 }
 
-// 匿名モード設定
+
+// LiveSpeedup更新
+document.getElementById("liveSpeed").addEventListener("change", function () {
+  chrome.storage.sync.set({
+    secretSettings: {
+      User: document.getElementById("User").value,
+      Address: document.getElementById("Address").value,
+      PostCode: document.getElementById("PostCode").value,
+      Greeting: document.getElementById("Greeting").value
+    }
+  })
+})
+// SecretSettings更新
 document.getElementById("saveSecretSetting").addEventListener("click", function () {
   chrome.storage.sync.set({
     secretSettings: {
@@ -63,6 +80,9 @@ document.getElementById("saveSecretSetting").addEventListener("click", function 
     }
   })
 })
+
+
+
 
 function HTMLescape(str) {
   return str.replace(

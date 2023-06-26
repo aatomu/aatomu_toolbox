@@ -44,6 +44,26 @@ function init() {
       console.log(e)
     }
   })
+  // いろんなやつの初期値
+  //// secret設定
+  chrome.storage.sync.get(["liveSpeed"]).then((result) => {
+    if (result.liveSpeed == undefined) {
+      chrome.storage.sync.set({ liveSpeed: 2 })
+    }
+  })
+  //// secret設定
+  chrome.storage.sync.get(["secretSettings"]).then((result) => {
+    let setting = result.secretSettings
+    if (setting == undefined) {
+      setting = {
+        User: "Atomu",
+        Address: "Minecraft",
+        PostCode: "minecraft:over_world",
+        Greeting: "おはー"
+      }
+      chrome.storage.sync.set({ secretSettings: setting })
+    }
+  })
 }
 
 // 右クリメニュー 呼び出し

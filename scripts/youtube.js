@@ -15,7 +15,7 @@ chrome.storage.sync.get(["isLiveSpeedupMode"]).then((result) => {
 });
 
 // Loop
-setInterval(function () {
+setInterval(async function () {
   // 登録チャンネルで検索
   if (window.location.href == "https://www.youtube.com/feed/subscriptions" && !isSearchSubscription) {
     let search = str2HTML(`<input type"text" id="searchVideoKey" value="">`)
@@ -70,10 +70,12 @@ setInterval(function () {
     if (timeLineWidth == 0) {
       // isDelay && !isSpeedup
       if (!button.disabled && !isLiveSpeedup && isLiveSpeedupMode) {
-        live.playbackRate = LiveSpeeduped
-        button.innerText += `(SPEEDUP x${LiveSpeeduped})`
+        const LiveSpeed = await chrome.storage.sync.get(["liveSpeed"]).then((result) => {return result.liveSpeed})
+      
+        live.playbackRate = LiveSpeed
+        button.innerText += `(SPEEDUP x${LiveSpeed})`
         isLiveSpeedup = true
-        console.log(`Live Is Delay(Change Speed To x${LiveSpeeduped})`)
+        console.log(`Live Is Delay(Change Speed To x${LiveSpeed})`)
         return
       }
       // !isDelay && isSpeedup
