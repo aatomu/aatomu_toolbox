@@ -28,14 +28,14 @@ function init() {
     { parentId: "master", id: 'disable_secret_amazon', type: 'checkbox', title: 'Disable Secret Amazon Mode', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
     // 選択時のみ
     { parentId: "master", id: 'separator_select', type: 'separator', contexts: ["selection"] },
-    { parentId: "master", id: 'amazon', title: 'amazon', contexts: ["selection"] },
-    { parentId: "master", id: 'yahoo_auction', title: 'ヤフオク', contexts: ["selection"] },
-    { parentId: "master", id: 'yahoo_shop', title: 'ヤフーshop', contexts: ["selection"] },
-    { parentId: "master", id: 'kakaku', title: '価格.com', contexts: ["selection"] },
-    { parentId: "master", id: 'youtube', title: 'youtube', contexts: ["selection"] },
-    { parentId: "master", id: 'googleJP', title: 'googleJP', contexts: ["selection"] },
-    { parentId: "master", id: 'googleEN', title: 'googleEN', contexts: ["selection"] },
-    { parentId: "master", id: 'deepL', title: 'DeepL', contexts: ["selection"] }
+    { parentId: "master", id: 'amazon', title: '検索: amazon', contexts: ["selection"] },
+    { parentId: "master", id: 'yahoo_auction', title: '検索: ヤフオク', contexts: ["selection"] },
+    { parentId: "master", id: 'yahoo_shop', title: '検索: ヤフーshop', contexts: ["selection"] },
+    { parentId: "master", id: 'kakaku', title: '検索: 価格.com', contexts: ["selection"] },
+    { parentId: "master", id: 'youtube', title: '検索: youtube', contexts: ["selection"] },
+    { parentId: "master", id: 'googleJP', title: '翻訳: googleJP', contexts: ["selection"] },
+    { parentId: "master", id: 'googleEN', title: '翻訳: googleEN', contexts: ["selection"] },
+    { parentId: "master", id: 'deepL', title: '翻訳: DeepL', contexts: ["selection"] }
   ]
   menuList.forEach(menu => {
     try {
