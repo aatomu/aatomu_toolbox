@@ -25,7 +25,7 @@ function init() {
     { parentId: "master", id: 'live_no_delay', type: 'checkbox', title: 'Live No Delay Mode', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/watch?v=*"] },
     // Amazon
     { parentId: "master", id: 'separator_amazon', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
-    { parentId: "master", id: 'open_amazon', type: 'checkbox', title: 'Open Amazon Mode', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
+    { parentId: "master", id: 'disable_secret_amazon', type: 'checkbox', title: 'Disable Secret Amazon Mode', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
     // 選択時のみ
     { parentId: "master", id: 'separator_select', type: 'separator', contexts: ["selection"] },
     { parentId: "master", id: 'amazon', title: 'amazon', contexts: ["selection"] },
@@ -108,8 +108,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       chrome.storage.sync.set({ isLiveSpeedupMode: info.checked })
       return
 
-    case "open_amazon":
-      chrome.storage.sync.set({ isOpenAmazonMode: info.checked })
+    case "disable_secret_amazon":
+      chrome.storage.sync.set({ isDisableSecretAmazonMode: info.checked })
       return
 
     case "amazon":

@@ -40,19 +40,23 @@
       "matches": [
         "https://www.amazon.co.jp/*"
       ],
+      "css": [
+        "css/secret.css"
+      ],
       "js": [
         "scripts/amazon.js"
-      ],
-      "run_at": "document_start"
+      ]
     },
     {
       "matches": [
         "https://www.google.com/*"
       ],
+      "css": [
+        "css/secret.css"
+      ],
       "js": [
         "scripts/google.js"
-      ],
-      "run_at": "document_start"
+      ]
     },
     {
       "matches": [
