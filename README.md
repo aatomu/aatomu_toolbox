@@ -12,6 +12,7 @@
 ## 機能
 * 右クリメニュ
   * Copy URL: Amazonの場合少し短くなる
+  * View Creeper: 各サイト 左下のクリーパーの表示設定
   * Short To Movie: youtube Shortをyoutube動画に変更する(youtube shortのページのみ)
   * Live No Delay: プレミア公開,配信を追いつくように加速 (youtube 動画のページのみ)
   * Secret Amazon: 名前,住所等を置換する(Amazon.co.jpのページのみ)

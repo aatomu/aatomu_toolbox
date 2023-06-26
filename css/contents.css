@@ -3,12 +3,12 @@
   bottom: 0;
   left: 0;
   z-index: 32767;
-  width: 2vw;
-  animation: rotate 10s linear 0s infinite;
+  width: 2vw !important;
+  animation: creeper_rotate 10s linear 0s infinite;
 }
 
 .creeper_fade {
-  animation: rotate 10s linear 0s infinite,fadeOut 2s linear both;
+  animation: creeper_rotate 10s linear 0s infinite,fadeOut 2s linear both;
 }
 
 .timebar {
@@ -30,7 +30,7 @@
   }
 }
 
-@keyframes rotate {
+@keyframes creeper_rotate {
   0%   { transform: scale( 0, 1); }
   50%  { transform: scale(-1, 1); }
   100% { transform: scale( 0, 1); }

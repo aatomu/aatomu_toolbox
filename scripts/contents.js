@@ -23,11 +23,8 @@ function str2HTML(html) {
 if (/https?/.test(location.protocol)) {
   chrome.storage.sync.get(["isViewCreeper"]).then(result => {
     if (result.isViewCreeper) {
-      let creeperElement = document.createElement("img")
-      creeperElement.classList.add("creeper")
-      creeperElement.id = "creeper"
-      creeperElement.src = chrome.runtime.getURL("images/creeper.webp")
-      document.getElementsByTagName("body")[0].appendChild(creeperElement)
+      const el = str2HTML(`<img class="creeper" id="creeper" src="${chrome.runtime.getURL("images/creeper.webp")}">`)
+      document.body.appendChild(el)
       document.getElementById("creeper").addEventListener("mouseover", function (e) {
         document.getElementById("creeper").classList.add("creeper_fade")
       })
