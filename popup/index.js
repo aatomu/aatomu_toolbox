@@ -5,10 +5,24 @@ chrome.storage.sync.getBytesInUse(function (result) {
 });
 // History
 updateHistory("")
-// モード
-chrome.storage.sync.get(["disableAddon"]).then((result) => {
-  document.getElementById("disableAddon").checked = result.disableAddon
+// 匿名モードの読み込み
+chrome.storage.sync.get(["secretSettings"]).then((result) => {
+  let setting = result.secretSettings
+  if (setting == undefined) {
+    setting = {
+      User: "Atomu",
+      Address: "Minecraft",
+      PostCode: "minecraft:over_world",
+      Greeting: "おはー"
+    }
+    chrome.storage.sync.set({ secretSettings: setting })
+  }
+  document.getElementById("User").value = setting.User
+  document.getElementById("Address").value = setting.Address
+  document.getElementById("PostCode").value = setting.PostCode
+  document.getElementById("Greeting").value = setting.Greeting
 });
+
 // 検索
 document.getElementById("searchInput").addEventListener("input", function () {
   let keyword = document.getElementById("searchInput").value
@@ -38,11 +52,16 @@ function updateHistory(keyword) {
   })
 }
 
-// 拡張機能のモード
-document.getElementById("disableAddon").addEventListener("change", function () {
-  isDisableAddon = document.getElementById("disableAddon").checked
-  console.log(isDisableAddon)
-  chrome.storage.sync.set({ disableAddon: isDisableAddon })
+// 匿名モード設定
+document.getElementById("saveSecretSetting").addEventListener("click", function () {
+  chrome.storage.sync.set({
+    secretSettings: {
+      User: document.getElementById("User").value,
+      Address: document.getElementById("Address").value,
+      PostCode: document.getElementById("PostCode").value,
+      Greeting: document.getElementById("Greeting").value
+    }
+  })
 })
 
 function HTMLescape(str) {

@@ -38,4 +38,3 @@ s.onload = function () {
   this.remove();
 };
 document.getElementsByTagName("body")[0].appendChild(s);
-

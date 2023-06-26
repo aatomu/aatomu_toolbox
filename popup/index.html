@@ -21,15 +21,41 @@
   .historyArea>a {
     color: black;
   }
-  
+
+  .secretSettings {
+    display: flex;
+    flex-direction: row;
+  }
+  .secretSettingsList {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-around;
+  }
 </style>
 
 <body>
   <h1 class="title" style="white-space: nowrap;">aatomu's Toolbox</h1>
-  Extension Buffer Use:<span id="ExtensionBufferUseValue">????</span>/1,024,000[Byte] <s><a href="chrome://extensions/" target="_blank">Jump Chrome Extension</a></s><br>
+  Extension Buffer Use:<span id="ExtensionBufferUseValue">????</span>/1,024,000[Byte]
+  <s><a href="chrome://extensions/" target="_blank">Jump Chrome Extension</a></s><br>
   WebSite History <input id="searchInput" type="text" placeholder="Search Word"><br>
   <div class="historyArea" id="history">
   </div>
-  <label class="disableAddonArea">Disable "aatomu's Toolbox"<input type="checkbox" id="disableAddon"></label>
+  <div class="secretSettings">
+    <div class="secretSettingsList">
+      <span>User:</span>
+      <span>Address:</span>
+      <span>PostCode:</span>
+      <span>Greeting:</span>
+      <span>Save:</span>
+    </div>
+    <div  class="secretSettingsList">
+      <input type="text" id="User">
+      <input type="text" id="Address">
+      <input type="text" id="PostCode">
+      <input type="text" id="Greeting">
+      <input type="button" id="saveSecretSetting" value="Click Here">
+    </div>
+  </div>
 </body>
 <script src="./index.js"></script>
