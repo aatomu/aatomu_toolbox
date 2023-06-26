@@ -17,6 +17,7 @@ function init() {
   const menuList = [
     // 常時表示
     { parentId: "master", id: 'copy_link', title: 'Copy URL', contexts: ["all"] },
+    { parentId: "master", id: 'view_creeper', title: 'View Creeper', type: 'checkbox', contexts: ["all"] },
     // Shortのページのみ
     { parentId: "master", id: 'separator_short', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
     { parentId: "master", id: 'short2movie', title: 'Short To Movie', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
@@ -95,6 +96,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         }
       })
       return;
+
+    case "view_creeper":
+      chrome.storage.sync.set({ isViewCreeper: info.checked })
+      return
 
     case "short2movie":
       // shortのページ以外で実行しない

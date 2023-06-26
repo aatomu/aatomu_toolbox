@@ -21,14 +21,19 @@ function str2HTML(html) {
 
 //// いろんなサイトのクリーパー
 if (/https?/.test(location.protocol)) {
-  let creeperElement = document.createElement("img")
-  creeperElement.classList.add("creeper")
-  creeperElement.id = "creeper"
-  creeperElement.src = chrome.runtime.getURL("images/creeper.webp")
-  document.getElementsByTagName("body")[0].appendChild(creeperElement)
-  document.getElementById("creeper").addEventListener("mouseover", function (e) {
-    document.getElementById("creeper").classList.add("creeper_fade")
+  chrome.storage.sync.get(["isViewCreeper"]).then(result => {
+    if (result.isViewCreeper) {
+      let creeperElement = document.createElement("img")
+      creeperElement.classList.add("creeper")
+      creeperElement.id = "creeper"
+      creeperElement.src = chrome.runtime.getURL("images/creeper.webp")
+      document.getElementsByTagName("body")[0].appendChild(creeperElement)
+      document.getElementById("creeper").addEventListener("mouseover", function (e) {
+        document.getElementById("creeper").classList.add("creeper_fade")
+      })
+    }
   })
+
 }
 
 //// 変数チェック
