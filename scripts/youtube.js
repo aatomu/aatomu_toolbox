@@ -70,11 +70,12 @@ setInterval(async function () {
     if (timeLineWidth == 0) {
       // isDelay && !isSpeedup
       if (!button.disabled && !isLiveSpeedup && isLiveSpeedupMode) {
-        const LiveSpeed = await chrome.storage.sync.get(["liveSpeed"]).then((result) => {return result.liveSpeed})
-      
+        const LiveSpeed = await chrome.storage.sync.get(["liveSpeed"]).then((result) => { return result.liveSpeed })
+
         live.playbackRate = LiveSpeed
         button.innerText += `(SPEEDUP x${LiveSpeed})`
         isLiveSpeedup = true
+        document.querySelector(".ytp-chrome-bottom").style.opacity = "1"
         console.log(`Live Is Delay(Change Speed To x${LiveSpeed})`)
         return
       }
@@ -83,6 +84,7 @@ setInterval(async function () {
         live.playbackRate = 1
         button.innerText = button.innerText.replace("(SPEEDUP)", "")
         isLiveSpeedup = false
+        document.querySelector(".ytp-chrome-bottom").style.opacity = ""
         console.log("Live is NoDelay(Change Speed To x1)")
         return
       }
@@ -91,6 +93,7 @@ setInterval(async function () {
         live.playbackRate = 1
         button.innerText = button.innerText.replace("(SPEEDUP)", "")
         isLiveSpeedup = false
+        document.querySelector(".ytp-chrome-bottom").style.opacity = ""
         console.log("Live Speedup Mode Is False(Change Speed To x1)")
       }
     }
