@@ -16,6 +16,7 @@ function init() {
 
   const menuList = [
     // 常時表示
+    { parentId: "master", id: 'jump_extension', title: 'Jump To Chrome Extension', contexts: ["all"] },
     { parentId: "master", id: 'copy_link', title: 'Copy URL', contexts: ["all"] },
     { parentId: "master", id: 'view_creeper', title: 'View Creeper', type: 'checkbox', contexts: ["all"] },
     // Shortのページのみ
@@ -34,6 +35,7 @@ function init() {
     { parentId: "master", id: 'yahoo_shop', title: '検索: ヤフーshop', contexts: ["selection"] },
     { parentId: "master", id: 'kakaku', title: '検索: 価格.com', contexts: ["selection"] },
     { parentId: "master", id: 'youtube', title: '検索: youtube', contexts: ["selection"] },
+    { parentId: "master", id: 'osu', title: '検索: osu!', contexts: ["selection"] },
     { parentId: "master", id: 'googleJP', title: '翻訳: googleJP', contexts: ["selection"] },
     { parentId: "master", id: 'googleEN', title: '翻訳: googleEN', contexts: ["selection"] },
     { parentId: "master", id: 'deepL', title: '翻訳: DeepL', contexts: ["selection"] }
@@ -73,6 +75,12 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   console.log("  Info:", info)
   console.log("  Tab:", tab)
   switch (info.menuItemId) {
+    case "jump_extension":
+      chrome.tabs.create({
+        active: true,
+        url:  'chrome://extensions/'
+      }, null);
+      return
     case "copy_link":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
@@ -146,43 +154,49 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     case "yahoo_auction":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://auctions.yahoo.co.jp/search/search?p=${selectStr}`, "_blank") }
+        function: function () { window.open(`https://auctions.yahoo.co.jp/search/search?p=${window.getSelection().toString()}`, "_blank") }
       })
       return
     case "yahoo_shop":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://shopping.yahoo.co.jp/search?p=${selectStr}`, "_blank") }
+        function: function () { window.open(`https://shopping.yahoo.co.jp/search?p=${window.getSelection().toString()}`, "_blank") }
       })
       return
     case "kakaku":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://kakaku.com/search_results/${selectStr}/`, "_blank") }
+        function: function () { window.open(`https://kakaku.com/search_results/${window.getSelection().toString()}/`, "_blank") }
       })
       return
     case "youtube":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.youtube.com/results?search_query=${selectStr}`, "_blank") }
+        function: function () { window.open(`https://www.youtube.com/results?search_query=${window.getSelection().toString()}`, "_blank") }
+      })
+      return
+    case "osu":
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: function () { window.open(`https://osu.ppy.sh/beatmapsets?q=${window.getSelection().toString()}`, "_blank") }
       })
       return
     case "googleJP":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.google.com/search?q=${selectStr}&gl=jp&hl=ja&pws=0`, "_blank") }
+        function: function () { window.open(`https://www.google.com/search?q=${window.getSelection().toString()}&gl=jp&hl=ja&pws=0`, "_blank") }
       })
       return
     case "googleEN":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.google.com/search?q=${selectStr}&gl=us&hl=en&pws=0`, "_blank") }
+        function: function () { window.open(`https://www.google.com/search?q=${window.getSelection().toString()}&gl=us&hl=en&pws=0`, "_blank") }
       })
       return
     case "deepL":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.deepl.com/translator#en/ja/${selectStr}`, "_blank") }
+        function: function () { window.open(`https://www.deepl.com/translator#en/ja/${window.getSelection().toString()}`, "_blank") }
       })
       return
   }
