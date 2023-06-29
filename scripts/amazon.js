@@ -1,5 +1,5 @@
 // 仮CSS
-document.querySelector(`head`).innerHTML += `<link id="secretDummy" rel="stylesheet" href="${chrome.runtime.getURL('css/amazon.css')}">`
+document.querySelector(`head`).insertAdjacentHTML("beforeend",`<link id="secretDummy" rel="stylesheet" href="${chrome.runtime.getURL('css/amazon.css')}">`)
 // CSS読み込み
 chrome.storage.sync.get(["isDisableSecretAmazonMode", "secretSettings"]).then(async (result) => {
   if (result.isDisableSecretAmazonMode) {

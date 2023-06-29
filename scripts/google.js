@@ -1,5 +1,5 @@
 // 仮CSS
-document.querySelector(`head`).innerHTML += `<link id="secretDummy" rel="stylesheet" href="${chrome.runtime.getURL('css/google.css')}">`
+document.querySelector(`head`).insertAdjacentHTML("beforeend",`<link id="secretDummy" rel="stylesheet" href="${chrome.runtime.getURL('css/google.css')}">`)
 // 読み込み
 chrome.storage.sync.get(["secretSettings"]).then(async (result) => {
   // 置換準備
