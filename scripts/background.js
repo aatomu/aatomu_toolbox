@@ -143,6 +143,10 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
     case "disable_secret_amazon":
       chrome.storage.sync.set({ isDisableSecretAmazonMode: info.checked })
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: function () { window.location.reload() }
+      })
       return
 
     case "amazon":
