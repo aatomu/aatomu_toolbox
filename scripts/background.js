@@ -28,6 +28,7 @@ function init() {
     // Amazon
     { parentId: "master", id: 'separator_amazon', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
     { parentId: "master", id: 'disable_secret_amazon', type: 'checkbox', title: 'Disable Secret Amazon Mode', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
+    { parentId: "master", id: 'show_amazon_buy_button', type: 'checkbox', title: '[Warning] Show Amazon Buy Button', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
     // 選択時のみ
     { parentId: "master", id: 'separator_select', type: 'separator', contexts: ["selection"] },
     { parentId: "master", id: 'amazon', title: '検索: amazon', contexts: ["selection"] },
@@ -78,7 +79,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     case "jump_extension":
       chrome.tabs.create({
         active: true,
-        url:  'chrome://extensions/'
+        url: 'chrome://extensions/'
       }, null);
       return
     case "copy_link":
@@ -104,7 +105,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         }
       })
       return;
-
     case "view_creeper":
       chrome.storage.sync.set({ isViewCreeper: info.checked })
       return
@@ -149,7 +149,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       })
       return
 
-    case "amazon":
+    case "show_amazon_buy_button":
+      chrome.storage.sync.set({ isShowAmazonBuyButton: info.checked })
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: function () { window.location.reload() }
+      })
+      return
+
+      case "amazon":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
         function: function () { window.open(`https://www.amazon.co.jp/s?k=${window.getSelection().toString()}`, "_blank") }

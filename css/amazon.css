@@ -20,9 +20,9 @@
    注文履歴 注文の詳細 支払方法
    注文履歴 いろいろ 配達状況の確認
 */
-#submit\.buy-now,
+#submit\.buy-now:not(.amazon-unsafety),
 .maple-banner,
-#sc-buy-box-ptc-button,
+#sc-buy-box-ptc-button:not(.amazon-unsafety),
 .recipient,
 .od-shipping-address-container,
 .pmts-payment-instrument-billing-address,
