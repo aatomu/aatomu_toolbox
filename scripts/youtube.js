@@ -115,6 +115,7 @@ setInterval(async function () {
             el.click()// 再生速度 標準ボタンをクリック
           }
         }) 
+        document.querySelector("button.ytp-button.ytp-settings-button").click() //設定ボタンをクリック == メニューを閉じる
         beforeWatchVideoID = nowWatchVideoID
         console.log("PlayBack Speed Set To Default(x1)")
       }
