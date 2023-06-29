@@ -145,7 +145,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       chrome.storage.sync.set({ isDisableSecretAmazonMode: info.checked })
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.location.reload() }
+        function: function () {
+          setTimeout(function () {
+            window.location.reload()
+          }, 500)
+        }
       })
       return
 
@@ -153,11 +157,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       chrome.storage.sync.set({ isShowAmazonBuyButton: info.checked })
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.location.reload() }
+        function: function () {
+          setTimeout(function () {
+            window.location.reload()
+          }, 500)
+        }
       })
       return
 
-      case "amazon":
+    case "amazon":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
         function: function () { window.open(`https://www.amazon.co.jp/s?k=${window.getSelection().toString()}`, "_blank") }
