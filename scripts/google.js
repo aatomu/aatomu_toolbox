@@ -15,4 +15,6 @@ chrome.storage.sync.get(["secretSettings"]).then(async (result) => {
 // 仮CSS 削除
 document.getElementById("secretDummy").remove()
 // 非表示解除
-document.body.classList.add("isSecretLoaded")
+setTimeout(function() {
+  document.body.classList.add("isSecretLoaded")
+},500)

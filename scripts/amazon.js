@@ -20,4 +20,6 @@ chrome.storage.sync.get(["isDisableSecretAmazonMode", "secretSettings"]).then(as
 // 仮CSS削除
 document.getElementById("secretDummy").remove()
 // 非表示解除
-document.body.classList.add("isSecretLoaded")
+setTimeout(function() {
+  document.body.classList.add("isSecretLoaded")
+},500)
