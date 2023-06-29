@@ -7,6 +7,8 @@ let shortNumber = -1
 let isLiveSpeedupMode = false
 let isLiveSpeedup = false
 let LiveSpeeduped = 3
+//// 動画のSpeed
+let beforeWatchVideoID = ""
 
 // Speedup
 chrome.storage.sync.get(["isLiveSpeedupMode"]).then((result) => {
@@ -63,12 +65,12 @@ setInterval(async function () {
 
   // 動画
   if (window.location.href.startsWith("https://www.youtube.com/watch")) {
-    let button = document.querySelector("button.ytp-live-badge.ytp-button")
-    let live = document.querySelector("video")
-    let timeLineWidth = document.querySelector("span.ytp-time-duration").offsetWidth
     // isLive?
+    let timeLineWidth = document.querySelector("span.ytp-time-duration").offsetWidth
     if (timeLineWidth == 0) {
-      // isDelay && !isSpeedup
+      let button = document.querySelector("button.ytp-live-badge.ytp-button")
+      let live = document.querySelector("video")
+        // isDelay && !isSpeedup
       if (!button.disabled && !isLiveSpeedup && isLiveSpeedupMode) {
         const LiveSpeed = await chrome.storage.sync.get(["liveSpeed"]).then((result) => { return result.liveSpeed })
 
@@ -95,6 +97,26 @@ setInterval(async function () {
         isLiveSpeedup = false
         document.querySelector(".ytp-chrome-bottom").style.opacity = ""
         console.log("Live Speedup Mode Is False(Change Speed To x1)")
+      }
+    }
+    // isMovie
+    const searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.has("v")) {
+      let nowWatchVideoID = searchParams.get("v")
+      if (beforeWatchVideoID != nowWatchVideoID) {
+        document.querySelector("button.ytp-button.ytp-settings-button").click() //設定ボタンをクリック
+        document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+          if (el.innerText == "再生速度") {
+            el.click() // 再生速度ボタンをクリック
+          }
+        })
+        document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+          if (el.innerText == "標準") {
+            el.click()// 再生速度 標準ボタンをクリック
+          }
+        }) 
+        beforeWatchVideoID = nowWatchVideoID
+        console.log("PlayBack Speed Set To Default(x1)")
       }
     }
   }
