@@ -103,8 +103,8 @@ setInterval(async function () {
     const searchParams = new URLSearchParams(window.location.search)
     if (searchParams.has("v")) {
       let nowWatchVideoID = searchParams.get("v")
-      const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
-      if (beforeWatchVideoID != nowWatchVideoID && settingButton.style.display != "none") {
+      if (beforeWatchVideoID != nowWatchVideoID && document.querySelector(".ytp-ad-button") == null) {
+        const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
         settingButton.click() //設定ボタンをクリック
         document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
           if (el.innerText == "再生速度") {
