@@ -8,7 +8,7 @@ let isLiveSpeedupMode = false
 let isLiveSpeedup = false
 let LiveSpeeduped = 3
 //// 動画のSpeed
-let beforeWatchVideoID = ""
+let beforeWatchVideoSrc = ""
 
 // Speedup
 chrome.storage.sync.get(["isLiveSpeedupMode"]).then((result) => {
@@ -65,16 +65,18 @@ setInterval(async function () {
 
   // 動画
   if (window.location.href.startsWith("https://www.youtube.com/watch")) {
+    let video = document.querySelector("video")
+
     // isLive?
     let timeLineWidth = document.querySelector("span.ytp-time-duration").offsetWidth
     if (timeLineWidth == 0) {
       let button = document.querySelector("button.ytp-live-badge.ytp-button")
       let live = document.querySelector("video")
-        // isDelay && !isSpeedup
+      // isDelay && !isSpeedup
       if (!button.disabled && !isLiveSpeedup && isLiveSpeedupMode) {
         const LiveSpeed = await chrome.storage.sync.get(["liveSpeed"]).then((result) => { return result.liveSpeed })
 
-        live.playbackRate = LiveSpeed
+        video.playbackRate = LiveSpeed
         button.innerText += `(SPEEDUP x${LiveSpeed})`
         isLiveSpeedup = true
         document.querySelector(".ytp-chrome-bottom").style.opacity = "1"
@@ -83,7 +85,7 @@ setInterval(async function () {
       }
       // !isDelay && isSpeedup
       if (button.disabled && isLiveSpeedup) {
-        live.playbackRate = 1
+        video.playbackRate = 1
         button.innerText = button.innerText.replace("(SPEEDUP)", "")
         isLiveSpeedup = false
         document.querySelector(".ytp-chrome-bottom").style.opacity = ""
@@ -92,7 +94,7 @@ setInterval(async function () {
       }
       // isSpeedup && !isLiveSpeedupMode
       if (isLiveSpeedup && !isLiveSpeedupMode) {
-        live.playbackRate = 1
+        video.playbackRate = 1
         button.innerText = button.innerText.replace("(SPEEDUP)", "")
         isLiveSpeedup = false
         document.querySelector(".ytp-chrome-bottom").style.opacity = ""
@@ -100,26 +102,22 @@ setInterval(async function () {
       }
     }
     // isMovie
-    const searchParams = new URLSearchParams(window.location.search)
-    if (searchParams.has("v")) {
-      let nowWatchVideoID = searchParams.get("v")
-      if (beforeWatchVideoID != nowWatchVideoID && document.querySelector(".ytp-ad-button") == null) {
-        const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
-        settingButton.click() //設定ボタンをクリック
-        document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
-          if (el.innerText == "再生速度") {
-            el.click() // 再生速度ボタンをクリック
-          }
-        })
-        document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
-          if (el.innerText == "標準") {
-            el.click()// 再生速度 標準ボタンをクリック
-          }
-        }) 
-        settingButton.click() //設定ボタンをクリック == メニューを閉じる
-        beforeWatchVideoID = nowWatchVideoID
-        console.log("PlayBack Speed Set To Default(x1)")
-      }
+    if (beforeWatchVideoSrc != video.src) {
+      beforeWatchVideoSrc = video.src
+      const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
+      settingButton.click() //設定ボタンをクリック
+      document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+        if (el.innerText == "再生速度") {
+          el.click() // 再生速度ボタンをクリック
+        }
+      })
+      document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+        if (el.innerText == "標準") {
+          el.click()// 再生速度 標準ボタンをクリック
+        }
+      })
+      settingButton.click() //設定ボタンをクリック == メニューを閉じる
+      console.log("PlayBack Speed Set To Default(x1)")
     }
   }
 }, 500)
