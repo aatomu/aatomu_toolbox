@@ -103,8 +103,9 @@ setInterval(async function () {
     const searchParams = new URLSearchParams(window.location.search)
     if (searchParams.has("v")) {
       let nowWatchVideoID = searchParams.get("v")
-      if (beforeWatchVideoID != nowWatchVideoID) {
-        document.querySelector("button.ytp-button.ytp-settings-button").click() //設定ボタンをクリック
+      const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
+      if (beforeWatchVideoID != nowWatchVideoID && settingButton.style.display != "none") {
+        settingButton.click() //設定ボタンをクリック
         document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
           if (el.innerText == "再生速度") {
             el.click() // 再生速度ボタンをクリック
@@ -115,7 +116,7 @@ setInterval(async function () {
             el.click()// 再生速度 標準ボタンをクリック
           }
         }) 
-        document.querySelector("button.ytp-button.ytp-settings-button").click() //設定ボタンをクリック == メニューを閉じる
+        settingButton.click() //設定ボタンをクリック == メニューを閉じる
         beforeWatchVideoID = nowWatchVideoID
         console.log("PlayBack Speed Set To Default(x1)")
       }
