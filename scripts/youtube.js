@@ -102,6 +102,7 @@ setInterval(async function () {
       }
     }
     // isMovie
+<<<<<<< HEAD
     if (beforeWatchVideoSrc != video.src) {
       beforeWatchVideoSrc = video.src
       const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
@@ -118,6 +119,37 @@ setInterval(async function () {
       })
       settingButton.click() //設定ボタンをクリック == メニューを閉じる
       console.log("PlayBack Speed Set To Default(x1)")
+=======
+    const searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.has("v")) {
+      let nowWatchVideoID = searchParams.get("v")
+      if (beforeWatchVideoID != nowWatchVideoID) {
+        beforeWatchVideoID = nowWatchVideoID
+        // 動画が変わったあと?に実行
+        setTimeout(function () {
+          // 広告だったらキャンセル
+          if (document.querySelector(".ytp-ad-button") != null) {
+            beforeWatchVideoID = ""
+            return
+          }
+          // 通常
+          const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
+          settingButton.click() //設定ボタンをクリック
+          document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+            if (el.innerText == "再生速度") {
+              el.click() // 再生速度ボタンをクリック
+            }
+          })
+          document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+            if (el.innerText == "標準") {
+              el.click()// 再生速度 標準ボタンをクリック
+            }
+          })
+          settingButton.click() //設定ボタンをクリック == メニューを閉じる
+          console.log("PlayBack Speed Set To Default(x1)")
+        }, 1000)
+      }
+>>>>>>> 85d5fa3b1a0c59b0a17c2690e75c0878ea034a8d
     }
   }
 }, 500)
