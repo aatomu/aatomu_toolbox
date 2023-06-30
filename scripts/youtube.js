@@ -104,6 +104,8 @@ setInterval(async function () {
     // isMovie
     if (beforeWatchVideoSrc != video.src) {
       beforeWatchVideoSrc = video.src
+      // 時間差で実行
+      setTimeout(function() {
       const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
       settingButton.click() //設定ボタンをクリック
       document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
@@ -118,6 +120,7 @@ setInterval(async function () {
       })
       settingButton.click() //設定ボタンをクリック == メニューを閉じる
       console.log("PlayBack Speed Set To Default(x1)")
+      },1000)
     }
   }
 }, 500)
