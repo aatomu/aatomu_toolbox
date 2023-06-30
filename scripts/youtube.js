@@ -70,7 +70,7 @@ setInterval(async function () {
     if (timeLineWidth == 0) {
       let button = document.querySelector("button.ytp-live-badge.ytp-button")
       let live = document.querySelector("video")
-        // isDelay && !isSpeedup
+      // isDelay && !isSpeedup
       if (!button.disabled && !isLiveSpeedup && isLiveSpeedupMode) {
         const LiveSpeed = await chrome.storage.sync.get(["liveSpeed"]).then((result) => { return result.liveSpeed })
 
@@ -103,22 +103,31 @@ setInterval(async function () {
     const searchParams = new URLSearchParams(window.location.search)
     if (searchParams.has("v")) {
       let nowWatchVideoID = searchParams.get("v")
-      if (beforeWatchVideoID != nowWatchVideoID && document.querySelector(".ytp-ad-button") == null) {
-        const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
-        settingButton.click() //設定ボタンをクリック
-        document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
-          if (el.innerText == "再生速度") {
-            el.click() // 再生速度ボタンをクリック
-          }
-        })
-        document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
-          if (el.innerText == "標準") {
-            el.click()// 再生速度 標準ボタンをクリック
-          }
-        }) 
-        settingButton.click() //設定ボタンをクリック == メニューを閉じる
+      if (beforeWatchVideoID != nowWatchVideoID) {
         beforeWatchVideoID = nowWatchVideoID
-        console.log("PlayBack Speed Set To Default(x1)")
+        // 動画が変わったあと?に実行
+        setTimeout(function () {
+          // 広告だったらキャンセル
+          if (document.querySelector(".ytp-ad-button") != null) {
+            beforeWatchVideoID = ""
+            return
+          }
+          // 通常
+          const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
+          settingButton.click() //設定ボタンをクリック
+          document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+            if (el.innerText == "再生速度") {
+              el.click() // 再生速度ボタンをクリック
+            }
+          })
+          document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+            if (el.innerText == "標準") {
+              el.click()// 再生速度 標準ボタンをクリック
+            }
+          })
+          settingButton.click() //設定ボタンをクリック == メニューを閉じる
+          console.log("PlayBack Speed Set To Default(x1)")
+        }, 1000)
       }
     }
   }
