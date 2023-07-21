@@ -40,3 +40,14 @@ s.onload = function () {
   this.remove();
 };
 document.getElementsByTagName("body")[0].appendChild(s);
+
+
+// document.querySelectorAll("*").forEach(el => {
+//   for (node of el.childNodes) {
+//     if (node.nodeType == Node.TEXT_NODE && !"SCRIPT,STYLE".includes(node.parentNode.nodeName)) {
+//       node.nodeValue = node.nodeValue.replace("ない", "無い")
+//       node.nodeValue = node.nodeValue.replace(/[ぁ-んァ-ヴｦ-ﾟ]/g, "")
+//       console.log(node)
+//     }
+//   }
+// })
