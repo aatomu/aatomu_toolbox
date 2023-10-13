@@ -2,7 +2,7 @@
 自分用のChrome拡張機能
 
 ## How to Install
-1. [aatomu_toolbox](https://github.com/atomu21263/aatomu_toolbox/archive/refs/heads/main.zip)をDLする
+1. [aatomu_toolbox](https://github.com/aatomu/aatomu_toolbox/archive/refs/heads/main.zip)をDLする
 2. DLしたファイルを展開する
 3. [拡張機能](chrome://extensions/) を開く
 4. デベロッパーモードをONにする
