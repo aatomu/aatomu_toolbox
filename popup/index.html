@@ -26,11 +26,42 @@
     display: flex;
     flex-direction: row;
   }
+
   .secretSettingsList {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     justify-content: space-around;
+  }
+
+  .switch {
+    margin-top: 1px;
+    margin-bottom: 1px;
+    height: calc(1lh - 2px);
+    width: 2lh;
+
+    box-sizing: border-box;
+    border-radius: 1lh;
+    border-color: black;
+    border-width: 2px;
+    border-style: solid;
+  }
+
+  .switch input[type="checkbox"] {
+    display: none;
+  }
+
+  .switch div {
+    height: calc(1lh - 6px);
+    width: calc(1lh - 6px);
+    border-radius: 1lh;
+    background-color: red;
+    transition: 0.2s;
+  }
+
+  .switch input[type="checkbox"]:checked~div {
+    background-color: lightgreen;
+    transform: translateX(calc(1lh + 3px));
   }
 </style>
 
@@ -52,13 +83,21 @@
       <span>Address:</span>
       <span>PostCode:</span>
       <span>Greeting:</span>
+      <span>Amazon Secret Mode:</span>
+      <span style="color:red;">Show Amazon Buy Button</span>
       <span>Save:</span>
     </div>
-    <div  class="secretSettingsList">
+    <div class="secretSettingsList">
       <input type="text" id="User">
       <input type="text" id="Address">
       <input type="text" id="PostCode">
       <input type="text" id="Greeting">
+      <label class="switch"><input type="checkbox" id="SecretAmazonMode">
+        <div></div>
+      </label>
+      <label class="switch"><input type="checkbox" id="ShowAmazonBuyButton">
+        <div></div>
+      </label>
       <input type="button" id="saveSecretSetting" value="Click Here">
     </div>
   </div>

@@ -17,15 +17,17 @@ chrome.storage.sync.get(["secretSettings"]).then((result) => {
   document.getElementById("Address").value = setting.Address
   document.getElementById("PostCode").value = setting.PostCode
   document.getElementById("Greeting").value = setting.Greeting
+  document.getElementById("SecretAmazonMode").checked = setting.SecretAmazonMode
+  document.getElementById("ShowAmazonBuyButton").checked = setting.ShowAmazonBuyButton
 });
 
 
-document.getElementById("liveSpeedValue").addEventListener("change",function() {
+document.getElementById("liveSpeedValue").addEventListener("change", function () {
   const speed = document.getElementById("liveSpeedValue").value
   chrome.storage.sync.set({ liveSpeed: speed })
   document.getElementById("liveSpeed").innerText = speed + " Saved!"
 })
-document.getElementById("liveSpeedValue").addEventListener("input",function() {
+document.getElementById("liveSpeedValue").addEventListener("input", function () {
   document.getElementById("liveSpeed").innerText = document.getElementById("liveSpeedValue").value
 })
 
@@ -59,29 +61,22 @@ function updateHistory(keyword) {
 
 
 // LiveSpeedup更新
-document.getElementById("liveSpeed").addEventListener("change", function () {
-  chrome.storage.sync.set({
-    secretSettings: {
-      User: document.getElementById("User").value,
-      Address: document.getElementById("Address").value,
-      PostCode: document.getElementById("PostCode").value,
-      Greeting: document.getElementById("Greeting").value
-    }
-  })
-})
+document.getElementById("liveSpeed").addEventListener("change", saveSecretSetting)
 // SecretSettings更新
-document.getElementById("saveSecretSetting").addEventListener("click", function () {
+document.getElementById("saveSecretSetting").addEventListener("click", saveSecretSetting)
+
+function saveSecretSetting() {
   chrome.storage.sync.set({
     secretSettings: {
       User: document.getElementById("User").value,
       Address: document.getElementById("Address").value,
       PostCode: document.getElementById("PostCode").value,
-      Greeting: document.getElementById("Greeting").value
+      Greeting: document.getElementById("Greeting").value,
+      SecretAmazonMode: document.getElementById("SecretAmazonMode").checked,
+      ShowAmazonBuyButton: document.getElementById("ShowAmazonBuyButton").checked,
     }
   })
-})
-
-
+}
 
 
 function HTMLescape(str) {

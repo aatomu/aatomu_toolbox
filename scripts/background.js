@@ -25,10 +25,6 @@ function init() {
     // Live 自動更新
     { parentId: "master", id: 'separator_live', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/watch?v=*"] },
     { parentId: "master", id: 'live_no_delay', type: 'checkbox', title: 'Live No Delay Mode', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/watch?v=*"] },
-    // Amazon
-    { parentId: "master", id: 'separator_amazon', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
-    { parentId: "master", id: 'disable_secret_amazon', type: 'checkbox', title: 'Disable Secret Amazon Mode', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
-    { parentId: "master", id: 'show_amazon_buy_button', type: 'checkbox', title: '[Warning] Show Amazon Buy Button', contexts: ["all"], documentUrlPatterns: ["*://www.amazon.co.jp/*"] },
     // 選択時のみ
     { parentId: "master", id: 'separator_select', type: 'separator', contexts: ["selection"] },
     { parentId: "master", id: 'amazon', title: '検索: amazon', contexts: ["selection"] },
@@ -139,30 +135,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         })
       })
       chrome.storage.sync.set({ isLiveSpeedupMode: info.checked })
-      return
-
-    case "disable_secret_amazon":
-      chrome.storage.sync.set({ isDisableSecretAmazonMode: info.checked })
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        function: function () {
-          setTimeout(function () {
-            window.location.reload()
-          }, 500)
-        }
-      })
-      return
-
-    case "show_amazon_buy_button":
-      chrome.storage.sync.set({ isShowAmazonBuyButton: info.checked })
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        function: function () {
-          setTimeout(function () {
-            window.location.reload()
-          }, 500)
-        }
-      })
       return
 
     case "amazon":

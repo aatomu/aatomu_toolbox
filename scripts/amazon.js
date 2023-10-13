@@ -1,9 +1,9 @@
 // 仮CSS
 document.querySelector(`head`).insertAdjacentHTML("beforeend", `<link id="secretDummy" rel="stylesheet" href="${chrome.runtime.getURL('css/amazon.css')}">`)
 // CSS読み込み
-chrome.storage.sync.get(["isDisableSecretAmazonMode", "secretSettings", "isShowAmazonBuyButton"]).then(async (result) => {
+chrome.storage.sync.get(["secretSettings"]).then(async (result) => {
   // secretモードか
-  if (result.isDisableSecretAmazonMode) {
+  if (!result.secretSettings.SecretAmazonMode) {
     return
   }
   // 置換準備
@@ -19,8 +19,7 @@ chrome.storage.sync.get(["isDisableSecretAmazonMode", "secretSettings", "isShowA
   document.querySelector(`head`).insertAdjacentHTML("beforeend", `<style>${amazonCss}</style`)
 
   // 購入ボタンの表示
-  console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",result.isShowAmazonBuyButton)
-  if (result.isShowAmazonBuyButton) {
+  if (!result.secretSettings.ShowAmazonBuyButton) {
     let buttons = document.querySelectorAll("#submit\\.buy-now,#sc-buy-box-ptc-button")
     for (i=0;i<buttons.length;i++) {
       buttons[i].classList.add("amazon-unsafety")
