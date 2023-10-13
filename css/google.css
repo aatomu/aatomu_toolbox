@@ -4,7 +4,7 @@
    検索結果 左下 市区町村
  */
 .uU7dJb,
-.eKPi4>.BBwThe,
+.eKPi4 .BBwThe,
 .Q8LRLc,
 .dfB0uf {
   display: inline-block;
@@ -45,7 +45,7 @@
   content: "${Address}";
 }
 
-.eKPi4>.BBwThe::before {
+.eKPi4 .BBwThe::before {
   /* 検索結果 上 市区町村 */
   content: "${Address}-${PostCode}";
 }
