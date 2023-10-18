@@ -19,7 +19,7 @@ chrome.storage.sync.get(["secretSettings"]).then(async (result) => {
   document.querySelector(`head`).insertAdjacentHTML("beforeend", `<style>${amazonCss}</style`)
 
   // 購入ボタンの表示
-  if (!result.secretSettings.ShowAmazonBuyButton) {
+  if (result.secretSettings.ShowAmazonBuyButton) {
     let buttons = document.querySelectorAll("#submit\\.buy-now,#sc-buy-box-ptc-button")
     for (i=0;i<buttons.length;i++) {
       buttons[i].classList.add("amazon-unsafety")
