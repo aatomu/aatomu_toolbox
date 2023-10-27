@@ -73,12 +73,10 @@
   <div class="historyArea" id="history">
   </div>
   <br>
-  LiveSpeedup: x<span id="liveSpeed">1</span><input type="range" id="liveSpeedValue" min="1" max="5" step="0.1">
-  <br>
-  <br>
   SecretSettings:<br>
   <div class="secretSettings">
     <div class="secretSettingsList">
+      <span>LiveSpeedup:</span>
       <span>User:</span>
       <span>Address:</span>
       <span>PostCode:</span>
@@ -88,6 +86,7 @@
       <span>Save:</span>
     </div>
     <div class="secretSettingsList">
+      <div>x<span id="LiveSpeedValue">1</span><input type="range" id="LiveSpeed" min="1" max="5" step="0.1"></div>
       <input type="text" id="User">
       <input type="text" id="Address">
       <input type="text" id="PostCode">
@@ -98,7 +97,7 @@
       <label class="switch"><input type="checkbox" id="ShowAmazonBuyButton">
         <div></div>
       </label>
-      <input type="button" id="saveSecretSetting" value="Click Here">
+      <div><span id="Saved"></span><input type="button" id="SaveSetting" value="Click Here"></div>
     </div>
   </div>
 </body>

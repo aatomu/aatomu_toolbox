@@ -1,13 +1,13 @@
 // 仮CSS
 document.querySelector(`head`).insertAdjacentHTML("beforeend",`<link id="secretDummy" rel="stylesheet" href="${chrome.runtime.getURL('css/google.css')}">`)
 // 読み込み
-chrome.storage.sync.get(["secretSettings"]).then(async (result) => {
+chrome.storage.sync.get(["Setting"]).then(async (result) => {
   // 置換準備
   let googleCss = await fetch(chrome.runtime.getURL('css/google.css'))
     .then(r => { return r.text() })
   // 置換
-  googleCss = googleCss.replaceAll('${Address}', result.secretSettings.Address)
-  googleCss = googleCss.replaceAll('${PostCode}', result.secretSettings.PostCode)
+  googleCss = googleCss.replaceAll('${Address}', result.Setting.Address)
+  googleCss = googleCss.replaceAll('${PostCode}', result.Setting.PostCode)
   console.log(googleCss)
   // 設置
   document.querySelector(`head`).insertAdjacentHTML("beforeend", `<style>${googleCss}</style`)

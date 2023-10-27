@@ -5,14 +5,11 @@ chrome.storage.sync.getBytesInUse(function (result) {
 });
 // History
 updateHistory("")
-// LiveSpeed
-chrome.storage.sync.get(["liveSpeed"]).then((result) => {
-  document.getElementById("liveSpeedValue").value = result.liveSpeed
-  document.getElementById("liveSpeed").innerText = result.liveSpeed
-})
 // SecretSettings
-chrome.storage.sync.get(["secretSettings"]).then((result) => {
-  let setting = result.secretSettings
+chrome.storage.sync.get(["Setting"]).then((result) => {
+  let setting = result.Setting
+  document.getElementById("LiveSpeed").value = setting.LiveSpeed
+  document.getElementById("LiveSpeedValue").innerText = setting.LiveSpeed
   document.getElementById("User").value = setting.User
   document.getElementById("Address").value = setting.Address
   document.getElementById("PostCode").value = setting.PostCode
@@ -22,13 +19,8 @@ chrome.storage.sync.get(["secretSettings"]).then((result) => {
 });
 
 
-document.getElementById("liveSpeedValue").addEventListener("change", function () {
-  const speed = document.getElementById("liveSpeedValue").value
-  chrome.storage.sync.set({ liveSpeed: speed })
-  document.getElementById("liveSpeed").innerText = speed + " Saved!"
-})
-document.getElementById("liveSpeedValue").addEventListener("input", function () {
-  document.getElementById("liveSpeed").innerText = document.getElementById("liveSpeedValue").value
+document.getElementById("LiveSpeed").addEventListener("change", function () {
+  document.getElementById("LiveSpeedValue").innerText = document.getElementById("LiveSpeed").value
 })
 
 // 検索
@@ -36,6 +28,7 @@ document.getElementById("searchInput").addEventListener("input", function () {
   let keyword = document.getElementById("searchInput").value
   updateHistory(keyword)
 })
+
 function updateHistory(keyword) {
   const searchDate = new Date();
   searchDate.setDate(searchDate.getDate() - 7);
@@ -59,15 +52,13 @@ function updateHistory(keyword) {
   })
 }
 
-
-// LiveSpeedup更新
-document.getElementById("liveSpeed").addEventListener("change", saveSecretSetting)
 // SecretSettings更新
-document.getElementById("saveSecretSetting").addEventListener("click", saveSecretSetting)
+document.getElementById("SaveSetting").addEventListener("click", saveSecretSetting)
 
 function saveSecretSetting() {
   chrome.storage.sync.set({
-    secretSettings: {
+    Setting: {
+      LiveSpeed: document.getElementById("LiveSpeed").value,
       User: document.getElementById("User").value,
       Address: document.getElementById("Address").value,
       PostCode: document.getElementById("PostCode").value,
@@ -76,6 +67,7 @@ function saveSecretSetting() {
       ShowAmazonBuyButton: document.getElementById("ShowAmazonBuyButton").checked,
     }
   })
+  document.getElementById("Saved").innerText="Saved!"
 }
 
 
