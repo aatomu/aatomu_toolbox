@@ -90,16 +90,3 @@ function HTMLescape(str) {
 function padding(str, n) {
   return ('000' + str).slice(-n)
 }
-// 待機
-function sleep(waitSec, callbackFunc) {
-  let spanedSec = 0;
-  // 1秒間隔で無名関数を実行
-  let id = setInterval(function () {
-    spanedSec++;
-    // 経過時間 >= 待機時間の場合、待機終了。
-    if (spanedSec >= waitSec) {
-      clearInterval(id);
-      if (callbackFunc) callbackFunc();
-    }
-  }, 1000);
-}
