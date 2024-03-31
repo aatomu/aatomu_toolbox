@@ -19,6 +19,7 @@ function init() {
     { parentId: "master", id: 'jump_extension', title: 'Jump To Chrome Extension', contexts: ["all"] },
     { parentId: "master", id: 'copy_link', title: 'Copy URL', contexts: ["all"] },
     { parentId: "master", id: 'view_creeper', title: 'View Creeper', type: 'checkbox', contexts: ["all"] },
+    { parentId: "master", id: 'volume_booster', title: 'Volume Booster', contexts: ["all"] },
     // Shortのページのみ
     { parentId: "master", id: 'separator_short', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
     { parentId: "master", id: 'short2movie', title: 'Short To Movie', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
@@ -33,8 +34,8 @@ function init() {
     { parentId: "master", id: 'kakaku', title: '検索: 価格.com', contexts: ["selection"] },
     { parentId: "master", id: 'youtube', title: '検索: youtube', contexts: ["selection"] },
     { parentId: "master", id: 'osu', title: '検索: osu!', contexts: ["selection"] },
-    { parentId: "master", id: 'googleJP', title: '翻訳: googleJP', contexts: ["selection"] },
-    { parentId: "master", id: 'googleEN', title: '翻訳: googleEN', contexts: ["selection"] },
+    { parentId: "master", id: 'googleJP', title: '検索: googleJP', contexts: ["selection"] },
+    { parentId: "master", id: 'googleEN', title: '検索: googleEN', contexts: ["selection"] },
     { parentId: "master", id: 'deepL', title: '翻訳: DeepL', contexts: ["selection"] }
   ]
   menuList.forEach(menu => {
@@ -98,6 +99,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     case "view_creeper":
       chrome.storage.sync.set({ isViewCreeper: info.checked })
       return
+
+    case "volume_booster":
+      chrome.windows.create({
+        type: "popup",
+        url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}&title=${tab.title}`,
+        width: 300,
+        height: 100
+      })
 
     case "short2movie":
       // shortのページ以外で実行しない

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <title id="title">Unknown</title>
+</head>
+<style>
+  body {
+    overflow: hidden;
+  }
+
+  .flex {
+    display: flex;
+  }
+
+  .key {
+    align-items: flex-end;
+    margin-right: 0.2ch;
+  }
+
+  .value {
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .value * {
+    vertical-align: middle;
+  }
+</style>
+
+<body>
+  <div class="flex" style="flex-direction: row;">
+    <div class="flex key" style="flex-direction: column;">
+      <span>Boost:</span>
+      <span>Amplifier:</span>
+    </div>
+    <div class="flex value" style="flex-direction: column;">
+      <span class="title" id="inline_title"></span>
+      <span><input type="range" id="amplifier" value="1" min="1" max="20" step="0.1"></span>
+    </div>
+</body>
+
+<script src="./booster.js"></script>

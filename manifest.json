@@ -12,7 +12,9 @@
     "clipboardWrite",
     "history",
     "scripting",
-    "storage"
+    "storage",
+    "tabs",
+    "tabCapture"
   ],
   "action": {
     "default_icon": {
