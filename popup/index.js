@@ -67,7 +67,7 @@ function saveSecretSetting() {
       ShowAmazonBuyButton: document.getElementById("ShowAmazonBuyButton").checked,
     }
   })
-  document.getElementById("Saved").innerText="Saved!"
+  document.getElementById("Saved").innerText = "Saved!"
 }
 
 
