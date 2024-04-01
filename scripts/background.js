@@ -54,8 +54,8 @@ function init() {
         Address: "Minecraft",
         PostCode: "minecraft:over_world",
         Greeting: "おはー",
-        SecretAmazonMode:true,
-        ShowAmazonBuyButton:false,
+        SecretAmazonMode: true,
+        ShowAmazonBuyButton: false,
       }
       chrome.storage.sync.set({ Setting: setting })
     }
@@ -108,7 +108,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         width: 300,
         height: 100
       })
-
     case "short2movie":
       // shortのページ以外で実行しない
       if (!tab.url.includes("youtube.com/shorts/")) {
