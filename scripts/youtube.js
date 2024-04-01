@@ -103,7 +103,7 @@ setInterval(async function () {
       }
       return
     }
-    // isMovie
+    // isNewMovie
     if (video.src != "" && beforeWatchVideoSrc != video.src) {
       console.log("Found New video")
       beforeWatchVideoSrc = video.src
@@ -125,6 +125,17 @@ setInterval(async function () {
         console.log("PlayBack Speed Set To Default(x1)")
       }, 1000)
       return
+    }
+    // isEndedVideo
+    if (beforeWatchVideoSrc == video.src) {
+      if (video.ended) {
+        const nextButton = document.querySelector("a.ytp-next-button")
+        const nextVideo = nextButton.href
+        if (nextVideo.includes("list=")) {
+          console.log("Found Finish video in playlist")
+          nextButton.click()
+        }
+      }
     }
   }
 }, 100)
