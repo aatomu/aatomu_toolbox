@@ -48,11 +48,14 @@ function init() {
     let setting = result.Setting
     if (setting == undefined) {
       setting = {
-        LiveSpeed: 2,
+        LiveAcceleration: false,
+        LiveAccelerationRate: 5,
         User: "Atomu",
         Address: "Minecraft",
         PostCode: "minecraft:over_world",
-        Greeting: "おはー"
+        Greeting: "おはー",
+        SecretAmazonMode:true,
+        ShowAmazonBuyButton:false,
       }
       chrome.storage.sync.set({ Setting: setting })
     }

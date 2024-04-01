@@ -8,8 +8,9 @@ updateHistory("")
 // SecretSettings
 chrome.storage.sync.get(["Setting"]).then((result) => {
   let setting = result.Setting
-  document.getElementById("LiveSpeed").value = setting.LiveSpeed
-  document.getElementById("LiveSpeedValue").innerText = setting.LiveSpeed
+  document.getElementById("LiveAcceleration").checked = setting.LiveAcceleration
+  document.getElementById("LiveAccelerationRate").value = setting.LiveAccelerationRate
+  document.getElementById("LiveAccelerationRateValue").innerText = setting.LiveAccelerationRate
   document.getElementById("User").value = setting.User
   document.getElementById("Address").value = setting.Address
   document.getElementById("PostCode").value = setting.PostCode
@@ -19,8 +20,8 @@ chrome.storage.sync.get(["Setting"]).then((result) => {
 });
 
 
-document.getElementById("LiveSpeed").addEventListener("change", function () {
-  document.getElementById("LiveSpeedValue").innerText = document.getElementById("LiveSpeed").value
+document.getElementById("LiveAccelerationRate").addEventListener("change", function () {
+  document.getElementById("LiveAccelerationRateValue").innerText = document.getElementById("LiveAccelerationRate").value
 })
 
 // 検索
@@ -58,7 +59,8 @@ document.getElementById("SaveSetting").addEventListener("click", saveSecretSetti
 function saveSecretSetting() {
   chrome.storage.sync.set({
     Setting: {
-      LiveSpeed: document.getElementById("LiveSpeed").value,
+      LiveAcceleration: document.getElementById("LiveAcceleration").checked,
+      LiveAccelerationRate: document.getElementById("LiveAccelerationRate").value,
       User: document.getElementById("User").value,
       Address: document.getElementById("Address").value,
       PostCode: document.getElementById("PostCode").value,

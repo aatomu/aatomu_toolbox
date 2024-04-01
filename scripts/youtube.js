@@ -4,15 +4,15 @@ let isSearchBoxPlaced = false
 //  Shorts
 let beforeShortNumber = -1
 //  Live
-let isLiveSpeedupMode = false
+let isLiveAcceleration = false
 let isLiveAccelerated = false
 // Video Speed
 let beforeWatchVideoSrc = ""
 
-// Speedup
-chrome.storage.sync.get(["isLiveSpeedupMode"]).then((result) => {
-  isLiveSpeedupMode = result.isLiveSpeedupMode
-  console.log("Load Live Speedup Mode:", isLiveSpeedupMode)
+// Live Acceleration
+chrome.storage.sync.get(["Setting"]).then((result) => {
+  isLiveAcceleration = result.Setting.LiveAcceleration
+  console.log("Load Live Acceleration:", isLiveAcceleration)
 });
 
 // Loop
@@ -86,8 +86,8 @@ setInterval(async function () {
       const isDelayed = (jumpToLiveButton.disabled == false)
       const videoToolBar = document.querySelector(".ytp-chrome-bottom")
 
-      if (isDelayed && !isLiveAccelerated && isLiveSpeedupMode) {
-        const acceleration = await chrome.storage.sync.get(["Setting"]).then((result) => { return result.Setting.LiveSpeed })
+      if (isDelayed && !isLiveAccelerated && isLiveAcceleration) {
+        const acceleration = await chrome.storage.sync.get(["Setting"]).then((result) => { return result.Setting.LiveAccelerationRate })
 
         isLiveAccelerated = true
         video.playbackRate = acceleration

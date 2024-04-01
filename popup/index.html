@@ -73,20 +73,24 @@
   <div class="historyArea" id="history">
   </div>
   <br>
-  SecretSettings:<br>
+  Extension Setting:<br>
   <div class="secretSettings">
     <div class="secretSettingsList">
-      <span>LiveSpeedup:</span>
+      <span>LiveAcceleration:</span>
+      <span>LiveAccelerationRate:</span>
       <span>User:</span>
       <span>Address:</span>
       <span>PostCode:</span>
       <span>Greeting:</span>
-      <span>Amazon Secret Mode:</span>
+      <span>AmazonSecretMode:</span>
       <span style="color:red;">Show Amazon Buy Button</span>
       <span>Save:</span>
     </div>
     <div class="secretSettingsList">
-      <div>x<span id="LiveSpeedValue">1</span><input type="range" id="LiveSpeed" min="1" max="5" step="0.1"></div>
+      <label class="switch"><input type="checkbox" id="LiveAcceleration">
+        <div></div>
+      </label>
+      <div>x<span id="LiveAccelerationRateValue">1</span><input type="range" id="LiveAccelerationRate" min="1" max="5" step="0.1"></div>
       <input type="text" id="User">
       <input type="text" id="Address">
       <input type="text" id="PostCode">
