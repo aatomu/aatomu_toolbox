@@ -81,7 +81,6 @@ setInterval(async function () {
     // isLive
     const liveText = document.querySelector(".ytp-live")
     if (liveText) {
-      console.log("Found Live")
       const jumpToLiveButton = document.querySelector("button.ytp-live-badge.ytp-button")
       const isDelayed = (jumpToLiveButton.disabled == false)
       const videoToolBar = document.querySelector(".ytp-chrome-bottom")
