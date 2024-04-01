@@ -1,13 +1,12 @@
 // Variable
-//// Subscriptions
-let isSearchSubscription = false
-//// Shorts
-let shortNumber = -1
-//// Live
+//  Subscriptions
+let isSearchBoxPlaced = false
+//  Shorts
+let beforeShortNumber = -1
+//  Live
 let isLiveSpeedupMode = false
-let isLiveSpeedup = false
-let LiveSpeeduped = 3
-//// 動画のSpeed
+let isLiveAccelerated = false
+// Video Speed
 let beforeWatchVideoSrc = ""
 
 // Speedup
@@ -19,170 +18,167 @@ chrome.storage.sync.get(["isLiveSpeedupMode"]).then((result) => {
 // Loop
 setInterval(async function () {
   // 登録チャンネルで検索
-  if (window.location.href == "https://www.youtube.com/feed/subscriptions" && !isSearchSubscription) {
-    let search = str2HTML(`<input type"text" id="searchVideoKey" value="">`)
-    document.querySelector("#masthead-container #container #center").appendChild(search)
-    search.addEventListener("input", function () {
-      let searchKey = document.getElementById("searchVideoKey").value.toUpperCase()
-      console.log(searchKey)
-      videos = document.querySelectorAll("ytd-rich-item-renderer")
-      for (i = 0; i < videos.length; i++) {
-        console.log(i)
-        let video = videos[i]
+  if (window.location.href == "https://www.youtube.com/feed/subscriptions" && !isSearchBoxPlaced) {
+    isSearchBoxPlaced = true
+    const searchInput = str2HTML(`<input type"text" id="searchInput" value="">`)
+    document.querySelector("#center.ytd-masthead").appendChild(searchInput)
+    searchInput.addEventListener("input", function () {
+      const search = searchInput.value.toUpperCase()
+      const videos = document.querySelectorAll("ytd-rich-item-renderer")
+      for (const video of videos) {
         video.removeAttribute("style")
-        if (video.querySelector("#video-title").getAttribute("aria-label").toUpperCase().includes(searchKey)) continue
-        video.style.display = "none"
+        let isMatch = false
+        const textElements = video.querySelectorAll("#details [title]")
+        for (const textElement of textElements) {
+          if (textElement.title.toUpperCase().includes(search)) {
+            isMatch = true
+          }
+        }
+        if (!isMatch) {
+          video.style.display = "none"
+        }
       }
     })
-    isSearchSubscription = true
     return
   }
-  if (window.location.href != "https://www.youtube.com/feed/subscriptions" && isSearchSubscription) {
-    try {
-      document.getElementById("searchVideoKey").remove()
-    } catch { }
+  if (window.location.href != "https://www.youtube.com/feed/subscriptions" && isSearchBoxPlaced) {
+    const searchInput = document.getElementById("searchInput")
+    if (searchInput) {
+      searchInput.remove()
+    }
   }
 
 
   // ショート
   if (window.location.href.startsWith("https://www.youtube.com/shorts/")) {
-    try {
-      // shortIDスキャン
-      for (let short of document.getElementsByTagName("ytd-reel-video-renderer")) {
-        // 変わったか確認
-        if (!short.hasAttribute("is-active") || shortNumber == short.id) {
-          continue
-        }
-        shortNumber = short.id
-        setTimeout(UpdateShortButton, 200)
-        break
+    const short = document.querySelector("ytd-reel-video-renderer[is-active]")
+    if (short) {
+      if (beforeShortNumber != short.id) {
+        beforeShortNumber = short.id
+        UpdateShortButton()
       }
-    } catch (e) {
-      console.log(e)
     }
   }
 
 
   // 動画
   if (window.location.href.startsWith("https://www.youtube.com/watch")) {
-    let video = document.querySelector("video")
+    const video = document.querySelector("video")
 
-    // isLive?
-    let timeLineWidth = document.querySelector("span.ytp-time-duration").offsetWidth
-    if (timeLineWidth == 0) {
-      let button = document.querySelector("button.ytp-live-badge.ytp-button")
-      let live = document.querySelector("video")
-      // isDelay && !isSpeedup
-      if (!button.disabled && !isLiveSpeedup && isLiveSpeedupMode) {
-        const LiveSpeed = await chrome.storage.sync.get(["liveSpeed"]).then((result) => { return result.liveSpeed })
+    // isAd
+    const adText = document.querySelector(".ytp-ad-text")
+    if (adText) {
+      video.playbackRate = 4
+      const adSkipText = document.querySelector(".ytp-ad-skip-button-text")
+      if (adSkipText) {
+        adSkipText.click()
+      }
+      return
+    }
+    // isLive
+    const liveText = document.querySelector(".ytp-live")
+    if (!liveText) {
+      const jumpToLiveButton = document.querySelector("button.ytp-live-badge.ytp-button")
+      const isDelayed = (jumpToLiveButton.disabled == false)
+      const videoToolBar = document.querySelector(".ytp-chrome-bottom")
 
-        video.playbackRate = LiveSpeed
-        button.innerText += `(SPEEDUP x${LiveSpeed})`
-        isLiveSpeedup = true
-        document.querySelector(".ytp-chrome-bottom").style.opacity = "1"
-        console.log(`Live Is Delay(Change Speed To x${LiveSpeed})`)
-        return
+      if (isDelayed && !isLiveAccelerated && isLiveSpeedupMode) {
+        const acceleration = await chrome.storage.sync.get(["Setting"]).then((result) => { return result.Setting.LiveSpeed })
+
+        isLiveAccelerated = true
+        video.playbackRate = acceleration
+        jumpToLiveButton.innerText += `(SPEEDUP x${acceleration})`
+        videoToolBar.style.opacity = "1"
+        console.log(`Live is acceleration(x${acceleration})`)
       }
-      // !isDelay && isSpeedup
-      if (button.disabled && isLiveSpeedup) {
+      if (!isDelayed && isLiveAccelerated) {
+        isLiveAccelerated = false
         video.playbackRate = 1
-        button.innerText = button.innerText.replace("(SPEEDUP)", "")
-        isLiveSpeedup = false
-        document.querySelector(".ytp-chrome-bottom").style.opacity = ""
-        console.log("Live is NoDelay(Change Speed To x1)")
-        return
-      }
-      // isSpeedup && !isLiveSpeedupMode
-      if (isLiveSpeedup && !isLiveSpeedupMode) {
-        video.playbackRate = 1
-        button.innerText = button.innerText.replace("(SPEEDUP)", "")
-        isLiveSpeedup = false
-        document.querySelector(".ytp-chrome-bottom").style.opacity = ""
-        console.log("Live Speedup Mode Is False(Change Speed To x1)")
+        jumpToLiveButton.innerText = ""
+        videoToolBar.style.opacity = "1"
+        console.log(`Live is't acceleration`)
       }
     }
     // isMovie
     if (beforeWatchVideoSrc != video.src) {
       beforeWatchVideoSrc = video.src
       // 時間差で実行
-      setTimeout(function() {
-      const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
-      settingButton.click() //設定ボタンをクリック
-      document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
-        if (el.innerText == "再生速度") {
-          el.click() // 再生速度ボタンをクリック
-        }
-      })
-      document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
-        if (el.innerText == "標準") {
-          el.click()// 再生速度 標準ボタンをクリック
-        }
-      })
-      settingButton.click() //設定ボタンをクリック == メニューを閉じる
-      console.log("PlayBack Speed Set To Default(x1)")
-      },1000)
+      setTimeout(function () {
+        const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
+        settingButton.click() //設定ボタンをクリック
+        document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+          if (el.innerText == "再生速度") {
+            el.click() // 再生速度ボタンをクリック
+          }
+        })
+        document.querySelectorAll("div.ytp-menuitem-label").forEach((el) => {
+          if (el.innerText == "標準") {
+            el.click()// 再生速度 標準ボタンをクリック
+          }
+        })
+        settingButton.click() //設定ボタンをクリック == メニューを閉じる
+        console.log("PlayBack Speed Set To Default(x1)")
+      }, 1000)
     }
   }
-}, 500)
+}, 100)
 
 function UpdateShortButton() {
   // info表示
-  console.log(`shortID:${shortNumber}`)
+  console.log(`shortID:${beforeShortNumber}`)
 
   // 過去の追加した要素削除
-  let oldShortButtons = document.getElementById("aatomuShortButtons")
-  if (oldShortButtons != undefined) {
+  const oldShortButtons = document.getElementById("aatomuShortButtons")
+  if (oldShortButtons) {
     oldShortButtons.remove()
   }
 
   // 再生中の動画
-  let shortVideo = document.querySelector(`ytd-reel-video-renderer#${CSS.escape(shortNumber)} video`)
-  if (shortVideo == undefined) {
-    setTimeout(UpdateShortButton, 200)
+  const shortVideo = document.querySelector("ytd-reel-video-renderer[is-active] video")
+  if (!shortVideo) {
+    setTimeout(UpdateShortButton, 100)
     return
   }
   if (isNaN(shortVideo.currentTime) || isNaN(shortVideo.duration)) {
-    setTimeout(UpdateShortButton, 200)
+    setTimeout(UpdateShortButton, 100)
     return
   }
 
-  let shortSidebar = document.querySelector(`ytd-reel-video-renderer#${CSS.escape(shortNumber)} #actions`)
-
+  const shortSidebar = document.querySelector("ytd-reel-video-renderer[is-active] #actions")
   shortSidebar.appendChild(str2HTML(`<br>`))
 
   // 親生成
-  let shortButtons = str2HTML(`<div id="aatomuShortButtons"></div>`)
+  const shortButtons = str2HTML(`<div id="aatomuShortButtons"></div>`)
   shortSidebar.appendChild(shortButtons)
 
-  // timebar(現在時刻) 設置
-  let shortTimeNow = str2HTML(`<input type"text" class="timebar" value="00.00">`)
+  // timestamp(現在時刻) 設置
+  const shortTimeNow = str2HTML(`<input type"text" class="timestamp" value="00.00">`)
   shortButtons.appendChild(shortTimeNow)
-  shortTimeNow.addEventListener("keydown", function (e) {
-    if (e.key != "Enter") return
-    let time = parseFloat(shortTimeNow.value)
-    if (time < shortTimeMax.value) {
-      shortVideo.currentTime = time
-    }
-  })
   shortTimeNow.addEventListener("click", function () {
     shortVideo.pause()
+  })
+  shortTimeNow.addEventListener("keydown", function (e) {
+    if (e.key != "Enter") return
+    const time = parseFloat(shortTimeNow.value)
+    if (time < shortTimeEnd.value) {
+      shortVideo.currentTime = time
+    }
   })
   shortVideo.addEventListener("timeupdate", function () {
     shortTimeNow.value = ('00' + (Math.floor(shortVideo.currentTime * 100) / 100).toFixed(2)).slice(-5)
   })
-
   shortButtons.appendChild(str2HTML(`<br>`))
 
-  // timebar(終了時刻)を設置
-  let shortTimeMax = str2HTML(`<input type"text" class="timebar" value="00.00" disabled>`)
-  shortTimeMax.value = ('00' + (Math.floor(shortVideo.duration * 100) / 100).toFixed(2)).slice(-5);
-  shortButtons.appendChild(shortTimeMax)
+  // timestamp(終了時刻)を設置
+  const shortTimeEnd = str2HTML(`<input type"text" class="timestamp" value="00.00" disabled>`)
+  shortTimeEnd.value = ('00' + (Math.floor(shortVideo.duration * 100) / 100).toFixed(2)).slice(-5);
+  shortButtons.appendChild(shortTimeEnd)
 
   // 再生速度(表示)
   shortButtons.appendChild(str2HTML(`<span id="aatomuShortSpeed">Speed: x1.00<span>`))
 
   // 再生速度(変更)
-  let shortSpeed = str2HTML(`<input type="range" class="play_speed" id="aatomuShortSpeedChanger" min="0.1" max="2" step="0.1" value="1">`)
+  const shortSpeed = str2HTML(`<input type="range" class="play-speed" id="aatomuShortSpeedChanger" min="0.1" max="2" step="0.1" value="1">`)
   shortButtons.appendChild(shortSpeed)
   shortSpeed.addEventListener("input", function () {
     shortVideo.playbackRate = parseFloat(shortSpeed.value)

@@ -11,10 +11,11 @@
   animation: creeper_rotate 10s linear 0s infinite,fadeOut 2s linear both;
 }
 
-.timebar {
-  width: 5ch;
+.timestamp {
+  box-sizing: border-box;
+  width: 100%;
 }
-.play_speed {
+.play-speed {
   width: 100%;
 }
 
