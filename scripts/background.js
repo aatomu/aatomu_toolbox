@@ -23,9 +23,6 @@ function init() {
     // Shortのページのみ
     { parentId: "master", id: 'separator_short', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
     { parentId: "master", id: 'short2movie', title: 'Short To Movie', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
-    // Live 自動更新
-    { parentId: "master", id: 'separator_live', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/watch?v=*"] },
-    { parentId: "master", id: 'live_no_delay', type: 'checkbox', title: 'Live No Delay Mode', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/watch?v=*"] },
     // 選択時のみ
     { parentId: "master", id: 'separator_select', type: 'separator', contexts: ["selection"] },
     { parentId: "master", id: 'amazon', title: '検索: amazon', contexts: ["selection"] },
@@ -36,7 +33,8 @@ function init() {
     { parentId: "master", id: 'osu', title: '検索: osu!', contexts: ["selection"] },
     { parentId: "master", id: 'googleJP', title: '検索: googleJP', contexts: ["selection"] },
     { parentId: "master", id: 'googleEN', title: '検索: googleEN', contexts: ["selection"] },
-    { parentId: "master", id: 'deepL', title: '翻訳: DeepL', contexts: ["selection"] }
+    { parentId: "master", id: 'deepL_jp', title: '翻訳: DeepL(jp-en)', contexts: ["selection"] },
+    { parentId: "master", id: 'deepL_en', title: '翻訳: DeepL(en-ja)', contexts: ["selection"] }
   ]
   menuList.forEach(menu => {
     try {
@@ -121,25 +119,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       });
       return
 
-    case "live_no_delay":
-      chrome.tabs.query({}, (tabs) => {
-        tabs.forEach((tab, index) => {
-          console.log(tab)
-          if (tab.url == undefined) return
-          if (!tab.url.startsWith("http")) return
-          chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            function: function (checked) {
-              console.log("Change To Live Speedup Mode", checked)
-              isLiveSpeedupMode = checked
-            },
-            args: [info.checked]
-          })
-        })
-      })
-      chrome.storage.sync.set({ isLiveSpeedupMode: info.checked })
-      return
-
     case "amazon":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
@@ -188,7 +167,13 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         function: function () { window.open(`https://www.google.com/search?q=${window.getSelection().toString()}&gl=us&hl=en&pws=0`, "_blank") }
       })
       return
-    case "deepL":
+    case "deepL_ja":
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: function () { window.open(`https://www.deepl.com/translator#ja/en/${window.getSelection().toString()}`, "_blank") }
+      })
+      return
+    case "deepL_en":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
         function: function () { window.open(`https://www.deepl.com/translator#en/ja/${window.getSelection().toString()}`, "_blank") }
