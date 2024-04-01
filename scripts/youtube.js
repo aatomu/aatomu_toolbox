@@ -53,6 +53,7 @@ setInterval(async function () {
   if (window.location.href.startsWith("https://www.youtube.com/shorts/")) {
     const short = document.querySelector("ytd-reel-video-renderer[is-active]")
     if (short) {
+      console.log("Found Short")
       if (beforeShortNumber != short.id) {
         beforeShortNumber = short.id
         UpdateShortButton()
@@ -68,16 +69,19 @@ setInterval(async function () {
     // isAd
     const adText = document.querySelector(".ytp-ad-text")
     if (adText) {
+      console.log("Found Ad")
       video.playbackRate = 4
       const adSkipText = document.querySelector(".ytp-ad-skip-button-text")
       if (adSkipText) {
         adSkipText.click()
+        console.log("Click ad skip")
       }
       return
     }
     // isLive
     const liveText = document.querySelector(".ytp-live")
-    if (!liveText) {
+    if (liveText) {
+      console.log("Found Live")
       const jumpToLiveButton = document.querySelector("button.ytp-live-badge.ytp-button")
       const isDelayed = (jumpToLiveButton.disabled == false)
       const videoToolBar = document.querySelector(".ytp-chrome-bottom")
@@ -98,9 +102,11 @@ setInterval(async function () {
         videoToolBar.style.opacity = "1"
         console.log(`Live is't acceleration`)
       }
+      return
     }
     // isMovie
-    if (beforeWatchVideoSrc != video.src) {
+    if (video.src != "" && beforeWatchVideoSrc != video.src) {
+      console.log("Found New video")
       beforeWatchVideoSrc = video.src
       // 時間差で実行
       setTimeout(function () {
@@ -119,13 +125,14 @@ setInterval(async function () {
         settingButton.click() //設定ボタンをクリック == メニューを閉じる
         console.log("PlayBack Speed Set To Default(x1)")
       }, 1000)
+      return
     }
   }
 }, 100)
 
 function UpdateShortButton() {
   // info表示
-  console.log(`shortID:${beforeShortNumber}`)
+  console.log(`ShortID:${beforeShortNumber}`)
 
   // 過去の追加した要素削除
   const oldShortButtons = document.getElementById("aatomuShortButtons")
