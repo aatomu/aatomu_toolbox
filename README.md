@@ -6,7 +6,7 @@
 
 1. [aatomu_toolbox](https://github.com/aatomu/aatomu_toolbox/archive/refs/heads/main.zip)を DL する
 2. DL したファイルを展開する
-3. [拡張機能の管理/Chrome](chrome://extensions/) [拡張機能の管理/Chrome](edge://extensions/) を開く
+3. [拡張機能の管理/Chrome](chrome://extensions/) [拡張機能の管理/Edge](edge://extensions/) を開く
 4. デベロッパーモードを ON にする
 5. パッケージ化されていない拡張機能を読み込むをクリックし展開した`aatomu_toolbox-main`を選択する
 6. 以上!
