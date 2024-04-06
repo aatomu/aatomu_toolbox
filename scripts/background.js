@@ -16,7 +16,6 @@ function init() {
 
   const menuList = [
     // 常時表示
-    { parentId: "master", id: 'jump_extension', title: 'Jump To Chrome Extension', contexts: ["all"] },
     { parentId: "master", id: 'copy_link', title: 'Copy URL', contexts: ["all"] },
     { parentId: "master", id: 'view_creeper', title: 'View Creeper', type: 'checkbox', contexts: ["all"] },
     { parentId: "master", id: 'volume_booster', title: 'Volume Booster', contexts: ["all"] },
