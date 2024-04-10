@@ -70,8 +70,12 @@ setInterval(async function () {
     const adText = document.querySelector(".ytp-ad-text")
     if (adText) {
       console.log("Found Ad")
-      const nowRate = video.playbackRate
-      video.playbackRate = nowRate * 2
+      video.playbackRate = 4
+      const adSkipText = document.querySelector(".ytp-ad-skip-button-text")
+      if (adSkipText.getAttribute("style") == "") {
+        adSkipText.click()
+        console.log("Click ad skip")
+      }
       return
     }
     // isLive
