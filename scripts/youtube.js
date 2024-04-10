@@ -168,6 +168,9 @@ function UpdateShortButton() {
   }
 
   const shortSidebar = document.querySelector("ytd-reel-video-renderer[is-active] #actions")
+  if (!shortSidebar) {
+    return
+  }
   shortSidebar.appendChild(str2HTML(`<br>`))
 
   // 親生成
