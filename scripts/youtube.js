@@ -72,9 +72,11 @@ setInterval(async function () {
       console.log("Found Ad")
       video.playbackRate = 4
       const adSkipText = document.querySelector(".ytp-ad-skip-button-text")
-      if (adSkipText.getAttribute("style") == "") {
-        adSkipText.click()
-        console.log("Click ad skip")
+      if (adSkipText) {
+        if (adSkipText.getAttribute("style") == "") {
+          adSkipText.click()
+          console.log("Click ad skip")
+        }
       }
       return
     }
@@ -137,6 +139,10 @@ setInterval(async function () {
         }
       }
     }
+    // shouldAfk
+    // const dialogButton = document.querySelector("tp-yt-paper-dialog[aria-hidden] button")
+    // if (dialogButton.getAttribute("aria-label") == "") {
+    // }
   }
 }, 100)
 
