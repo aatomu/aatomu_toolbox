@@ -9,7 +9,10 @@ document.getElementById("inline_title").innerText = `${searchParams.get("title")
 
 let isBoosted = false
 
-document.getElementById("amplifier").addEventListener("input", async function (e) {
+const amplifier = document.getElementById("amplifier")
+const amplifierValue = document.getElementById("amplifierValue")
+
+amplifier.addEventListener("input", async function () {
   if (!isBoosted) {
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
 
@@ -26,5 +29,6 @@ document.getElementById("amplifier").addEventListener("input", async function (e
     track.connect(gainNode).connect(audioCtx.destination)
     isBoosted = true
   }
-  gainNode.gain.value = e.target.value
+  gainNode.gain.value = amplifier.value
+  amplifierValue.innerText = `x${amplifier.value}`
 })
