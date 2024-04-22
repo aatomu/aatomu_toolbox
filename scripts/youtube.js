@@ -65,16 +65,19 @@ setInterval(async function () {
   // 動画
   if (window.location.href.startsWith("https://www.youtube.com/watch")) {
     const video = document.querySelector("video")
+    if (!video) {
+      return
+    }
 
     // isAd
     const adText = document.querySelector(".ytp-ad-text")
     if (adText) {
       console.log("Found Ad")
       video.playbackRate = 4
-      const adSkipText = document.querySelector(".ytp-ad-skip-button-text")
-      if (adSkipText) {
-        if (adSkipText.getAttribute("style") == "") {
-          adSkipText.click()
+      const previewAd = document.querySelector(".ytp-preview-ad")
+      if (previewAd) {
+        if (previewAd.style.display === "none") {
+          previewAd.click()
           console.log("Click ad skip")
         }
       }
