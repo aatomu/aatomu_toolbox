@@ -6,9 +6,10 @@ let beforeShortNumber = -1
 //  Live
 let isLiveAcceleration = false
 let isLiveAccelerated = false
-// Video Speed
+//  Video Speed
 let beforeWatchVideoSrc = ""
-
+//  in Playlist
+let videoEndedFreeze = 0
 // Live Acceleration
 chrome.storage.sync.get(["Setting"]).then((result) => {
   isLiveAcceleration = result.Setting.LiveAcceleration
@@ -74,10 +75,10 @@ setInterval(async function () {
     if (adText) {
       console.log("Found Ad")
       video.playbackRate = 4
-      const previewAd = document.querySelector(".ytp-preview-ad")
-      if (previewAd) {
-        if (previewAd.style.display === "none") {
-          previewAd.click()
+      const skipAd = document.querySelector(".ytp-skip-ad-button")
+      if (skipAd && video.currentTime > 1) {
+        if (skipAd.style.display === "") {
+          skipAd.click()
           console.log("Click ad skip")
         }
       }
@@ -112,6 +113,7 @@ setInterval(async function () {
     if (video.src != "" && beforeWatchVideoSrc != video.src) {
       console.log("Found New video")
       beforeWatchVideoSrc = video.src
+      videoEndedFreeze = 0
       // 時間差で実行
       setTimeout(function () {
         const settingButton = document.querySelector("button.ytp-button.ytp-settings-button")
@@ -132,12 +134,15 @@ setInterval(async function () {
       return
     }
     // isEndedVideo
-    if (beforeWatchVideoSrc == video.src) {
-      if (video.ended) {
+    if (video.ended) {
+      console.log("Vide Is Ended")
+      videoEndedFreeze++
+      if (videoEndedFreeze > 20) {
+        console.log("Check Next Video Is Playlist Video")
         const nextButton = document.querySelector("a.ytp-next-button")
         const nextVideo = nextButton.href
         if (nextVideo.includes("list=")) {
-          console.log("Found Finish video in playlist")
+          console.log("Click Next Button")
           nextButton.click()
         }
       }
