@@ -75,12 +75,9 @@ setInterval(async function () {
     if (adText) {
       console.log("Found Ad")
       video.playbackRate = 4
-      const skipAd = document.querySelector(".ytp-skip-ad-button")
-      if (skipAd && video.currentTime > 1) {
-        if (skipAd.style.display === "") {
-          skipAd.click()
-          console.log("Click ad skip")
-        }
+      const duration = document.querySelector("video").duration
+      if (video.currentTime < duration - 4) {
+        video.currentTime = duration - 4
       }
       return
     }
