@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>DynamicsCompressor Test</h1>
+<table>
+<tr><th>Threshold</th><td><input id="thresh" type="range" min="-100" max="0" step="0.1" value="-24"/></td><td id="threshval"></td></tr>
+<tr><th>Knee</th><td><input id="knee" type="range" min="0" max="40" step="0.1" value="30"/></td><td id="kneeval"></td></tr>
+<tr><th>Ratio</th><td><input id="ratio" type="range" min="1" max="20" step="0.1" value="12"/></td><td id="ratioval"></td></tr>
+<tr><th>Attack</th><td><input id="atk" type="range" min="0" max="0.1" step="0.001" value="0.003"/></td><td id="atkval"></td></tr>
+<tr><th>Release</th><td><input id="rel" type="range" min="0" max="1" step="0.01" value="0.25"/></td><td id="relval"></td></tr>
+</table>
+<button id="start">Test Start</button><br/>
+<canvas id="cv" width="364" height="364"></canvas>
+
+<script>
+
+window.addEventListener("load", ()=>{
+    const audioctx = new AudioContext();
+    const gaintable = new Array(100);
+    for(let i = 0; i < 100; ++i)
+        gaintable[i] = 0;
+    
+    const sig = new OscillatorNode(audioctx);
+    const gain = new GainNode(audioctx, {gain:0});
+    const comp = new DynamicsCompressorNode(audioctx);
+    const ana = new AnalyserNode(audioctx);
+    const wavdata = new Float32Array(512);
+    let timer;
+    let testcount = 0;
+    let currentOutLevel = 0;
+    let testing = 0;
+    let maxlev = 0;
+    sig.connect(gain).connect(comp).connect(ana)
+    sig.start();
+    Draw();
+    Setup();
+
+    document.getElementById("start").addEventListener("click",()=>{
+        if(audioctx.state=="suspended")
+            audioctx.resume();
+        testing = 1;
+        gain.gain.value = 0;
+        testcount = -2;
+        maxlev = 0;
+        timer = setInterval(TestInterval, 20);
+    });
+    document.getElementById("thresh").addEventListener("input", Setup);
+    document.getElementById("knee").addEventListener("input", Setup);
+    document.getElementById("ratio").addEventListener("input", Setup);
+    document.getElementById("atk").addEventListener("input", Setup);
+    document.getElementById("rel").addEventListener("input", Setup);
+
+    function Setup(){
+        comp.threshold.value = document.getElementById("threshval").innerHTML
+            = document.getElementById("thresh").value;
+        comp.knee.value = document.getElementById("kneeval").innerHTML
+            = document.getElementById("knee").value;
+        comp.ratio.value = document.getElementById("ratioval").innerHTML
+            = document.getElementById("ratio").value;
+        comp.attack.value = document.getElementById("atkval").innerHTML
+            = document.getElementById("atk").value;
+        comp.release.value = document.getElementById("relval").innerHTML
+            = document.getElementById("rel").value;
+    }
+
+    function TestInterval() {
+        if(testcount>0){
+            ana.getFloatTimeDomainData(wavdata);
+            for(let i = 0; i < wavdata.length; ++i){
+                const d = Math.abs(wavdata[i]);
+                if(d > maxlev)
+                    maxlev = d;
+            }
+            gaintable[testcount-1] = maxlev;
+        }
+        maxlev = 0;
+        Draw(testcount-1);
+        gain.gain.value = Math.pow(10, (testcount - 80) / 20);
+        if(++testcount > 100) {
+            gain.gain.value = 0;
+            clearInterval(timer);
+            testing = 0;
+        }
+    }
+
+    function Draw(n) {
+        const cv = document.getElementById("cv");
+        const ctx = cv.getContext("2d");
+        ctx.fillStyle = "#404040";
+        ctx.fillRect(0, 0, 364, 364);
+        ctx.fillStyle = "#20c040";
+        for(let i = 0; i < 100; ++i) {
+            let v = gaintable[i];
+            if(v < 1e-128)
+                v = 1e-128;
+            v = Math.max(-80, Math.LOG10E * 20 * Math.log(v));
+            v = (20 - v) * 3;
+            ctx.fillRect(i * 3 + 32, v + 32, 3, 300 - v);
+        }
+        ctx.fillStyle = "#c06060";
+        for(let i = 0; i <= 100; i += 10) {
+            ctx.fillRect(32, 32 + i * 3, 300, 1);
+            ctx.fillRect(32 + i * 3, 32, 1, 300);
+            ctx.fillText((20 - i) + "dB", 5, i * 3 + 35);
+            ctx.fillText((20 - i) + "dB", 320 - i * 3, 345);
+        }
+        ctx.fillStyle = "#f0e480";
+        ctx.fillRect(34 + n*3, 32, 1, 300);
+    }
+});
+</script>
+
+</body>
+</html>

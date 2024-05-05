@@ -27,12 +27,15 @@
     vertical-align: middle;
   }
 
-  .volume-area {
+  .decibel-value {
+    font-weight: bolder;
+  }
+  .graph-area {
     width: 100%;
-    aspect-ratio: 4/1;
+    aspect-ratio: 3/1;
 
     border-width: 3px;
-    border-color: black;
+    border-color: gray;
     border-style: solid;
 
     background-color: lightgray;
@@ -40,33 +43,43 @@
     fill: none;
   }
 
-  .volume-line {
+  .fft-line {
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 2px;
     stroke: #000000;
+  }
+
+  .wave-line {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2px;
+    stroke: #ffffff;
   }
 </style>
 
 <body>
   <!-- Liner -->
   <div class="flex" style="flex-direction: column;">
-    <!-- Audio Configs -->
+    <!-- Audio configs -->
     <div class="flex" style="flex-direction: row;">
-      <!-- Config Key -->
+      <!-- Config key -->
       <div class="flex key" style="flex-direction: column;">
         <span>Target:</span>
         <span>Amplifier:</span>
+        <span>Decibel:</span>
       </div>
-      <!-- Config Value -->
+      <!-- Config value -->
       <div class="flex value" style="flex-direction: column;">
-        <span class="title" id="inline_title"></span>
+        <span id="inlineTitle"></span>
         <span><input type="range" id="amplifier" value="1" min="1" max="20" step="0.1"><span id="amplifierValue"></span></span>
+        <span><progress id="decibelPercentage" max="100" value="75"></progress><span class="decibel-value" id="decibelValue"></span></span>
       </div>
     </div>
-    <!-- Audio Volume(FFT) -->
-    <svg class="volume-area" id="volumeArea">
-      <path class="volume-line" id="volumeLine"></path>
+    <!-- Audio(FFT/wave) -->
+    <svg class="graph-area" id="graphArea">
+      <path class="fft-line" id="fftLine"></path>
+      <path class="wave-line" id="waveLine"></path>
     </svg>
   </div>
 </body>

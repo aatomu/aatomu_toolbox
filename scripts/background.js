@@ -104,8 +104,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       chrome.windows.create({
         type: "popup",
         url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}&title=${tab.title}`,
-        width: 300,
-        height: 100
+        width: 500,
+        height: 500
       })
     case "short2movie":
       // shortのページ以外で実行しない
