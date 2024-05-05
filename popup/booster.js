@@ -1,6 +1,11 @@
 // Audio Context
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const gainNode = audioCtx.createGain()
+const compressorNode = audioCtx.createDynamicsCompressor()
+compressorNode.knee.setValueAtTime(10, audioCtx.currentTime) // Threshold to Ratio smoothing width[dB]
+compressorNode.ratio.setValueAtTime(15, audioCtx.currentTime)
+compressorNode.attack.setValueAtTime(0, audioCtx.currentTime)
+compressorNode.release.setValueAtTime(1, audioCtx.currentTime)
 const analyzerNode = audioCtx.createAnalyser()
 analyzerNode.smoothingTimeConstant = 0.5
 analyzerNode.fftSize = 1024
@@ -22,6 +27,9 @@ let isBoosted = false
 // HTML element
 const amplifier = document.getElementById("amplifier")
 const amplifierValue = document.getElementById("amplifierValue")
+const threshold = document.getElementById("threshold")
+const thresholdValue = document.getElementById("thresholdValue")
+const compressing = document.getElementById("compressing")
 const decibelPercentage = document.getElementById("decibelPercentage")
 const decibelValue = document.getElementById("decibelValue")
 
@@ -29,29 +37,40 @@ const graphArea = document.getElementById("graphArea")
 const fftLine = document.getElementById("fftLine")
 const waveLine = document.getElementById("waveLine")
 
-amplifier.addEventListener("input", async function () {
-  if (!isBoosted) {
-    const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
-
-    const media = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        mandatory: {
-          chromeMediaSource: 'tab',
-          chromeMediaSourceId: streamId
-        }
-      },
-      video: false
-    })
-
-    const track = audioCtx.createMediaStreamSource(media)
-    track.connect(gainNode).connect(analyzerNode).connect(audioCtx.destination)
-    isBoosted = true
-
-    setInterval(analyze, 50)
+window.addEventListener("mousemove", async function () {
+  if (isBoosted) {
+    return
   }
+  const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
+
+  const media = await navigator.mediaDevices.getUserMedia({
+    audio: {
+      mandatory: {
+        chromeMediaSource: 'tab',
+        chromeMediaSourceId: streamId
+      }
+    },
+    video: false
+  })
+
+  const track = audioCtx.createMediaStreamSource(media)
+  track.connect(gainNode).connect(compressorNode).connect(analyzerNode).connect(audioCtx.destination)
+  isBoosted = true
+
+  setInterval(analyze, 50)
+})
+
+amplifier.addEventListener("input", async function () {
   gainNode.gain.value = amplifier.value
   amplifierValue.innerText = `x${amplifier.value}`
 })
+amplifier.dispatchEvent(new Event("input"))
+
+threshold.addEventListener("input", async function () {
+  compressorNode.threshold.setValueAtTime(threshold.value, audioCtx.currentTime)
+  thresholdValue.innerText = `${threshold.value}[dB]`
+})
+threshold.dispatchEvent(new Event("input"))
 
 function analyze() {
   // View area variable
@@ -93,6 +112,7 @@ function analyze() {
   decibelPercentage.value = decibelPercentageValue
   const decibelRange = analyzerNode.maxDecibels - analyzerNode.minDecibels
   decibelValue.innerText = `${Math.floor((peek * decibelRange + analyzerNode.minDecibels) * 10) / 10}[dB]`
+  compressing.innerText = `${Math.floor(compressorNode.reduction * 10) / 10}[dB] compressed`
   if (decibelPercentageValue > 100) {
     decibelValue.style.color = "DarkRed"
   } else if (decibelPercentageValue > 90) {

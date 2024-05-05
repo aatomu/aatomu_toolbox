@@ -13,9 +13,15 @@
     display: flex;
   }
 
+  .grid {
+    display: grid;
+    grid-template-columns: 15ch 1fr;
+    width: fit-content;
+  }
+
   .key {
-    align-items: flex-end;
-    margin-right: 0.2ch;
+    text-align: right;
+    margin-right: 1ch;
   }
 
   .value {
@@ -30,6 +36,7 @@
   .decibel-value {
     font-weight: bolder;
   }
+
   .graph-area {
     width: 100%;
     aspect-ratio: 3/1;
@@ -62,25 +69,24 @@
   <!-- Liner -->
   <div class="flex" style="flex-direction: column;">
     <!-- Audio configs -->
-    <div class="flex" style="flex-direction: row;">
-      <!-- Config key -->
-      <div class="flex key" style="flex-direction: column;">
-        <span>Target:</span>
-        <span>Amplifier:</span>
-        <span>Decibel:</span>
-      </div>
-      <!-- Config value -->
-      <div class="flex value" style="flex-direction: column;">
-        <span id="inlineTitle"></span>
-        <span><input type="range" id="amplifier" value="1" min="1" max="20" step="0.1"><span id="amplifierValue"></span></span>
-        <span><progress id="decibelPercentage" max="100" value="75"></progress><span class="decibel-value" id="decibelValue"></span></span>
-      </div>
+    <div class="grid">
+      <span class="key">Target:</span>
+      <span class="value" id="inlineTitle"></span>
+      <span class="key">Amplifier:</span>
+      <div class="value"><input type="range" id="amplifier" value="1" min="1" max="20" step="0.1"><span id="amplifierValue"></span></div>
+      <span class="key">Comp Threshold:</span>
+      <div class="value"><input type="range" id="threshold" value="-60" min="-100" max="0" step="1"><span id="thresholdValue"></span></div>
+      <span class="key">Compressing:</span>
+      <span class="value" id="compressing"></span>
+      <span class="key">Decibel:</span>
+      <div class="value"><progress id="decibelPercentage" max="100" value="75"></progress><span class="decibel-value" id="decibelValue"></span></div>
     </div>
-    <!-- Audio(FFT/wave) -->
-    <svg class="graph-area" id="graphArea">
-      <path class="fft-line" id="fftLine"></path>
-      <path class="wave-line" id="waveLine"></path>
-    </svg>
+  </div>
+  <!-- Audio(FFT/wave) -->
+  <svg class="graph-area" id="graphArea">
+    <path class="fft-line" id="fftLine"></path>
+    <path class="wave-line" id="waveLine"></path>
+  </svg>
   </div>
 </body>
 
