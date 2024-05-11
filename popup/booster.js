@@ -84,11 +84,10 @@ function analyze() {
   const fftHeight = areaHeight / 255
   const waveHeight = areaHeight / 2
   const areaWidth = graphArea.clientWidth
-  const fftStepWidth = areaWidth / (Math.log(frequencyMax) - Math.log(0.0001))
   const stepWidth = areaWidth / analyzeBinLength
 
   // Frequency line
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 20; i++) {
     const frequency = (i + 1) * 1000
     document.getElementById(`frequencyTitle${i}`).innerHTML = `${frequency}Hz`
     document.getElementById(`frequencyBar${i}`).setAttribute("d", `M${(areaWidth / frequencyMax) * frequency},0 L${(areaWidth / frequencyMax) * frequency},${areaHeight}`)
@@ -99,8 +98,7 @@ function analyze() {
   // FFT view
   let fftLiner = `M0,${areaHeight - fftBin[0] * fftHeight} `
   for (let i = 1; i < analyzeBinLength; i++) {
-    const frequency = (frequencyMax / analyzeBinLength) * i
-    fftLiner += `L${(Math.log(frequency) - Math.log(0.0001)) * fftStepWidth},${areaHeight - fftBin[i] * fftHeight} `
+    fftLiner += `L${i * stepWidth},${areaHeight - fftBin[i] * fftHeight} `
   }
   fftLine.setAttribute("d", fftLiner)
 

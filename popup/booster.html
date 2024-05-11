@@ -41,9 +41,7 @@
     width: 100%;
     aspect-ratio: 3/1;
 
-    border-width: 3px;
-    border-color: gray;
-    border-style: solid;
+    border-radius: 10px;
 
     background-color: lightgray;
 
@@ -57,16 +55,16 @@
   }
 
   .freq-line {
-    stroke: green;
+    stroke: #0b0;
     cursor: pointer;
   }
 
   .fft-line {
-    stroke: #000000;
+    stroke: #080;
   }
 
   .wave-line {
-    stroke: #ffffff;
+    stroke: black;
   }
 </style>
 
@@ -89,46 +87,26 @@
   </div>
   <!-- Audio(FFT/wave) -->
   <svg class="graph-area" id="graphArea">
-    <g>
-      <title id="frequencyTitle0">100Hz</title>
-      <path class="freq-line" id="frequencyBar0" d="M0,100 L50,100"></path>
-    </g>
-    <g>
-      <title id="frequencyTitle1">100Hz</title>
-      <path class="freq-line" id="frequencyBar1"></path>
-    </g>
-    <g>
-      <title id="frequencyTitle2">100Hz</title>
-      <path class="freq-line" id="frequencyBar2"></path>
-    </g>
-    <g>
-      <title id="frequencyTitle3">100Hz</title>
-      <path class="freq-line" id="frequencyBar3"></path>
-    </g>
-    <g>
-      <title id="frequencyTitle4">100Hz</title>
-      <path class="freq-line" id="frequencyBar4"></path>
-    </g>
-    <g>
-      <title id="frequencyTitle5">100Hz</title>
-      <path class="freq-line" id="frequencyBar5"></path>
-    </g>
-    <g>
-      <title id="frequencyTitle6">100Hz</title>
-      <path class="freq-line" id="frequencyBar6"></path>
-    </g>
-    <g>
-      <title id="frequencyTitle7">100Hz</title>
-      <path class="freq-line" id="frequencyBar7"></path>
-    </g>
-    <g>
-      <title id="frequencyTitle8">100Hz</title>
-      <path class="freq-line" id="frequencyBar8"></path>
-    </g>
-    <g>
-      <title id="frequencyTitle9">100Hz</title>
-      <path class="freq-line" id="frequencyBar9"></path>
-    </g>
+    <g><title id="frequencyTitle0"></title><path class="freq-line" id="frequencyBar0"></path></g>
+    <g><title id="frequencyTitle1"></title><path class="freq-line" id="frequencyBar1"></path></g>
+    <g><title id="frequencyTitle2"></title><path class="freq-line" id="frequencyBar2"></path></g>
+    <g><title id="frequencyTitle3"></title><path class="freq-line" id="frequencyBar3"></path></g>
+    <g><title id="frequencyTitle4"></title><path class="freq-line" id="frequencyBar4"></path></g>
+    <g><title id="frequencyTitle5"></title><path class="freq-line" id="frequencyBar5"></path></g>
+    <g><title id="frequencyTitle6"></title><path class="freq-line" id="frequencyBar6"></path></g>
+    <g><title id="frequencyTitle7"></title><path class="freq-line" id="frequencyBar7"></path></g>
+    <g><title id="frequencyTitle8"></title><path class="freq-line" id="frequencyBar8"></path></g>
+    <g><title id="frequencyTitle9"></title><path class="freq-line" id="frequencyBar9"></path></g>
+    <g><title id="frequencyTitle10"></title><path class="freq-line" id="frequencyBar10"></path></g>
+    <g><title id="frequencyTitle11"></title><path class="freq-line" id="frequencyBar11"></path></g>
+    <g><title id="frequencyTitle12"></title><path class="freq-line" id="frequencyBar12"></path></g>
+    <g><title id="frequencyTitle13"></title><path class="freq-line" id="frequencyBar13"></path></g>
+    <g><title id="frequencyTitle14"></title><path class="freq-line" id="frequencyBar14"></path></g>
+    <g><title id="frequencyTitle15"></title><path class="freq-line" id="frequencyBar15"></path></g>
+    <g><title id="frequencyTitle16"></title><path class="freq-line" id="frequencyBar16"></path></g>
+    <g><title id="frequencyTitle17"></title><path class="freq-line" id="frequencyBar17"></path></g>
+    <g><title id="frequencyTitle18"></title><path class="freq-line" id="frequencyBar18"></path></g>
+    <g><title id="frequencyTitle19"></title><path class="freq-line" id="frequencyBar19"></path></g>
     <path class="fft-line" id="fftLine"></path>
     <path class="wave-line" id="waveLine"></path>
   </svg>
