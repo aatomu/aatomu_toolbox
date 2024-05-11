@@ -103,8 +103,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     case "volume_booster":
       chrome.windows.create({
         type: "popup",
-        url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}&title=${tab.title}`,
-        width: 500,
+        url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
+        width: 800,
         height: 500
       })
     case "short2movie":

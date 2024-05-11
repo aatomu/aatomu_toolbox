@@ -1,5 +1,6 @@
 // Audio Context
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const frequencyMax = audioCtx.sampleRate / 2
 const gainNode = audioCtx.createGain()
 const compressorNode = audioCtx.createDynamicsCompressor()
 compressorNode.knee.setValueAtTime(10, audioCtx.currentTime) // Threshold to Ratio smoothing width[dB]
@@ -19,8 +20,6 @@ const waveBin = new Float32Array(analyzeBinLength)
 const url = new URL(window.location.href)
 const searchParams = new URLSearchParams(url.searchParams)
 const tabID = parseInt(searchParams.get("id"))
-document.getElementById("title").innerText = `Boost: ${searchParams.get("title")}`
-document.getElementById("inlineTitle").innerText = `${searchParams.get("title")}`
 
 let isBoosted = false
 
@@ -59,6 +58,8 @@ window.addEventListener("mousemove", async function () {
     isBoosted = true
 
     setInterval(analyze, 50)
+    updateTitle()
+    setInterval(updateTitle, 5000)
   } catch (e) {
     console.log("Capture Error:")
     console.log(e)
@@ -83,14 +84,23 @@ function analyze() {
   const fftHeight = areaHeight / 255
   const waveHeight = areaHeight / 2
   const areaWidth = graphArea.clientWidth
+  const fftStepWidth = areaWidth / (Math.log(frequencyMax) - Math.log(0.0001))
   const stepWidth = areaWidth / analyzeBinLength
+
+  // Frequency line
+  for (let i = 0; i < 10; i++) {
+    const frequency = (i + 1) * 1000
+    document.getElementById(`frequencyTitle${i}`).innerHTML = `${frequency}Hz`
+    document.getElementById(`frequencyBar${i}`).setAttribute("d", `M${(areaWidth / frequencyMax) * frequency},0 L${(areaWidth / frequencyMax) * frequency},${areaHeight}`)
+  }
 
   // FFT
   analyzerNode.getByteFrequencyData(fftBin)
   // FFT view
   let fftLiner = `M0,${areaHeight - fftBin[0] * fftHeight} `
   for (let i = 1; i < analyzeBinLength; i++) {
-    fftLiner += `L${i * stepWidth},${areaHeight - fftBin[i] * fftHeight} `
+    const frequency = (frequencyMax / analyzeBinLength) * i
+    fftLiner += `L${(Math.log(frequency) - Math.log(0.0001)) * fftStepWidth},${areaHeight - fftBin[i] * fftHeight} `
   }
   fftLine.setAttribute("d", fftLiner)
 
@@ -116,8 +126,8 @@ function analyze() {
   const decibelPercentageValue = peek * 100
   decibelPercentage.value = decibelPercentageValue
   const decibelRange = analyzerNode.maxDecibels - analyzerNode.minDecibels
-  decibelValue.innerText = `${Math.floor((peek * decibelRange + analyzerNode.minDecibels) * 10) / 10}[dB]`
-  compressing.innerText = `${Math.floor(compressorNode.reduction * 10) / 10}[dB] compressed`
+  decibelValue.innerText = `${Math.round((peek * decibelRange + analyzerNode.minDecibels) * 100) / 100}[dB]`
+  compressing.innerText = `${Math.round(compressorNode.reduction * 100) / 100}[dB] compressed`
   if (decibelPercentageValue > 100) {
     decibelValue.style.color = "DarkRed"
   } else if (decibelPercentageValue > 90) {
@@ -127,4 +137,12 @@ function analyze() {
   } else {
     decibelValue.style.color = "Green"
   }
+}
+
+async function updateTitle() {
+  // Update title
+  const tab = await chrome.tabs.get(tabID)
+  console.log(tab)
+  document.getElementById("title").innerText = `Boost: ${tab.title}`
+  document.getElementById("inlineTitle").innerText = tab.title
 }

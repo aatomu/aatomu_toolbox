@@ -56,6 +56,11 @@
     stroke-width: 2px;
   }
 
+  .freq-line {
+    stroke: green;
+    cursor: pointer;
+  }
+
   .fft-line {
     stroke: #000000;
   }
@@ -75,7 +80,7 @@
       <span class="key">Amplifier:</span>
       <div class="value"><input type="range" id="amplifier" value="1" min="1" max="20" step="0.1"><span id="amplifierValue"></span></div>
       <span class="key">Comp Threshold:</span>
-      <div class="value"><input type="range" id="threshold" value="-60" min="-100" max="0" step="2"><span id="thresholdValue"></span></div>
+      <div class="value"><input type="range" id="threshold" value="0" min="-100" max="0" step="2"><span id="thresholdValue"></span></div>
       <span class="key">Compressing:</span>
       <span class="value" id="compressing"></span>
       <span class="key">Decibel:</span>
@@ -84,6 +89,46 @@
   </div>
   <!-- Audio(FFT/wave) -->
   <svg class="graph-area" id="graphArea">
+    <g>
+      <title id="frequencyTitle0">100Hz</title>
+      <path class="freq-line" id="frequencyBar0" d="M0,100 L50,100"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle1">100Hz</title>
+      <path class="freq-line" id="frequencyBar1"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle2">100Hz</title>
+      <path class="freq-line" id="frequencyBar2"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle3">100Hz</title>
+      <path class="freq-line" id="frequencyBar3"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle4">100Hz</title>
+      <path class="freq-line" id="frequencyBar4"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle5">100Hz</title>
+      <path class="freq-line" id="frequencyBar5"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle6">100Hz</title>
+      <path class="freq-line" id="frequencyBar6"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle7">100Hz</title>
+      <path class="freq-line" id="frequencyBar7"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle8">100Hz</title>
+      <path class="freq-line" id="frequencyBar8"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle9">100Hz</title>
+      <path class="freq-line" id="frequencyBar9"></path>
+    </g>
     <path class="fft-line" id="fftLine"></path>
     <path class="wave-line" id="waveLine"></path>
   </svg>
