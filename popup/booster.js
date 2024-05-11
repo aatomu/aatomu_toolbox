@@ -5,12 +5,12 @@ const compressorNode = audioCtx.createDynamicsCompressor()
 compressorNode.knee.setValueAtTime(10, audioCtx.currentTime) // Threshold to Ratio smoothing width[dB]
 compressorNode.ratio.setValueAtTime(15, audioCtx.currentTime)
 compressorNode.attack.setValueAtTime(0, audioCtx.currentTime)
-compressorNode.release.setValueAtTime(1, audioCtx.currentTime)
+compressorNode.release.setValueAtTime(0.5, audioCtx.currentTime)
 const analyzerNode = audioCtx.createAnalyser()
-analyzerNode.smoothingTimeConstant = 0.5
+analyzerNode.smoothingTimeConstant = 0.25
 analyzerNode.fftSize = 1024
 analyzerNode.maxDecibels = 0
-analyzerNode.minDecibels = -50
+analyzerNode.minDecibels = -100
 const analyzeBinLength = analyzerNode.frequencyBinCount
 const fftBin = new Uint8Array(analyzeBinLength)
 const waveBin = new Float32Array(analyzeBinLength)
@@ -41,23 +41,28 @@ window.addEventListener("mousemove", async function () {
   if (isBoosted) {
     return
   }
-  const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
+  try {
+    const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
 
-  const media = await navigator.mediaDevices.getUserMedia({
-    audio: {
-      mandatory: {
-        chromeMediaSource: 'tab',
-        chromeMediaSourceId: streamId
-      }
-    },
-    video: false
-  })
+    const media = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        mandatory: {
+          chromeMediaSource: 'tab',
+          chromeMediaSourceId: streamId
+        }
+      },
+      video: false
+    })
 
-  const track = audioCtx.createMediaStreamSource(media)
-  track.connect(gainNode).connect(compressorNode).connect(analyzerNode).connect(audioCtx.destination)
-  isBoosted = true
+    const track = audioCtx.createMediaStreamSource(media)
+    track.connect(gainNode).connect(compressorNode).connect(analyzerNode).connect(audioCtx.destination)
+    isBoosted = true
 
-  setInterval(analyze, 50)
+    setInterval(analyze, 50)
+  } catch (e) {
+    console.log("Capture Error:")
+    console.log(e)
+  }
 })
 
 amplifier.addEventListener("input", async function () {
@@ -99,7 +104,7 @@ function analyze() {
   waveLine.setAttribute("d", waveLiner)
 
   // Wave variable
-  // peek = 0~1
+  // peek = 0~inf
   const peek = waveBin.reduce((max, sample) => {
     const current = Math.abs(sample)
     if (max < current) {
@@ -122,5 +127,4 @@ function analyze() {
   } else {
     decibelValue.style.color = "Green"
   }
-
 }

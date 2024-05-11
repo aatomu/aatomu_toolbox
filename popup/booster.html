@@ -50,17 +50,17 @@
     fill: none;
   }
 
-  .fft-line {
+  .graph-area path {
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 2px;
+  }
+
+  .fft-line {
     stroke: #000000;
   }
 
   .wave-line {
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 2px;
     stroke: #ffffff;
   }
 </style>
@@ -75,7 +75,7 @@
       <span class="key">Amplifier:</span>
       <div class="value"><input type="range" id="amplifier" value="1" min="1" max="20" step="0.1"><span id="amplifierValue"></span></div>
       <span class="key">Comp Threshold:</span>
-      <div class="value"><input type="range" id="threshold" value="-60" min="-100" max="0" step="1"><span id="thresholdValue"></span></div>
+      <div class="value"><input type="range" id="threshold" value="-60" min="-100" max="0" step="2"><span id="thresholdValue"></span></div>
       <span class="key">Compressing:</span>
       <span class="value" id="compressing"></span>
       <span class="key">Decibel:</span>
