@@ -1,27 +1,8 @@
-// Audio Context
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const frequencyMax = audioCtx.sampleRate / 2
-const gainNode = audioCtx.createGain()
-const compressorNode = audioCtx.createDynamicsCompressor()
-compressorNode.knee.setValueAtTime(10, audioCtx.currentTime) // Threshold to Ratio smoothing width[dB]
-compressorNode.ratio.setValueAtTime(15, audioCtx.currentTime)
-compressorNode.attack.setValueAtTime(0, audioCtx.currentTime)
-compressorNode.release.setValueAtTime(0.5, audioCtx.currentTime)
-const analyzerNode = audioCtx.createAnalyser()
-analyzerNode.smoothingTimeConstant = 0.25
-analyzerNode.fftSize = 1024
-analyzerNode.maxDecibels = 0
-analyzerNode.minDecibels = -100
-const analyzeBinLength = analyzerNode.frequencyBinCount
-const fftBin = new Uint8Array(analyzeBinLength)
-const waveBin = new Float32Array(analyzeBinLength)
-
 // Audio information(by URL)
 const url = new URL(window.location.href)
 const searchParams = new URLSearchParams(url.searchParams)
 const tabID = parseInt(searchParams.get("id"))
 
-let isBoosted = false
 
 // HTML element
 const amplifier = document.getElementById("amplifier")
@@ -36,13 +17,43 @@ const graphArea = document.getElementById("graphArea")
 const fftLine = document.getElementById("fftLine")
 const waveLine = document.getElementById("waveLine")
 
+let isBoosted = false
 window.addEventListener("mousemove", async function () {
   if (isBoosted) {
     return
   }
   try {
-    const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
+    // Audio context
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const frequencyMax = audioCtx.sampleRate / 2
+    const gainNode = audioCtx.createGain()
+    const compressorNode = audioCtx.createDynamicsCompressor()
+    compressorNode.knee.setValueAtTime(10, audioCtx.currentTime) // Threshold to Ratio smoothing width[dB]
+    compressorNode.ratio.setValueAtTime(15, audioCtx.currentTime)
+    compressorNode.attack.setValueAtTime(0, audioCtx.currentTime)
+    compressorNode.release.setValueAtTime(0.5, audioCtx.currentTime)
+    const analyzerNode = audioCtx.createAnalyser()
+    analyzerNode.smoothingTimeConstant = 0.25
+    analyzerNode.fftSize = 1024
+    analyzerNode.maxDecibels = 0
+    analyzerNode.minDecibels = -100
+    const analyzeBinLength = analyzerNode.frequencyBinCount
+    const fftBin = new Uint8Array(analyzeBinLength)
+    const waveBin = new Float32Array(analyzeBinLength)
+    const equalizerBands = 10
+    const equalizerFirstBand = 31.25
+    const equalizers = new Array(equalizerBands)
+    for (let i = 0; i < equalizerBands; i++) {
+      const equalizer = audioCtx.createBiquadFilter()
+      equalizer.type = "peaking"
+      equalizer.frequency.value = equalizerFirstBand * Math.pow(2, i)
+      equalizer.Q = 2
+      equalizer.gain.value = 0
+      equalizers[i] = equalizer
+    }
 
+    // Media stream
+    const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
     const media = await navigator.mediaDevices.getUserMedia({
       audio: {
         mandatory: {
@@ -52,90 +63,95 @@ window.addEventListener("mousemove", async function () {
       },
       video: false
     })
-
     const track = audioCtx.createMediaStreamSource(media)
-    track.connect(gainNode).connect(compressorNode).connect(analyzerNode).connect(audioCtx.destination)
     isBoosted = true
 
-    setInterval(analyze, 50)
+    function updateGraph() {
+      // View area variable
+      const areaHeight = graphArea.clientHeight
+      const fftHeight = areaHeight / 255
+      const waveHeight = areaHeight / 2
+      const areaWidth = graphArea.clientWidth
+      const stepWidth = areaWidth / analyzeBinLength
+
+      // Frequency line
+      for (let i = 0; i < 20; i++) {
+        const frequency = (i + 1) * 1000
+        document.getElementById(`frequencyTitle${i}`).innerHTML = `${frequency}Hz`
+        document.getElementById(`frequencyBar${i}`).setAttribute("d", `M${(areaWidth / frequencyMax) * frequency},0 L${(areaWidth / frequencyMax) * frequency},${areaHeight}`)
+      }
+
+      // FFT
+      analyzerNode.getByteFrequencyData(fftBin)
+      // FFT view
+      let fftLiner = `M0,${areaHeight - fftBin[0] * fftHeight} `
+      for (let i = 1; i < analyzeBinLength; i++) {
+        fftLiner += `L${i * stepWidth},${areaHeight - fftBin[i] * fftHeight} `
+      }
+      fftLine.setAttribute("d", fftLiner)
+
+      // Wave
+      analyzerNode.getFloatTimeDomainData(waveBin)
+      // Wave view
+      let waveLiner = `M0,${(areaHeight * 0.5) - waveBin[0] * waveHeight} `
+      for (let i = 1; i < analyzeBinLength; i++) {
+        waveLiner += `L${i * stepWidth},${(areaHeight * 0.5) - waveBin[i] * waveHeight} `
+      }
+      waveLine.setAttribute("d", waveLiner)
+
+      // Wave variable
+      // peek = 0~inf
+      const peek = waveBin.reduce((max, sample) => {
+        const current = Math.abs(sample)
+        if (max < current) {
+          return current
+        }
+        return max
+      })
+
+      const decibelPercentageValue = peek * 100
+      decibelPercentage.value = decibelPercentageValue
+      const decibelRange = analyzerNode.maxDecibels - analyzerNode.minDecibels
+      decibelValue.innerText = `${Math.round((peek * decibelRange + analyzerNode.minDecibels) * 100) / 100}[dB]`
+      compressing.innerText = `${Math.round(compressorNode.reduction * 100) / 100}[dB] compressed`
+      if (decibelPercentageValue > 100) {
+        decibelValue.style.color = "DarkRed"
+      } else if (decibelPercentageValue > 90) {
+        decibelValue.style.color = "Red"
+      } else if (decibelPercentageValue > 60) {
+        decibelValue.style.color = "DarkOrange"
+      } else {
+        decibelValue.style.color = "Green"
+      }
+    }
+
+    setInterval(updateGraph, 50)
     updateTitle()
     setInterval(updateTitle, 5000)
+    // Create gain setting
+    amplifier.addEventListener("input", async function () {
+      gainNode.gain.value = amplifier.value
+      amplifierValue.innerText = `x${amplifier.value}`
+    })
+    amplifier.dispatchEvent(new Event("input"))
+    // Create threshold setting
+    threshold.addEventListener("input", async function () {
+      compressorNode.threshold.setValueAtTime(threshold.value, audioCtx.currentTime)
+      thresholdValue.innerText = `${threshold.value}[dB]`
+    })
+    threshold.dispatchEvent(new Event("input"))
+    // Connect effects
+    track.connect(gainNode).connect(equalizers[0])
+    for (let i = 1; i < equalizerBands; i++) {
+      equalizers[i - 1].connect(equalizers[i])
+    }
+    equalizers[equalizerBands - 1].connect(compressorNode).connect(analyzerNode).connect(audioCtx.destination)
   } catch (e) {
     console.log("Capture Error:")
     console.log(e)
   }
 })
 
-amplifier.addEventListener("input", async function () {
-  gainNode.gain.value = amplifier.value
-  amplifierValue.innerText = `x${amplifier.value}`
-})
-amplifier.dispatchEvent(new Event("input"))
-
-threshold.addEventListener("input", async function () {
-  compressorNode.threshold.setValueAtTime(threshold.value, audioCtx.currentTime)
-  thresholdValue.innerText = `${threshold.value}[dB]`
-})
-threshold.dispatchEvent(new Event("input"))
-
-function analyze() {
-  // View area variable
-  const areaHeight = graphArea.clientHeight
-  const fftHeight = areaHeight / 255
-  const waveHeight = areaHeight / 2
-  const areaWidth = graphArea.clientWidth
-  const stepWidth = areaWidth / analyzeBinLength
-
-  // Frequency line
-  for (let i = 0; i < 20; i++) {
-    const frequency = (i + 1) * 1000
-    document.getElementById(`frequencyTitle${i}`).innerHTML = `${frequency}Hz`
-    document.getElementById(`frequencyBar${i}`).setAttribute("d", `M${(areaWidth / frequencyMax) * frequency},0 L${(areaWidth / frequencyMax) * frequency},${areaHeight}`)
-  }
-
-  // FFT
-  analyzerNode.getByteFrequencyData(fftBin)
-  // FFT view
-  let fftLiner = `M0,${areaHeight - fftBin[0] * fftHeight} `
-  for (let i = 1; i < analyzeBinLength; i++) {
-    fftLiner += `L${i * stepWidth},${areaHeight - fftBin[i] * fftHeight} `
-  }
-  fftLine.setAttribute("d", fftLiner)
-
-  // Wave
-  analyzerNode.getFloatTimeDomainData(waveBin)
-  // Wave view
-  let waveLiner = `M0,${(areaHeight * 0.5) - waveBin[0] * waveHeight} `
-  for (let i = 1; i < analyzeBinLength; i++) {
-    waveLiner += `L${i * stepWidth},${(areaHeight * 0.5) - waveBin[i] * waveHeight} `
-  }
-  waveLine.setAttribute("d", waveLiner)
-
-  // Wave variable
-  // peek = 0~inf
-  const peek = waveBin.reduce((max, sample) => {
-    const current = Math.abs(sample)
-    if (max < current) {
-      return current
-    }
-    return max
-  })
-
-  const decibelPercentageValue = peek * 100
-  decibelPercentage.value = decibelPercentageValue
-  const decibelRange = analyzerNode.maxDecibels - analyzerNode.minDecibels
-  decibelValue.innerText = `${Math.round((peek * decibelRange + analyzerNode.minDecibels) * 100) / 100}[dB]`
-  compressing.innerText = `${Math.round(compressorNode.reduction * 100) / 100}[dB] compressed`
-  if (decibelPercentageValue > 100) {
-    decibelValue.style.color = "DarkRed"
-  } else if (decibelPercentageValue > 90) {
-    decibelValue.style.color = "Red"
-  } else if (decibelPercentageValue > 60) {
-    decibelValue.style.color = "DarkOrange"
-  } else {
-    decibelValue.style.color = "Green"
-  }
-}
 
 async function updateTitle() {
   // Update title
