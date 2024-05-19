@@ -43,9 +43,11 @@ window.addEventListener("mousemove", async function () {
     analyzerNode.fftSize = 1024
     analyzerNode.maxDecibels = 0
     analyzerNode.minDecibels = -100
-    const analyzeBinLength = analyzerNode.frequencyBinCount
-    const fftBin = new Uint8Array(analyzeBinLength)
-    const waveBin = new Float32Array(analyzeBinLength)
+    const fftFrequencyMax = 8000
+    const fftBinLength = Math.round(analyzerNode.frequencyBinCount * fftFrequencyMax / frequencyMax)
+    const fftBin = new Uint8Array(fftBinLength)
+    const waveBinLength = analyzerNode.frequencyBinCount
+    const waveBin = new Float32Array(waveBinLength)
     const bassEqualizerNode = audioCtx.createBiquadFilter()
     bassEqualizerNode.type = "lowshelf"
     bassEqualizerNode.frequency.value = 500
@@ -76,21 +78,27 @@ window.addEventListener("mousemove", async function () {
       const fftHeight = areaHeight / 255
       const waveHeight = areaHeight / 2
       const areaWidth = graphArea.clientWidth
-      const stepWidth = areaWidth / analyzeBinLength
+      // const fftWidth = areaWidth / Math.log10(fftFrequencyMax)
+      const fftStepWidth = areaWidth / fftBinLength
+      const waveStepWidth = areaWidth / waveBinLength
 
       // Frequency line
       for (let i = 0; i < 20; i++) {
-        const frequency = (i + 1) * 1000
+        const frequency = 500 * i
+        // const frequency = 10 * Math.pow(2,i)
         document.getElementById(`frequencyTitle${i}`).innerHTML = `${frequency}Hz`
-        document.getElementById(`frequencyBar${i}`).setAttribute("d", `M${(areaWidth / frequencyMax) * frequency},0 L${(areaWidth / frequencyMax) * frequency},${areaHeight}`)
+        document.getElementById(`frequencyBar${i}`).setAttribute("d", `M${(areaWidth / fftFrequencyMax) * frequency},0 L${(areaWidth / fftFrequencyMax) * frequency},${areaHeight}`)
+        // document.getElementById(`frequencyBar${i}`).setAttribute("d", `M${Math.log10(frequency) * fftWidth},0 L${Math.log10(frequency) * fftWidth},${areaHeight}`)
       }
 
       // FFT
       analyzerNode.getByteFrequencyData(fftBin)
       // FFT view
       let fftLiner = `M0,${areaHeight - fftBin[0] * fftHeight} `
-      for (let i = 1; i < analyzeBinLength; i++) {
-        fftLiner += `L${i * stepWidth},${areaHeight - fftBin[i] * fftHeight} `
+      for (let i = 1; i < fftBinLength; i++) {
+        fftLiner += `L${i * fftStepWidth},${areaHeight - fftBin[i] * fftHeight} `
+        // const frequency = (frequencyMax / analyzerNode.frequencyBinCount) * i
+        // fftLiner += `L${Math.log10(frequency) * fftWidth},${areaHeight - fftBin[i] * fftHeight} `
       }
       fftLine.setAttribute("d", fftLiner)
 
@@ -98,8 +106,8 @@ window.addEventListener("mousemove", async function () {
       analyzerNode.getFloatTimeDomainData(waveBin)
       // Wave view
       let waveLiner = `M0,${(areaHeight * 0.5) - waveBin[0] * waveHeight} `
-      for (let i = 1; i < analyzeBinLength; i++) {
-        waveLiner += `L${i * stepWidth},${(areaHeight * 0.5) - waveBin[i] * waveHeight} `
+      for (let i = 1; i < waveBinLength; i++) {
+        waveLiner += `L${i * waveStepWidth},${(areaHeight * 0.5) - waveBin[i] * waveHeight} `
       }
       waveLine.setAttribute("d", waveLiner)
 
