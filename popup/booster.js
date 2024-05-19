@@ -53,7 +53,7 @@ window.addEventListener("mousemove", async function () {
     middleEqualizerNode.type = "peaking"
     middleEqualizerNode.frequency.value = 1000
     const trebleEqualizerNode = audioCtx.createBiquadFilter()
-    trebleEqualizerNode.type = "peaking"
+    trebleEqualizerNode.type = "highshelf"
     trebleEqualizerNode.frequency.value = 2000
 
     // Media stream
