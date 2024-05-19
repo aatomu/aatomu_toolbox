@@ -15,8 +15,7 @@
 
   .grid {
     display: grid;
-    grid-template-columns: 15ch 1fr;
-    width: fit-content;
+    grid-template-columns: 16ch 30ch 10ch 30ch;
   }
 
   .key {
@@ -26,7 +25,6 @@
 
   .value {
     white-space: nowrap;
-    overflow: hidden;
   }
 
   .value * {
@@ -69,48 +67,112 @@
 </style>
 
 <body>
-  <!-- Liner -->
-  <div class="flex" style="flex-direction: column;">
-    <!-- Audio configs -->
-    <div class="grid">
-      <span class="key">Target:</span>
-      <span class="value" id="inlineTitle"></span>
-      <span class="key">Amplifier:</span>
-      <div class="value"><input type="range" id="amplifier" value="1" min="1" max="20" step="0.1"><span id="amplifierValue"></span></div>
-      <span class="key">Comp Threshold:</span>
-      <div class="value"><input type="range" id="threshold" value="0" min="-100" max="0" step="2"><span id="thresholdValue"></span></div>
-      <span class="key">Compressing:</span>
-      <span class="value" id="compressing"></span>
-      <span class="key">Decibel:</span>
-      <div class="value"><progress id="decibelPercentage" max="100" value="75"></progress><span class="decibel-value" id="decibelValue"></span></div>
-    </div>
+  <!-- Audio configs -->
+  <div class="grid">
+    <span class="key" style="grid-row: 1/2; grid-column: 1/2;">Target:</span>
+    <span class="value" style="grid-row: 1/2; grid-column: 2/5;" id="inlineTitle"></span>
+    <span class="key" style="grid-row: 2/3; grid-column: 1/2;">Amplifier:</span>
+    <div class="value" style="grid-row: 2/3; grid-column: 2/3;"><input type="range" id="amplifier" value="1" min="1" max="20" step="0.1"><span id="amplifierValue"></span></div>
+    <span class="key" style="grid-row: 3/4; grid-column: 1/2;">Comp Threshold:</span>
+    <div class="value" style="grid-row: 3/4; grid-column: 2/3;"><input type="range" id="threshold" value="0" min="-100" max="0" step="2"><span id="thresholdValue"></span></div>
+    <span class="key" style="grid-row: 4/5; grid-column: 1/2;">Compressing:</span>
+    <span class="value" style="grid-row: 4/5; grid-column: 2/3;" id="compressing"></span>
+    <span class="key" style="grid-row: 5/6; grid-column: 1/2;">Decibel:</span>
+    <div class="value" style="grid-row: 5/6; grid-column: 2/3;"><progress id="decibelPercentage" max="100" value="75"></progress><span class="decibel-value" id="decibelValue"></span></div>
+
+    <span class="key" style="grid-row: 2/3; grid-column: 3/4;">Equalizer:</span>
+    <span class="key" style="grid-row: 3/4; grid-column: 3/4;">(Bass):</span>
+    <div class="value" style="grid-row: 3/4; grid-column: 4/5;"><input type="range" id="equalizerBass" value="0" min="-40" max="40" step="2"><span id="equalizerBassValue"></span></div>
+    <span class="key"  style="grid-row: 4/5; grid-column: 3/4;">(Middle):</span>
+    <div class="value" style="grid-row: 4/5; grid-column: 4/5;"><input type="range" id="equalizerMiddle" value="0" min="-40" max="40" step="2"><span id="equalizerMiddleValue"></span></div>
+    <span class="key"  style="grid-row: 5/6; grid-column: 3/4;">(Treble):</span>
+    <div class="value"  style="grid-row: 5/6; grid-column: 4/5;"><input type="range" id="equalizerTreble" value="0" min="-40" max="40" step="2"><span id="equalizerTrebleValue"></span></div>
   </div>
   <!-- Audio(FFT/wave) -->
   <svg class="graph-area" id="graphArea">
-    <g><title id="frequencyTitle0"></title><path class="freq-line" id="frequencyBar0"></path></g>
-    <g><title id="frequencyTitle1"></title><path class="freq-line" id="frequencyBar1"></path></g>
-    <g><title id="frequencyTitle2"></title><path class="freq-line" id="frequencyBar2"></path></g>
-    <g><title id="frequencyTitle3"></title><path class="freq-line" id="frequencyBar3"></path></g>
-    <g><title id="frequencyTitle4"></title><path class="freq-line" id="frequencyBar4"></path></g>
-    <g><title id="frequencyTitle5"></title><path class="freq-line" id="frequencyBar5"></path></g>
-    <g><title id="frequencyTitle6"></title><path class="freq-line" id="frequencyBar6"></path></g>
-    <g><title id="frequencyTitle7"></title><path class="freq-line" id="frequencyBar7"></path></g>
-    <g><title id="frequencyTitle8"></title><path class="freq-line" id="frequencyBar8"></path></g>
-    <g><title id="frequencyTitle9"></title><path class="freq-line" id="frequencyBar9"></path></g>
-    <g><title id="frequencyTitle10"></title><path class="freq-line" id="frequencyBar10"></path></g>
-    <g><title id="frequencyTitle11"></title><path class="freq-line" id="frequencyBar11"></path></g>
-    <g><title id="frequencyTitle12"></title><path class="freq-line" id="frequencyBar12"></path></g>
-    <g><title id="frequencyTitle13"></title><path class="freq-line" id="frequencyBar13"></path></g>
-    <g><title id="frequencyTitle14"></title><path class="freq-line" id="frequencyBar14"></path></g>
-    <g><title id="frequencyTitle15"></title><path class="freq-line" id="frequencyBar15"></path></g>
-    <g><title id="frequencyTitle16"></title><path class="freq-line" id="frequencyBar16"></path></g>
-    <g><title id="frequencyTitle17"></title><path class="freq-line" id="frequencyBar17"></path></g>
-    <g><title id="frequencyTitle18"></title><path class="freq-line" id="frequencyBar18"></path></g>
-    <g><title id="frequencyTitle19"></title><path class="freq-line" id="frequencyBar19"></path></g>
+    <g>
+      <title id="frequencyTitle0"></title>
+      <path class="freq-line" id="frequencyBar0"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle1"></title>
+      <path class="freq-line" id="frequencyBar1"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle2"></title>
+      <path class="freq-line" id="frequencyBar2"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle3"></title>
+      <path class="freq-line" id="frequencyBar3"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle4"></title>
+      <path class="freq-line" id="frequencyBar4"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle5"></title>
+      <path class="freq-line" id="frequencyBar5"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle6"></title>
+      <path class="freq-line" id="frequencyBar6"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle7"></title>
+      <path class="freq-line" id="frequencyBar7"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle8"></title>
+      <path class="freq-line" id="frequencyBar8"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle9"></title>
+      <path class="freq-line" id="frequencyBar9"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle10"></title>
+      <path class="freq-line" id="frequencyBar10"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle11"></title>
+      <path class="freq-line" id="frequencyBar11"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle12"></title>
+      <path class="freq-line" id="frequencyBar12"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle13"></title>
+      <path class="freq-line" id="frequencyBar13"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle14"></title>
+      <path class="freq-line" id="frequencyBar14"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle15"></title>
+      <path class="freq-line" id="frequencyBar15"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle16"></title>
+      <path class="freq-line" id="frequencyBar16"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle17"></title>
+      <path class="freq-line" id="frequencyBar17"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle18"></title>
+      <path class="freq-line" id="frequencyBar18"></path>
+    </g>
+    <g>
+      <title id="frequencyTitle19"></title>
+      <path class="freq-line" id="frequencyBar19"></path>
+    </g>
     <path class="fft-line" id="fftLine"></path>
     <path class="wave-line" id="waveLine"></path>
   </svg>
-  </div>
 </body>
 
 <script src="./booster.js"></script>
