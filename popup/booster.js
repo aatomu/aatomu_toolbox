@@ -156,8 +156,14 @@ window.addEventListener("mousemove", async function () {
 
 async function updateTitle() {
   // Update title
+  try {
   const tab = await chrome.tabs.get(tabID)
   console.log(tab)
   document.getElementById("title").innerText = `Boost: ${tab.title}`
   document.getElementById("inlineTitle").innerText = tab.title
+  } catch(e) {
+    console.log("Tab Get Error:")
+    console.log(e)
+    window.close()
+  }
 }
