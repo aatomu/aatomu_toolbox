@@ -12,6 +12,12 @@ const thresholdValue = document.getElementById("thresholdValue")
 const compressing = document.getElementById("compressing")
 const decibelPercentage = document.getElementById("decibelPercentage")
 const decibelValue = document.getElementById("decibelValue")
+const bassEqualizer = document.getElementById("bassEqualizer")
+const bassEqualizerValue = document.getElementById("bassEqualizerValue")
+const middleEqualizer = document.getElementById("middleEqualizer")
+const middleEqualizerValue = document.getElementById("middleEqualizerValue")
+const trebleEqualizer = document.getElementById("trebleEqualizer")
+const trebleEqualizerValue = document.getElementById("trebleEqualizerValue")
 
 const graphArea = document.getElementById("graphArea")
 const fftLine = document.getElementById("fftLine")
@@ -40,17 +46,15 @@ window.addEventListener("mousemove", async function () {
     const analyzeBinLength = analyzerNode.frequencyBinCount
     const fftBin = new Uint8Array(analyzeBinLength)
     const waveBin = new Float32Array(analyzeBinLength)
-    const equalizerBands = 10
-    const equalizerFirstBand = 31.25
-    const equalizers = new Array(equalizerBands)
-    for (let i = 0; i < equalizerBands; i++) {
-      const equalizer = audioCtx.createBiquadFilter()
-      equalizer.type = "peaking"
-      equalizer.frequency.value = equalizerFirstBand * Math.pow(2, i)
-      equalizer.Q = 2
-      equalizer.gain.value = 0
-      equalizers[i] = equalizer
-    }
+    const bassEqualizerNode = audioCtx.createBiquadFilter()
+    bassEqualizerNode.type = "lowshelf"
+    bassEqualizerNode.frequency.value = 500
+    const middleEqualizerNode = audioCtx.createBiquadFilter()
+    middleEqualizerNode.type = "peaking"
+    middleEqualizerNode.frequency.value = 1000
+    const trebleEqualizerNode = audioCtx.createBiquadFilter()
+    trebleEqualizerNode.type = "peaking"
+    trebleEqualizerNode.frequency.value = 2000
 
     // Media stream
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
@@ -140,13 +144,33 @@ window.addEventListener("mousemove", async function () {
       thresholdValue.innerText = `${threshold.value}[dB]`
     })
     threshold.dispatchEvent(new Event("input"))
+    // Create equalizer gain
+    bassEqualizer.addEventListener("input", async function () {
+      bassEqualizerNode.gain.value = bassEqualizer.value
+      bassEqualizerValue.innerText = `${bassEqualizer.value}[dB]`
+    })
+    bassEqualizer.dispatchEvent(new Event("input"))
+    middleEqualizer.addEventListener("input", async function () {
+      middleEqualizerNode.gain.value = middleEqualizer.value
+      middleEqualizerValue.innerText = `${middleEqualizer.value}[dB]`
+    })
+    middleEqualizer.dispatchEvent(new Event("input"))
+    trebleEqualizer.addEventListener("input", async function () {
+      trebleEqualizerNode.gain.value = trebleEqualizer.value
+      trebleEqualizerValue.innerText = `${trebleEqualizer.value}[dB]`
+    })
+    trebleEqualizer.dispatchEvent(new Event("input"))
+
 
     // Connect effects
-    track.connect(gainNode).connect(equalizers[0])
-    for (let i = 1; i < equalizerBands; i++) {
-      equalizers[i - 1].connect(equalizers[i])
-    }
-    equalizers[equalizerBands - 1].connect(compressorNode).connect(analyzerNode).connect(audioCtx.destination)
+    track.
+      connect(gainNode).
+      connect(bassEqualizerNode).
+      connect(middleEqualizerNode).
+      connect(trebleEqualizerNode).
+      connect(compressorNode).
+      connect(analyzerNode).
+      connect(audioCtx.destination)
   } catch (e) {
     console.log("Capture Error:")
     console.log(e)
@@ -157,11 +181,11 @@ window.addEventListener("mousemove", async function () {
 async function updateTitle() {
   // Update title
   try {
-  const tab = await chrome.tabs.get(tabID)
-  console.log(tab)
-  document.getElementById("title").innerText = `Boost: ${tab.title}`
-  document.getElementById("inlineTitle").innerText = tab.title
-  } catch(e) {
+    const tab = await chrome.tabs.get(tabID)
+    console.log(tab)
+    document.getElementById("title").innerText = `Boost: ${tab.title}`
+    document.getElementById("inlineTitle").innerText = tab.title
+  } catch (e) {
     console.log("Tab Get Error:")
     console.log(e)
     window.close()
