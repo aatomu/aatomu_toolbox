@@ -6,7 +6,6 @@ function str2HTML(html) {
 
 // Protocol Check
 const HTML_Body = document.body
-console.log(HTML_Body)
 if (HTML_Body) {
   // Creeper
   chrome.storage.sync.get(["isViewCreeper"]).then(result => {
