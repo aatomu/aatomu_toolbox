@@ -140,6 +140,7 @@ window.addEventListener("mousemove", async function () {
       thresholdValue.innerText = `${threshold.value}[dB]`
     })
     threshold.dispatchEvent(new Event("input"))
+
     // Connect effects
     track.connect(gainNode).connect(equalizers[0])
     for (let i = 1; i < equalizerBands; i++) {
