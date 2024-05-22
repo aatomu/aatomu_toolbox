@@ -1,7 +1,7 @@
 // 消したらService Checker使えない
-console.log("Chrome Addon is Loaded!");
+console.log("Chrome Addon is Loaded!")
 // 読み込み
-chrome.runtime.onInstalled.addListener(init());
+chrome.runtime.onInstalled.addListener(init())
 function init() {
   // 読み込み 通知
   console.log("Init Call")
@@ -12,7 +12,7 @@ function init() {
     id: 'master',
     title: 'atomuの道具箱',
     contexts: ["all"]
-  });
+  })
 
   const menuList = [
     // 常時表示
@@ -37,7 +37,7 @@ function init() {
   ]
   menuList.forEach(menu => {
     try {
-      chrome.contextMenus.create(menu);
+      chrome.contextMenus.create(menu)
     } catch (e) {
       console.log(e)
     }
@@ -71,31 +71,31 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       chrome.tabs.create({
         active: true,
         url: 'chrome://extensions/'
-      }, null);
+      }, null)
       return
     case "copy_link":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
         function: function () {
           // url
-          let url = window.location.href;
+          let url = window.location.href
           // Amazonのトラックを削除
           if (window.location.hostname.includes("amazon")) {
             url = window.location.origin + window.location.pathname.replace(/.*(\/dp\/.+?\/).*/, "$1")
           }
           // コピー
-          const el = document.createElement('textarea');
-          el.value = url;
-          el.setAttribute('readonly', '');
-          el.style.position = 'absolute';
-          el.style.left = '-9999px';
-          document.body.appendChild(el);
-          el.select();
-          document.execCommand('copy');
-          document.body.removeChild(el);
+          const el = document.createElement('textarea')
+          el.value = url
+          el.setAttribute('readonly', '')
+          el.style.position = 'absolute'
+          el.style.left = '-9999px'
+          document.body.appendChild(el)
+          el.select()
+          document.execCommand('copy')
+          document.body.removeChild(el)
         }
       })
-      return;
+      return
     case "view_creeper":
       chrome.storage.sync.set({ isViewCreeper: info.checked })
       return
@@ -112,14 +112,14 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     case "short2movie":
       // shortのページ以外で実行しない
       if (!tab.url.includes("youtube.com/shorts/")) {
-        return;
+        return
       }
 
       // 開く
       chrome.tabs.create({
         url: tab.url.replace("shorts/", "watch?v="),
         index: tab.index + 1
-      });
+      })
       return
 
     case "amazon":
@@ -183,18 +183,18 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       })
       return
   }
-});
+})
 
 // 待機
 function sleep(waitSec, callbackFunc) {
-  var spanedSec = 0;
+  var spanedSec = 0
   // 1秒間隔で無名関数を実行
   var id = setInterval(function () {
-    spanedSec++;
+    spanedSec++
     // 経過時間 >= 待機時間の場合、待機終了。
     if (spanedSec >= waitSec) {
-      clearInterval(id);
-      if (callbackFunc) callbackFunc();
+      clearInterval(id)
+      if (callbackFunc) callbackFunc()
     }
-  }, 1000);
+  }, 1000)
 }
