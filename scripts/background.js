@@ -107,6 +107,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         width: 800,
         height: 420
       })
+      return
+
     case "short2movie":
       // shortのページ以外で実行しない
       if (!tab.url.includes("youtube.com/shorts/")) {
