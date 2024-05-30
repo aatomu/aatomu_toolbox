@@ -74,12 +74,14 @@ setInterval(async function () {
     const adText = document.querySelector(".ytp-ad-text")
     if (adText) {
       console.log("Found Ad")
-      video.playbackRate = 16
-      // const duration = document.querySelector("video").duration
-      // if (video.currentTime < duration - 4) {
-      //   video.currentTime = duration - 4
-      // }
-      return
+      if (video.currentTime < 5) {
+        video.playbackRate = 5
+        return
+      }
+      if (video.currentTime < 5 && video.playbackRate != 1) {
+        video.playbackRate = 1
+        return
+      }
     }
     // isLive
     const liveText = document.querySelector(".ytp-live")
