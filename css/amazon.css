@@ -16,12 +16,13 @@
    ショッピングカート 上 広告
    ショッピングカート 右 レジに進む
    注文履歴 各枠 お届け先
+   注文履歴 各枠 お届け先
    注文履歴 注文の詳細 お届け先
    注文履歴 注文の詳細 支払方法
    注文履歴 いろいろ 配達状況の確認
 */
 #submit\.buy-now:not(.amazon-unsafety),
-.maple-banner,
+.yohtmlc-recipient,
 #sc-buy-box-ptc-button:not(.amazon-unsafety),
 .recipient,
 .od-shipping-address-container,
