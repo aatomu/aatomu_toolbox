@@ -185,6 +185,19 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 })
 
+chrome.commands.onCommand.addListener((command,tab) => {
+  console.log(`Command: ${command}`);
+  switch (command) {
+    case "volume_booster":
+      chrome.windows.create({
+        type: "popup",
+        url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
+        width: 800,
+        height: 420
+      })
+      return
+  }
+});
 // 待機
 function sleep(waitSec, callbackFunc) {
   var spanedSec = 0
