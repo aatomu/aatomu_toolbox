@@ -23,6 +23,8 @@ const graphArea = document.getElementById("graphArea")
 const fftLine = document.getElementById("fftLine")
 const waveLine = document.getElementById("waveLine")
 
+const preview = document.getElementById("preview")
+
 let isBoosted = false
 window.addEventListener("mousemove", async function () {
   if (isBoosted) {
@@ -67,10 +69,16 @@ window.addEventListener("mousemove", async function () {
           chromeMediaSourceId: streamId
         }
       },
-      video: false
+      video: {
+        mandatory: {
+          chromeMediaSource: "tab",
+          chromeMediaSourceId: streamId,
+        },
+      }
     })
     const track = audioCtx.createMediaStreamSource(media)
     isBoosted = true
+    preview.srcObject = media
 
     function updateGraph() {
       // View area variable
