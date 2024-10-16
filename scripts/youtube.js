@@ -82,6 +82,10 @@ setInterval(async function () {
         video.playbackRate = 1
         return
       }
+      const adSkip = document.querySelector(".ytp-skip-ad-button__icon")
+      if (adSkip) {
+        video.currentTime = video.duration
+      }
     }
     // isLive
     const liveText = document.querySelector(".ytp-live")
