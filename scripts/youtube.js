@@ -151,7 +151,7 @@ setInterval(async function () {
     // isEndedVideo
     if (video.ended) {
       videoEndedFreeze++
-      console.log(`Vide Is Ended ${videoEndedFreeze}`)
+      console.log(`Vide Is Ended`)
       if (videoEndedFreeze > 20) {
         // cancel auto next
         const isEndScreen = document.querySelector("div.ytp-autonav-endscreen-button-container").style.display != "none"
