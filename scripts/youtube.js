@@ -70,6 +70,18 @@ setInterval(async function () {
       return
     }
 
+    // isPlaylist
+    const url = new URL(window.location.href)
+    const params = new URLSearchParams(url.searchParams)
+    const playlist = params.get("list")
+    if (playlist) {
+      console.log("In Playlist")
+      const playlistPanel = document.querySelector("ytd-playlist-panel-renderer#playlist")
+      if (!playlistPanel) {
+        console.log("Window Reload Because By Playlist Panel Notfound")
+        window.location.reload()
+      }
+    }
     // isAd
     const adText = document.querySelector(".ytp-ad-text")
     if (adText) {
@@ -138,10 +150,17 @@ setInterval(async function () {
     }
     // isEndedVideo
     if (video.ended) {
-      console.log("Vide Is Ended")
       videoEndedFreeze++
+      console.log(`Vide Is Ended ${videoEndedFreeze}`)
       if (videoEndedFreeze > 20) {
-        console.log("Check Next Video Is Playlist Video")
+        // cancel auto next
+        const isEndScreen = document.querySelector("div.ytp-autonav-endscreen-button-container").style.display != "none"
+        const nextCancelButton = document.querySelector("button.ytp-autonav-endscreen-upnext-cancel-button")
+        if (isEndScreen && nextCancelButton) {
+          console.log("Click Cancel Auto Next Button")
+          nextCancelButton.click()
+        }
+        // playlist
         const nextButton = document.querySelector("a.ytp-next-button")
         const nextVideo = nextButton.href
         if (nextVideo.includes("list=")) {
