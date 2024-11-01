@@ -83,8 +83,8 @@ setInterval(async function () {
       }
     }
     // isAd
-    const adText = document.querySelector(".ytp-ad-text")
-    if (adText) {
+    const adArea = document.querySelector(".video-ads")
+    if (adArea.children.length > 0) {
       console.log("Found Ad")
       if (video.currentTime < 5) {
         video.playbackRate = 5
