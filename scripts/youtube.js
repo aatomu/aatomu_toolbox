@@ -149,7 +149,7 @@ setInterval(async function () {
       return
     }
     // isEndedVideo
-    if (video.ended) {
+    if (video.duration - video.currentTime < 0.5) {
       videoEndedFreeze++
       console.log(`Vide Is Ended`)
       if (videoEndedFreeze > 20) {
