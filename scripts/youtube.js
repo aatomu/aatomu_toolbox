@@ -83,19 +83,21 @@ setInterval(async function () {
     }
     // isAd
     const adArea = document.querySelector(".video-ads")
-    if (adArea.children.length > 0) {
-      console.log("Found Ad")
-      if (video.currentTime < 5) {
-        video.playbackRate = 5
-        return
-      }
-      if (video.currentTime < 5 && video.playbackRate != 1) {
-        video.playbackRate = 1
-        return
-      }
-      const adSkip = document.querySelector(".ytp-skip-ad-button__icon")
-      if (adSkip) {
-        video.currentTime = video.duration
+    if (adArea) {
+      if (adArea.children.length > 0) {
+        console.log("Found Ad")
+        if (video.currentTime < 5) {
+          video.playbackRate = 5
+          return
+        }
+        if (video.currentTime < 5 && video.playbackRate != 1) {
+          video.playbackRate = 1
+          return
+        }
+        const adSkip = document.querySelector(".ytp-skip-ad-button__icon")
+        if (adSkip) {
+          video.currentTime = video.duration
+        }
       }
     }
     // isLive
