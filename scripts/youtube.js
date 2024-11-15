@@ -75,8 +75,8 @@ setInterval(async function () {
     const params = new URLSearchParams(url.searchParams)
     const playlist = params.get("list")
     if (playlist) {
-      const playlistPanel = document.querySelector("ytd-playlist-panel-renderer#playlist")
-      if (!playlistPanel) {
+      const playlistPanelTitle = document.querySelector(".title.style-scope.ytd-playlist-panel-renderer.complex-string")
+      if (!playlistPanelTitle) {
         console.log("Window Reload Because By Playlist Panel Notfound")
         window.location.reload()
       }
@@ -87,7 +87,7 @@ setInterval(async function () {
       if (adArea.children.length > 0) {
         console.log("Found Ad")
         if (video.currentTime < 5) {
-          video.playbackRate = 5
+          video.playbackRate = 3
           return
         }
         if (video.currentTime < 5 && video.playbackRate != 1) {
