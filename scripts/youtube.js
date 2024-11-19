@@ -79,6 +79,11 @@ setInterval(async function () {
       if (!playlistPanelTitle) {
         console.log("Window Reload Because By Playlist Panel Notfound")
         window.location.reload()
+        return
+      }
+      if (playlistPanelTitle.innerText == "") {
+        console.log("Window Reload Because By Playlist Panel Notfound")
+        window.location.reload()
       }
     }
     // isAd
