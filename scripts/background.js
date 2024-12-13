@@ -193,7 +193,7 @@ chrome.commands.onCommand.addListener((command,tab) => {
         type: "popup",
         url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
         width: 800,
-        height: 420
+        height: 350
       })
       return
   }
