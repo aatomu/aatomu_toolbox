@@ -51,7 +51,7 @@
 }
 
 #nav-link-accountList-nav-line-1::before {
-  /* 共通 左上 名前 */
+  /* 共通 右上 名前 */
   content: "${User}" !important;
 }
 
