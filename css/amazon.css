@@ -20,6 +20,7 @@
    注文履歴 注文の詳細 お届け先
    注文履歴 注文の詳細 支払方法
    注文履歴 いろいろ 配達状況の確認
+   共通 右上 アカウントプロファイル
 */
 #submit\.buy-now:not(.amazon-unsafety),
 .yohtmlc-recipient,
@@ -27,7 +28,8 @@
 .recipient,
 .od-shipping-address-container,
 .pmts-payment-instrument-billing-address,
-.track-package-button {
+.track-package-button,
+.sc-dLMFU.sc-iMWBiJ.EZIgf.eWvzwW {
   display: none !important;
 }
 
