@@ -105,7 +105,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         type: "popup",
         url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
         width: 800,
-        height: 350
+        height: 370
       })
       return
 
@@ -185,7 +185,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 })
 
-chrome.commands.onCommand.addListener((command,tab) => {
+chrome.commands.onCommand.addListener((command, tab) => {
   console.log(`Command: ${command}`);
   switch (command) {
     case "volume_booster":
@@ -193,21 +193,8 @@ chrome.commands.onCommand.addListener((command,tab) => {
         type: "popup",
         url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
         width: 800,
-        height: 350
+        height: 370
       })
       return
   }
 });
-// 待機
-function sleep(waitSec, callbackFunc) {
-  var spanedSec = 0
-  // 1秒間隔で無名関数を実行
-  var id = setInterval(function () {
-    spanedSec++
-    // 経過時間 >= 待機時間の場合、待機終了。
-    if (spanedSec >= waitSec) {
-      clearInterval(id)
-      if (callbackFunc) callbackFunc()
-    }
-  }, 1000)
-}
