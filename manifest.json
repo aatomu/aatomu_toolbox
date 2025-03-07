@@ -24,11 +24,11 @@
     "default_popup": "popup/index.html"
   },
   "commands": {
-    "volume_booster":{
-        "suggested_key": {
-          "default": "Alt+Shift+E"
-        },
-        "description": "Run \"Volume Booster\" on the current page."
+    "volume_booster": {
+      "suggested_key": {
+        "default": "Alt+Shift+E"
+      },
+      "description": "Run \"Volume Booster\" on the current page."
     }
   },
   "background": {
@@ -36,6 +36,7 @@
   },
   "content_scripts": [
     {
+      "run_at": "document_start",
       "matches": [
         "<all_urls>"
       ],
@@ -47,6 +48,7 @@
       ]
     },
     {
+      "run_at": "document_start",
       "matches": [
         "https://www.amazon.co.jp/*"
       ],
@@ -58,6 +60,7 @@
       ]
     },
     {
+      "run_at": "document_start",
       "matches": [
         "https://www.google.com/*"
       ],
@@ -69,6 +72,7 @@
       ]
     },
     {
+      "run_at": "document_start",
       "matches": [
         "https://www.youtube.com/*"
       ],

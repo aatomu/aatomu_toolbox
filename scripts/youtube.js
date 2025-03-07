@@ -1,3 +1,17 @@
+// fake e.isTrusted = true
+Element.prototype._addEventListener = Element.prototype.addEventListener;
+Element.prototype.addEventListener = function () {
+  let args = [...arguments]
+  let temp = args[1];
+  args[1] = function () {
+    let args2 = [...arguments];
+    args2[0] = Object.assign({}, args2[0])
+    args2[0].isTrusted = true;
+    return temp(...args2);
+  }
+  return this._addEventListener(...args);
+}
+
 // Variable
 //  Subscriptions
 let isSearchBoxPlaced = false
@@ -10,6 +24,7 @@ let isLiveAccelerated = false
 let beforeWatchVideoSrc = ""
 //  in Playlist
 let videoEndedFreeze = 0
+let reloadInterval = 0
 // Live Acceleration
 chrome.storage.sync.get(["Setting"]).then((result) => {
   isLiveAcceleration = result.Setting.LiveAcceleration
@@ -76,15 +91,21 @@ setInterval(async function () {
     const title = document.querySelector("div#title").innerHTML
     const playlist = params.get("list")
     if (playlist && title) {
+      if (reloadInterval > 0) {
+        reloadInterval--
+      }
       const playlistPanelTitle = document.querySelector(".title.style-scope.ytd-playlist-panel-renderer.complex-string")
       if (!playlistPanelTitle) {
         console.log("Window Reload Because By Playlist Panel Notfound")
         window.location.reload()
+        reloadInterval = 5000
         return
       }
       if (playlistPanelTitle.innerText == "") {
         console.log("Window Reload Because By Playlist Panel Notfound")
         window.location.reload()
+        reloadInterval = 5000
+        return
       }
     }
     // isAd
