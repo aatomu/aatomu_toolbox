@@ -1,3 +1,4 @@
+console.log("contents.js loaded")
 function str2HTML(html) {
   const dummyElement = document.createElement('div');
   dummyElement.innerHTML = html;
@@ -21,6 +22,7 @@ if (HTML_Body) {
   const insertScript = document.createElement('script');
   insertScript.src = chrome.runtime.getURL('scripts/contents_insert.js');
   insertScript.onload = function () {
+    console.log("contents_insert.js loaded")
     this.remove();
   };
   HTML_Body.appendChild(insertScript)
