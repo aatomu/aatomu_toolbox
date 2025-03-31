@@ -240,20 +240,20 @@ function UpdateShortButton() {
     shortVideo.pause()
   })
   shortTimeNow.addEventListener("keydown", function (e) {
-    if (e.key != "Enter") return
     const time = parseFloat(shortTimeNow.value)
     if (time < shortTimeEnd.value) {
       shortVideo.currentTime = time
     }
   })
   shortVideo.addEventListener("timeupdate", function () {
-    shortTimeNow.value = ('00' + (Math.floor(shortVideo.currentTime * 100) / 100).toFixed(2)).slice(-5)
+    if (shortVideo.paused) return
+    shortTimeNow.value = (Math.floor(shortVideo.currentTime * 100) / 100).toFixed(2).padStart(6, "0")
   })
   shortButtons.appendChild(str2HTML(`<br>`))
 
   // timestamp(終了時刻)を設置
-  const shortTimeEnd = str2HTML(`<input type"text" class="timestamp" value="00.00" disabled>`)
-  shortTimeEnd.value = ('00' + (Math.floor(shortVideo.duration * 100) / 100).toFixed(2)).slice(-5);
+  const shortTimeEnd = str2HTML(`<input type"text" class="timestamp" value="000.00" disabled>`)
+  shortTimeEnd.value = (Math.floor(shortVideo.duration * 100) / 100).toFixed(2).padStart(6, "0")
   shortButtons.appendChild(shortTimeEnd)
 
   // 再生速度(表示)
