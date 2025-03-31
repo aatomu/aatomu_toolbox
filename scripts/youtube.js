@@ -103,23 +103,19 @@ setInterval(async function () {
       }
     }
     // isAd
-    const adArea = document.querySelector(".video-ads")
-    if (adArea) {
-      if (adArea.children.length > 0) {
-        console.log("Found Ad")
-        if (video.currentTime < 5) {
-          video.playbackRate = 3
-          return
-        }
-        if (video.currentTime < 5 && video.playbackRate != 1) {
-          video.playbackRate = 1
-          return
-        }
-        const adSkip = document.querySelector(".ytp-skip-ad-button__icon")
-        if (adSkip) {
-          video.currentTime = video.duration
-        }
-      }
+    const addButton = document.querySelector("button.ytp-skip-ad-button")
+    if (addButton) {
+      console.log("Found Ad")
+      if (addButton.style.display != "") return
+      // if (video.currentTime < 5) {
+      //   video.playbackRate = 1.5
+      //   return
+      // }
+      // if (video.currentTime < 5 && video.playbackRate != 1) {
+      //   video.playbackRate = 1
+      //   return
+      // }
+      video.currentTime = video.duration
     }
     // isLive
     const liveText = document.querySelector(".ytp-live")
