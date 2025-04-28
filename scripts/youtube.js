@@ -70,8 +70,8 @@ setInterval(async function () {
     const short = document.querySelector("ytd-reel-video-renderer[is-active]")
     if (short) {
       console.log("Found Short")
-      if (beforeShortNumber != short.id) {
-        beforeShortNumber = short.id
+      if (beforeShortNumber != short.parentElement.id) {
+        beforeShortNumber = short.parentElement.id
         UpdateShortButton()
       }
     }
@@ -115,7 +115,7 @@ setInterval(async function () {
       //   video.playbackRate = 1
       //   return
       // }
-      video.currentTime = video.duration
+      // video.currentTime = video.duration
     }
     // isLive
     const liveText = document.querySelector(".ytp-live")
