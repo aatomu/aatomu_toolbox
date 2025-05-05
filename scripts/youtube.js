@@ -103,19 +103,11 @@ setInterval(async function () {
       }
     }
     // isAd
-    const addButton = document.querySelector("button.ytp-skip-ad-button")
-    if (addButton) {
+    const adButton = document.querySelector("button.ytp-skip-ad-button")
+    if (adButton) {
       console.log("Found Ad")
-      if (addButton.style.display != "") return
-      // if (video.currentTime < 5) {
-      //   video.playbackRate = 1.5
-      //   return
-      // }
-      // if (video.currentTime < 5 && video.playbackRate != 1) {
-      //   video.playbackRate = 1
-      //   return
-      // }
-      // video.currentTime = video.duration
+      if (adButton.style.display != "") return
+      video.currentTime = video.duration
     }
     // isLive
     const liveText = document.querySelector(".ytp-live")
