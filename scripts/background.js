@@ -185,6 +185,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 })
 
+// ショートカットキー 呼び出し
 chrome.commands.onCommand.addListener((command, tab) => {
   console.log(`Command: ${command}`);
   switch (command) {
@@ -196,5 +197,25 @@ chrome.commands.onCommand.addListener((command, tab) => {
         height: 370
       })
       return
+  }
+});
+
+// content.js 呼び出し
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log(`Message:`, message);
+  if (message.injection && sender.tab && sender.tab.id) {
+    console.log("injection call")
+    chrome.scripting.executeScript({
+      target: { tabId: sender.tab.id, allFrames: true },
+      files: ["scripts/injection.js"]
+    })
+      .then(injectionResults => {
+        for (const { frameId, result } of injectionResults) {
+          console.log(`Frame ${frameId} result:`, result);
+        }
+      })
+      .catch(err => {
+        console.error("Injection failed:", err);
+      });
   }
 });

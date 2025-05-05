@@ -1,16 +1,4 @@
-// fake e.isTrusted = true
-Element.prototype._addEventListener = Element.prototype.addEventListener;
-Element.prototype.addEventListener = function () {
-  let args = [...arguments]
-  let temp = args[1];
-  args[1] = function () {
-    let args2 = [...arguments];
-    args2[0] = Object.assign({}, args2[0])
-    args2[0].isTrusted = true;
-    return temp(...args2);
-  }
-  return this._addEventListener(...args);
-}
+chrome.runtime.sendMessage({ injection: true });
 
 // Variable
 //  Subscriptions
@@ -254,4 +242,10 @@ function UpdateShortButton() {
     shortVideo.playbackRate = parseFloat(shortSpeed.value)
     document.getElementById("aatomuShortSpeed").innerText = `Speed: x${(Math.floor(parseFloat(shortSpeed.value) * 100) / 100).toFixed(2)}`
   })
+}
+
+function str2HTML(html) {
+  const dummyElement = document.createElement('div');
+  dummyElement.innerHTML = html;
+  return dummyElement.firstElementChild;
 }
