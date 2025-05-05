@@ -76,13 +76,13 @@ setInterval(async function () {
     // isPlaylist
     const url = new URL(window.location.href)
     const params = new URLSearchParams(url.searchParams)
-    const title = document.querySelector("div#title").innerHTML
     const playlist = params.get("list")
+    const title = document.querySelector("div#title").innerHTML
     if (playlist && title) {
       if (reloadInterval > 0) {
         reloadInterval--
       }
-      const playlistPanelTitle = document.querySelector(".title.style-scope.ytd-playlist-panel-renderer")
+      const playlistPanelTitle = document.querySelector(".title.style-scope.ytd-playlist-panel-renderer a.yt-simple-endpoint.style-scope.yt-formatted-string")
       if (!playlistPanelTitle) {
         console.log("Window Reload Because By Playlist Panel Notfound")
         window.location.reload()
