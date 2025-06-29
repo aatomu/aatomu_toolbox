@@ -45,18 +45,18 @@ setInterval(async function () {
     const playlist = params.get("list")
     const title = document.querySelector("div#title").innerHTML
     if (playlist && title) {
-      const playlistPanelTitle = document.querySelector(".title.style-scope.ytd-playlist-panel-renderer a.yt-simple-endpoint.style-scope.yt-formatted-string")
-      if (playlistPanelTitle) return
-      console.log("Playlist embed notfound")
-      if (reloadInterval > 0) {
-        reloadInterval--
-        return
+      const playlistPanelTitle = document.querySelector("#content .title.style-scope.ytd-playlist-panel-renderer")
+      
+      if (!playlistPanelTitle) {
+        console.log("Playlist embed notfound")
+        if (reloadInterval > 0) {
+          reloadInterval--
+        } else {
+          console.log("Window Reload Because By Playlist Panel Notfound")
+          window.location.reload()
+          reloadInterval = 5000
+        }
       }
-
-      console.log("Window Reload Because By Playlist Panel Notfound")
-      window.location.reload()
-      reloadInterval = 5000
-      return
     }
     // isAd
     const adButton = document.querySelector("button.ytp-skip-ad-button")
