@@ -1,8 +1,6 @@
 chrome.runtime.sendMessage({ injection: true });
 
 // Variable
-//  Subscriptions
-let isSearchBoxPlaced = false
 //  Shorts
 let beforeShortNumber = -1
 //  Live
@@ -21,38 +19,6 @@ chrome.storage.sync.get(["Setting"]).then((result) => {
 
 // Loop
 setInterval(async function () {
-  // 登録チャンネルで検索
-  if (window.location.href == "https://www.youtube.com/feed/subscriptions" && !isSearchBoxPlaced) {
-    isSearchBoxPlaced = true
-    const searchInput = str2HTML(`<input type"text" id="searchInput" value="">`)
-    document.querySelector("#center.ytd-masthead").appendChild(searchInput)
-    searchInput.addEventListener("input", function () {
-      const search = searchInput.value.toUpperCase()
-      const videos = document.querySelectorAll("ytd-rich-item-renderer")
-      for (const video of videos) {
-        video.removeAttribute("style")
-        let isMatch = false
-        const textElements = video.querySelectorAll("#details [title]")
-        for (const textElement of textElements) {
-          if (textElement.title.toUpperCase().includes(search)) {
-            isMatch = true
-          }
-        }
-        if (!isMatch) {
-          video.style.display = "none"
-        }
-      }
-    })
-    return
-  }
-  if (window.location.href != "https://www.youtube.com/feed/subscriptions" && isSearchBoxPlaced) {
-    const searchInput = document.getElementById("searchInput")
-    if (searchInput) {
-      searchInput.remove()
-    }
-  }
-
-
   // ショート
   if (window.location.href.startsWith("https://www.youtube.com/shorts/")) {
     const short = document.querySelector("ytd-reel-video-renderer[is-active]")
