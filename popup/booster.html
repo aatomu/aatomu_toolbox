@@ -5,25 +5,39 @@
   <title id="title">Unknown</title>
 </head>
 <style>
+  :root {
+    --darker: #404258;
+    --dark: #474E68;
+    --light: #50577A;
+    --lighter: #6B728E;
+  }
+
   body {
-    overflow: hidden;
+    color: white;
+    background-color: var(--darker);
+  }
+
+  .box {
+    border-radius: 5px;
+    border-color: var(--light);
+    border-style: solid;
+    border-width: 2px;
+
+    padding: 5px;
+    margin-bottom: 10px;
+
+    background-color: var(--dark);
   }
 
   .flex {
     display: flex;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: fit-content(16ch) 30ch fit-content(10ch) 30ch 1fr;
-  }
-
-  .key {
-    text-align: right;
-    margin-right: 1ch;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
   }
 
   .value {
+    width: 100%;
     white-space: nowrap;
   }
 
@@ -31,13 +45,54 @@
     vertical-align: middle;
   }
 
-  .decibel-value {
+  .decibel-bar {
+    position: relative;
+    height: 7px;
+    border-radius: 5px;
+    border-color: gray;
+    border-style: solid;
+    border-width: 1.5px;
+
+    background-color: white;
+  }
+
+  .decibel-compression {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    height: 100%;
+    width: 75%;
+
+    background-color: orangered;
+  }
+
+  .decibel-current {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    height: 100%;
+    width: 50%;
+    background-color: royalblue;
+  }
+
+  .volume-current {
     font-weight: bolder;
+  }
+
+  .volume-compression {
+    color: lightgray;
+    font-size: 80%;
+  }
+
+  .range {
+    width: calc(100% - 10ch);
   }
 
   .graphic {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: nowrap;
     justify-content: space-evenly;
     align-items: center;
@@ -48,12 +103,12 @@
   }
 
   .graph-area {
-    width: 50%;
+    width: 100%;
     aspect-ratio: 16/9;
 
     border-radius: 10px;
 
-    background-color: lightgray;
+    background-color: whitesmoke;
 
     fill: none;
   }
@@ -69,16 +124,8 @@
     cursor: pointer;
   }
 
-  .fft-line {
-    stroke: #080;
-  }
-
-  .wave-line {
-    stroke: black;
-  }
-
   .preview {
-    width: 50%;
+    width: 100%;
     aspect-ratio: 16/9;
 
     border-radius: 10px;
@@ -88,29 +135,60 @@
 </style>
 
 <body>
-  <!-- Audio configs -->
-  <div class="grid">
-    <span class="key" style="grid-row: 1/2; grid-column: 1/2;">Target:</span>
-    <span class="value" style="grid-row: 1/2; grid-column: 2/6;" id="inlineTitle"></span>
-    <span class="key" style="grid-row: 2/3; grid-column: 1/2;">Amplifier:</span>
-    <div class="value" style="grid-row: 2/3; grid-column: 2/3;"><input type="range" id="amplifier" value="1" min="1" max="20" step="0.1"><span id="amplifierValue"></span></div>
-    <span class="key" style="grid-row: 3/4; grid-column: 1/2;">Threshold:</span>
-    <div class="value" style="grid-row: 3/4; grid-column: 2/3;"><input type="range" id="threshold" value="0" min="-100" max="0" step="2"><span id="thresholdValue"></span></div>
-    <span class="key" style="grid-row: 4/5; grid-column: 1/2;">Compressing:</span>
-    <span class="value" style="grid-row: 4/5; grid-column: 2/3;" id="compressing"></span>
-    <span class="key" style="grid-row: 5/6; grid-column: 1/2;">Decibel:</span>
-    <div class="value" style="grid-row: 5/6; grid-column: 2/3;"><progress id="decibelPercentage" max="100" value="75"></progress><span class="decibel-value" id="decibelValue"></span></div>
-
-    <span class="key" style="grid-row: 2/3; grid-column: 3/4;">Equalizer:</span>
-    <span class="key" style="grid-row: 3/4; grid-column: 3/4;">(Bass):</span>
-    <div class="value" style="grid-row: 3/4; grid-column: 4/5;"><input type="range" id="bassEqualizer" value="0" min="-40" max="40" step="2"><span id="bassEqualizerValue"></span></div>
-    <span class="key" style="grid-row: 4/5; grid-column: 3/4;">(Middle):</span>
-    <div class="value" style="grid-row: 4/5; grid-column: 4/5;"><input type="range" id="middleEqualizer" value="0" min="-40" max="40" step="2"><span id="middleEqualizerValue"></span></div>
-    <span class="key" style="grid-row: 5/6; grid-column: 3/4;">(Treble):</span>
-    <div class="value" style="grid-row: 5/6; grid-column: 4/5;"><input type="range" id="trebleEqualizer" value="0" min="-40" max="40" step="2"><span id="trebleEqualizerValue"></span></div>
-
+  <!-- Title -->
+  <div class="box flex">
+    <span>Title:</span>
+    <span id="inlineTitle">aaaaa</span>
   </div>
-  <div class="graphic">
+  <!-- Volume -->
+  <div class="box flex">
+    <div class="flex value">
+      <span>Volume Boost: </span>
+      <div style="width: 100%;">
+        <input type="range" id="amplifier" value="1" min="0" max="30" step="0.1" class="range">
+        <span id="amplifierValue"></span>
+      </div>
+    </div>
+    <div class="flex value">
+      <span>Compression Threshold:</span>
+      <div style="width: 100%;">
+        <input type="range" id="threshold" value="0" min="-100" max="0" step="2" class="range">
+        <span id="thresholdValue"></span>
+      </div>
+    </div>
+    <div class="flex value">
+      <span>Current Volume:</span>
+      <div style="width: 100%;">
+        <div class="range decibel-bar">
+          <div class="decibel-compression" id="inputPercentage"></div>
+          <div class="decibel-current" id="currentPercentage"></div>
+        </div>
+        <span class="volume-current" id="currentValue"></span>
+        <span class="volume-compression" id="compressionValue"></span>
+      </div>
+    </div>
+  </div>
+  <!-- Equalizer -->
+  <div class="box flex">
+    <span>Equalizer:</span>
+    <span>(Bass):</span>
+    <div style="width: 100%;">
+      <input type="range" id="bassEqualizer" value="0" min="-40" max="40" step="2" class="range">
+      <span id="bassEqualizerValue"></span>
+    </div>
+    <span>(Middle):</span>
+    <div style="width: 100%;">
+      <input type="range" id="middleEqualizer" value="0" min="-40" max="40" step="2" class="range">
+      <span id="middleEqualizerValue"></span>
+    </div>
+    <span>(Treble):</span>
+    <div style="width: 100%;">
+      <input type="range" id="trebleEqualizer" value="0" min="-40" max="40" step="2" class="range">
+      <span id="trebleEqualizerValue"></span>
+    </div>
+  </div>
+  <!-- Analyze -->
+  <div class="box graphic">
     <!-- Audio(FFT/wave) -->
     <svg class="graph-area" id="graphArea">
       <g>
@@ -193,8 +271,10 @@
         <title id="frequencyTitle19"></title>
         <path class="freq-line" id="frequencyBar19"></path>
       </g>
-      <path class="fft-line" id="fftLine"></path>
-      <path class="wave-line" id="waveLine"></path>
+      <path style="stroke:green; ; opacity: 0.2;" id="fftLineInput"></path>
+      <path style="stroke:green;" id="fftLineCurrent"></path>
+      <path style="stroke: black; opacity: 0.2;" id="waveLineInput"></path>
+      <path style="stroke: black;" id="waveLineCurrent"></path>
     </svg>
     <!-- Tab preview -->
     <video class="preview" id="preview" muted autoplay></video>

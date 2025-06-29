@@ -63,7 +63,7 @@ setInterval(async function () {
     if (adButton) {
       console.log("Found Ad")
       if (adButton.style.display != "") return
-      video.currentTime = video.duration
+      // video.currentTime = video.duration
     }
     // isLive
     const liveText = document.querySelector(".ytp-live")

@@ -104,8 +104,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       chrome.windows.create({
         type: "popup",
         url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
-        width: 800,
-        height: 370
+        width: 400,
+        height: 600
       })
       return
 
@@ -193,8 +193,8 @@ chrome.commands.onCommand.addListener((command, tab) => {
       chrome.windows.create({
         type: "popup",
         url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
-        width: 800,
-        height: 370
+        width: 400,
+        height: 600
       })
       return
   }
