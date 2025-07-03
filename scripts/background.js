@@ -1,3 +1,6 @@
+const boosterHeight = 420
+const boosterWidth = 300
+
 // 消したらService Checker使えない
 console.log("Chrome Addon is Loaded!")
 // 読み込み
@@ -104,8 +107,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       chrome.windows.create({
         type: "popup",
         url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
-        width: 400,
-        height: 600
+        width: boosterWidth,
+        height: boosterHeight
       })
       return
 
@@ -193,8 +196,8 @@ chrome.commands.onCommand.addListener((command, tab) => {
       chrome.windows.create({
         type: "popup",
         url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
-        width: 400,
-        height: 600
+        width: boosterWidth,
+        height: boosterHeight
       })
       return
   }

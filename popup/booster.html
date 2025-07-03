@@ -36,6 +36,9 @@
     align-items: flex-start;
   }
 
+  .title {
+    height: 4lh;
+  }
   .inline-title {
     font-weight: bolder;
   }
@@ -91,7 +94,7 @@
   }
 
   .range {
-    width: calc(100% - 10ch);
+    width: calc(100% - 20ch);
   }
 
   .graphic {
@@ -140,7 +143,7 @@
 
 <body>
   <!-- Title -->
-  <div class="box flex">
+  <div class="box flex title">
     <span>Title:</span>
     <span class="inline-title" id="inlineTitle">Now waiting...</span>
   </div>
@@ -163,7 +166,7 @@
     <div class="flex value">
       <span>Current Volume:</span>
       <div style="width: 100%;">
-        <div class="range decibel-bar">
+        <div class="range decibel-bar" style="display: inline-block;">
           <div class="decibel-compression" id="inputPercentage"></div>
           <div class="decibel-current" id="currentPercentage"></div>
         </div>
