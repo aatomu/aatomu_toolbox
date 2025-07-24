@@ -2,7 +2,6 @@ chrome.runtime.sendMessage({ injection: true });
 
 // Variable
 //  Shorts
-let beforeShortNumber = -1
 //  Live
 let isLiveAcceleration = false
 let isLiveAccelerated = false
@@ -24,8 +23,7 @@ setInterval(async function () {
     const short = document.querySelector("ytd-reel-video-renderer[is-active]")
     if (short) {
       console.log("Found Short")
-      if (beforeShortNumber != short.parentElement.id) {
-        beforeShortNumber = short.parentElement.id
+      if (!document.querySelector("ytd-reel-video-renderer[is-active]").querySelector("#aatomuShortButtons")) {
         UpdateShortButton()
       }
     }
@@ -45,8 +43,8 @@ setInterval(async function () {
     const playlist = params.get("list")
     const title = document.querySelector("div#title").innerHTML
     if (playlist && title) {
-      const playlistPanelTitle = document.querySelector("#content .title.style-scope.ytd-playlist-panel-renderer")
-      
+      const playlistPanelTitle = document.querySelector("#content .title.style-scope.ytd-playlist-panel-renderer").innerHTML
+
       if (!playlistPanelTitle) {
         console.log("Playlist embed notfound")
         if (reloadInterval > 0) {
@@ -147,9 +145,6 @@ setInterval(async function () {
 }, 100)
 
 function UpdateShortButton() {
-  // info表示
-  console.log(`ShortID:${beforeShortNumber}`)
-
   // 過去の追加した要素削除
   const oldShortButtons = document.getElementById("aatomuShortButtons")
   if (oldShortButtons) {

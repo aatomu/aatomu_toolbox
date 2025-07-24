@@ -14,7 +14,7 @@
       const args2 = [...arguments];
       args2[0] = Object.assign({}, args2[0]);
       args2[0].isTrusted = true;
-      console.log(`[Bypass] Call event listener for type: ${eventType}`,originalHandler);
+      // console.log(`[Bypass] Call event listener for type: ${eventType}`,originalHandler);
       return originalHandler(...args2);
     };
 
