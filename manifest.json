@@ -83,6 +83,15 @@
         "src/extension/injection.js",
         "src/youtube.js"
       ]
+    },
+    {
+      "run_at": "document_start",
+      "matches": [
+        "https://www.pixiv.net/users/*/following*"
+      ],
+      "js": [
+        "src/pixiv.js"
+      ]
     }
   ],
   "host_permissions": [
