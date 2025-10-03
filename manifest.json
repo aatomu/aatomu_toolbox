@@ -4,7 +4,7 @@
   "version": "0.1",
   "manifest_version": 3,
   "icons": {
-    "64": "images/icon.png"
+    "64": "src/extension/icon.png"
   },
   "permissions": [
     "activeTab",
@@ -12,16 +12,20 @@
     "clipboardWrite",
     "history",
     "scripting",
+    "sidePanel",
     "storage",
     "tabs",
     "tabCapture"
   ],
   "action": {
     "default_icon": {
-      "64": "images/icon.png"
+      "64": "src/extension/icon.png"
     },
     "default_title": "aatomu's Toolbox",
-    "default_popup": "popup/index.html"
+    "default_popup": "src/extension/popup/index.html"
+  },
+  "side_panel": {
+    "default_path": "src/extension/sidepanel/index.html"
   },
   "commands": {
     "volume_booster": {
@@ -32,7 +36,7 @@
     }
   },
   "background": {
-    "service_worker": "scripts/background.js"
+    "service_worker": "src/extension/background.js"
   },
   "content_scripts": [
     {
@@ -40,10 +44,10 @@
         "<all_urls>"
       ],
       "css": [
-        "css/contents.css"
+        "src/extension/content/creeper.css"
       ],
       "js": [
-        "scripts/contents.js"
+        "src/extension/content/contents.js"
       ]
     },
     {
@@ -52,10 +56,10 @@
         "https://www.amazon.co.jp/*"
       ],
       "css": [
-        "css/secret.css"
+        "src/amazon.css"
       ],
       "js": [
-        "scripts/amazon.js"
+        "src/amazon.js"
       ]
     },
     {
@@ -64,10 +68,10 @@
         "https://www.google.com/*"
       ],
       "css": [
-        "css/secret.css"
+        "src/extension/secret.css"
       ],
       "js": [
-        "scripts/google.js"
+        "src/google.js"
       ]
     },
     {
@@ -76,7 +80,8 @@
         "https://www.youtube.com/*"
       ],
       "js": [
-        "scripts/youtube.js"
+        "src/extension/injection.js",
+        "src/youtube.js"
       ]
     }
   ],
@@ -87,10 +92,10 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "images/creeper.webp",
-        "scripts/contents_insert.js",
-        "css/amazon.css",
-        "css/google.css"
+        "src/extension/content/creeper.webp",
+        "src/extension/content/insert.js",
+        "src/amazon.css",
+        "src/google.css"
       ],
       "matches": [
         "<all_urls>"

@@ -1,16 +1,18 @@
 function CheckVariable() {
-  var original = [];
-  var win = window.open();
-  for (var i in win) {
-    original.push(i);
+  const original = [];
+  const win = window.open();
+  for (let variable in win) {
+    original.push(variable);
   }
   win.close();
 
-  for (var i in window) {
-    if (!original.includes(i)) {
-      console.table("Name:", i, "Value:", window[i])
+  const table = []
+  for (let variable in window) {
+    if (!original.includes(variable)) {
+      table.push([variable, `${window[variable]}`])
     }
   }
+  console.table(table)
 }
 
 async function CloudFlareDomain(name) {
@@ -37,7 +39,7 @@ async function CloudFlareDomain(name) {
 
   var prices = []
   console.log(`Start Search (${domains.length}domains)`)
-  for (i = 0; i < searchDomains.length; i++) {
+  for (let i = 0; i < searchDomains.length; i++) {
     let value = searchDomains[i]
     console.log(`Search: No.${i + 1}/${searchDomains.length}`)
     const result = await fetch(url, {

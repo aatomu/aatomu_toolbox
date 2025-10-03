@@ -1,26 +1,54 @@
-const boosterHeight = 420
-const boosterWidth = 300
+const booster = {
+  height: 420,
+  width: 300
+}
 
 // 消したらService Checker使えない
 console.log("Chrome Addon is Loaded!")
-// 読み込み
-chrome.runtime.onInstalled.addListener(init())
-function init() {
+
+
+// MARK: onInstall
+chrome.runtime.onInstalled.addListener(async () => {
   // 読み込み 通知
   console.log("Init Call")
-  // Context Menu 全削除
+
+  // MARK: > contextMenu
   chrome.contextMenus.removeAll()
-  // Context Menu 生成
   chrome.contextMenus.create({
     id: 'master',
     title: 'atomuの道具箱',
     contexts: ["all"]
   })
 
+  // MARK: > storage
+  // いろんなやつの初期値
+  let config = await chrome.storage.local.get(null)
+  if (Object.keys(config).length === 0) {
+    config = {
+      enableCreeper: true,
+      youtube: {
+        isLiveAcceleration: false,
+        liveAccelerationRate: 5
+      },
+      amazon: {
+        greeting: "おはー",
+        enableSecret: true,
+        showBuyButton: false
+      },
+      secret: {
+        name: "Atomu",
+        postCode: "minecraft:over_world",
+        address: "Minecraft",
+      },
+    }
+    chrome.storage.local.set(config)
+  }
+
+  /** @type {chrome.contextMenus.CreateProperties[]} */
   const menuList = [
     // 常時表示
     { parentId: "master", id: 'copy_link', title: 'Copy URL', contexts: ["all"] },
-    { parentId: "master", id: 'view_creeper', title: 'View Creeper', type: 'checkbox', contexts: ["all"] },
+    { parentId: "master", id: 'view_creeper', title: 'View Creeper', type: 'checkbox', contexts: ["all"], checked: config.enableCreeper },
     { parentId: "master", id: 'volume_booster', title: 'Volume Booster', contexts: ["all"] },
     // Shortのページのみ
     { parentId: "master", id: 'separator_short', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
@@ -42,29 +70,15 @@ function init() {
     try {
       chrome.contextMenus.create(menu)
     } catch (e) {
-      console.log(e)
+      console.error("contextMenus.create", e)
     }
   })
-  // いろんなやつの初期値
-  chrome.storage.sync.get(["Setting"]).then((result) => {
-    let setting = result.Setting
-    if (setting == undefined) {
-      setting = {
-        LiveAcceleration: false,
-        LiveAccelerationRate: 5,
-        User: "Atomu",
-        Address: "Minecraft",
-        PostCode: "minecraft:over_world",
-        Greeting: "おはー",
-        SecretAmazonMode: true,
-        ShowAmazonBuyButton: false,
-      }
-      chrome.storage.sync.set({ Setting: setting })
-    }
-  })
-}
 
-// 右クリメニュー 呼び出し
+
+
+})
+
+// MARK: menu onClick
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   console.log("Context Menu Click:")
   console.log("  Info:", info)
@@ -79,7 +93,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     case "copy_link":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () {
+        func: function () {
           // url
           let url = window.location.href
           // Amazonのトラックを削除
@@ -100,15 +114,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       })
       return
     case "view_creeper":
-      chrome.storage.sync.set({ isViewCreeper: info.checked })
+      chrome.storage.local.set({ enableCreeper: info.checked })
       return
 
     case "volume_booster":
       chrome.windows.create({
         type: "popup",
-        url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
-        width: boosterWidth,
-        height: boosterHeight
+        url: chrome.runtime.getURL("src/extension/booster/index.html") + `?id=${tab.id}`,
+        width: booster.width,
+        height: booster.height
       })
       return
 
@@ -128,82 +142,82 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     case "amazon":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.amazon.co.jp/s?k=${window.getSelection().toString()}`, "_blank") }
+        func: function () { window.open(`https://www.amazon.co.jp/s?k=${window.getSelection().toString()}`, "_blank") }
       })
       return
     case "yahoo_auction":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://auctions.yahoo.co.jp/search/search?p=${window.getSelection().toString()}`, "_blank") }
+        func: function () { window.open(`https://auctions.yahoo.co.jp/search/search?p=${window.getSelection().toString()}`, "_blank") }
       })
       return
     case "yahoo_shop":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://shopping.yahoo.co.jp/search?p=${window.getSelection().toString()}`, "_blank") }
+        func: function () { window.open(`https://shopping.yahoo.co.jp/search?p=${window.getSelection().toString()}`, "_blank") }
       })
       return
     case "kakaku":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://kakaku.com/search_results/${window.getSelection().toString()}/`, "_blank") }
+        func: function () { window.open(`https://kakaku.com/search_results/${window.getSelection().toString()}/`, "_blank") }
       })
       return
     case "youtube":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.youtube.com/results?search_query=${window.getSelection().toString()}`, "_blank") }
+        func: function () { window.open(`https://www.youtube.com/results?search_query=${window.getSelection().toString()}`, "_blank") }
       })
       return
     case "osu":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://osu.ppy.sh/beatmapsets?q=${window.getSelection().toString()}`, "_blank") }
+        func: function () { window.open(`https://osu.ppy.sh/beatmapsets?q=${window.getSelection().toString()}`, "_blank") }
       })
       return
     case "googleJP":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.google.com/search?q=${window.getSelection().toString()}&gl=jp&hl=ja&pws=0`, "_blank") }
+        func: function () { window.open(`https://www.google.com/search?q=${window.getSelection().toString()}&gl=jp&hl=ja&pws=0`, "_blank") }
       })
       return
     case "googleEN":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.google.com/search?q=${window.getSelection().toString()}&gl=us&hl=en&pws=0`, "_blank") }
+        func: function () { window.open(`https://www.google.com/search?q=${window.getSelection().toString()}&gl=us&hl=en&pws=0`, "_blank") }
       })
       return
     case "deepL_ja":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.deepl.com/translator#ja/en/${window.getSelection().toString()}`, "_blank") }
+        func: function () { window.open(`https://www.deepl.com/translator#ja/en/${window.getSelection().toString()}`, "_blank") }
       })
       return
     case "deepL_en":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        function: function () { window.open(`https://www.deepl.com/translator#en/ja/${window.getSelection().toString()}`, "_blank") }
+        func: function () { window.open(`https://www.deepl.com/translator#en/ja/${window.getSelection().toString()}`, "_blank") }
       })
       return
   }
 })
 
-// ショートカットキー 呼び出し
+// MARK: shortcut onCommand
 chrome.commands.onCommand.addListener((command, tab) => {
   console.log(`Command: ${command}`);
   switch (command) {
     case "volume_booster":
       chrome.windows.create({
         type: "popup",
-        url: chrome.runtime.getURL("popup/booster.html") + `?id=${tab.id}`,
-        width: boosterWidth,
-        height: boosterHeight
+        url: chrome.runtime.getURL("src/extension/booster/index.html") + `?id=${tab.id}`,
+        width: booster.width,
+        height: booster.height
       })
       return
   }
 });
 
-// content.js 呼び出し
+// MARK: runtime onMessage
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log(`Message:`, message);
   if (message.injection && sender.tab && sender.tab.id) {

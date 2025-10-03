@@ -1,5 +1,5 @@
 // fake e.isTrusted = true
-(function () {
+(() => {
   console.log("[Bypass] Overriding isTrusted");
 
   Element.prototype._addEventListener = Element.prototype.addEventListener;
@@ -18,6 +18,7 @@
       return originalHandler(...args2);
     };
 
+    // @ts-expect-error
     return this._addEventListener(...args);
   };
 })();

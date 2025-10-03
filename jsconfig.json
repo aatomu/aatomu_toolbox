@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "module": "esnext",
+    "moduleResolution": "classic",
+    "lib": ["es2024", "dom", "webworker"],
+    "target": "es2024",
+    "baseUrl": "."
+  },
+  "include": ["**/*"],
+  "exclude": ["node_modules"]
+}

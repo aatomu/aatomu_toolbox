@@ -74,36 +74,8 @@
   </div>
   <br>
   Extension Setting:<br>
-  <div class="secretSettings">
-    <div class="secretSettingsList">
-      <span>LiveAcceleration:</span>
-      <span>LiveAccelerationRate:</span>
-      <span>User:</span>
-      <span>Address:</span>
-      <span>PostCode:</span>
-      <span>Greeting:</span>
-      <span>AmazonSecretMode:</span>
-      <span style="color:red;">Show Amazon Buy Button</span>
-      <span>Save:</span>
-    </div>
-    <div class="secretSettingsList">
-      <label class="switch"><input type="checkbox" id="LiveAcceleration">
-        <div></div>
-      </label>
-      <div>x<span id="LiveAccelerationRateValue">1</span><input type="range" id="LiveAccelerationRate" min="1" max="5" step="0.1"></div>
-      <input type="text" id="User">
-      <input type="text" id="Address">
-      <input type="text" id="PostCode">
-      <input type="text" id="Greeting">
-      <label class="switch"><input type="checkbox" id="SecretAmazonMode">
-        <div></div>
-      </label>
-      <label class="switch"><input type="checkbox" id="ShowAmazonBuyButton">
-        <div></div>
-      </label>
-      <div><span id="Saved"></span><input type="button" id="SaveSetting" value="Click Here"></div>
-    </div>
-  </div>
+  <textarea id="config-input"></textarea>
+  <button id="config-save">Save</button>
 </body>
 
 <script src="./index.js"></script>

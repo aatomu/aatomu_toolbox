@@ -5,27 +5,60 @@ const tabID = parseInt(searchParams.get("id"))
 
 
 // HTML element
+/** @type {HTMLInputElement} */
+// @ts-expect-error
 const amplifier = document.getElementById("amplifier")
+/** @type {HTMLSpanElement} */
 const amplifierValue = document.getElementById("amplifierValue")
+/** @type {HTMLInputElement} */
+// @ts-expect-error
 const threshold = document.getElementById("threshold")
+/** @type {HTMLSpanElement} */
 const thresholdValue = document.getElementById("thresholdValue")
+/** @type {HTMLDivElement} */
+// @ts-expect-error
 const inputPercentage = document.getElementById("inputPercentage")
+/** @type {HTMLDivElement} */
+// @ts-expect-error
 const currentPercentage = document.getElementById("currentPercentage")
+/** @type {HTMLSpanElement} */
 const currentValue = document.getElementById("currentValue")
+/** @type {HTMLSpanElement} */
 const compressionValue = document.getElementById("compressionValue")
+/** @type {HTMLInputElement} */
+// @ts-expect-error
 const bassEqualizer = document.getElementById("bassEqualizer")
+/** @type {HTMLSpanElement} */
 const bassEqualizerValue = document.getElementById("bassEqualizerValue")
+/** @type {HTMLInputElement} */
+// @ts-expect-error
 const middleEqualizer = document.getElementById("middleEqualizer")
+/** @type {HTMLSpanElement} */
 const middleEqualizerValue = document.getElementById("middleEqualizerValue")
+/** @type {HTMLInputElement} */
+// @ts-expect-error
 const trebleEqualizer = document.getElementById("trebleEqualizer")
+/** @type {HTMLSpanElement} */
 const trebleEqualizerValue = document.getElementById("trebleEqualizerValue")
 
+/** @type {SVGElement} */
+// @ts-expect-error
 const graphArea = document.getElementById("graphArea")
+/** @type {SVGPathElement} */
+// @ts-expect-error
 const fftLineInput = document.getElementById("fftLineInput")
+/** @type {SVGPathElement} */
+// @ts-expect-error
 const fftLineCurrent = document.getElementById("fftLineCurrent")
+/** @type {SVGPathElement} */
+// @ts-expect-error
 const waveLineInput = document.getElementById("waveLineInput")
+/** @type {SVGPathElement} */
+// @ts-expect-error
 const waveLineCurrent = document.getElementById("waveLineCurrent")
 
+/** @type {HTMLVideoElement} */
+// @ts-expect-error
 const preview = document.getElementById("preview")
 
 let isBoosted = false
@@ -35,7 +68,7 @@ window.addEventListener("mousemove", async function () {
   }
   try {
     // Audio context
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioCtx = new AudioContext();
     const frequencyMax = audioCtx.sampleRate / 2
     const gainNode = audioCtx.createGain()
     const analyzerNodeInput = audioCtx.createAnalyser()
@@ -71,14 +104,17 @@ window.addEventListener("mousemove", async function () {
 
     // Media stream
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
+
     const media = await navigator.mediaDevices.getUserMedia({
       audio: {
+        // @ts-expect-error
         mandatory: {
           chromeMediaSource: 'tab',
           chromeMediaSourceId: streamId
         }
       },
       video: {
+        // @ts-expect-error
         mandatory: {
           chromeMediaSource: "tab",
           chromeMediaSourceId: streamId,
@@ -177,29 +213,29 @@ window.addEventListener("mousemove", async function () {
     setInterval(updateTitle, 5000)
     // Create gain setting
     amplifier.addEventListener("input", async function () {
-      gainNode.gain.value = amplifier.value
+      gainNode.gain.value = parseFloat(amplifier.value)
       amplifierValue.innerText = `x${amplifier.value}`
     })
     amplifier.dispatchEvent(new Event("input"))
     // Create threshold setting
     threshold.addEventListener("input", async function () {
-      compressorNode.threshold.setValueAtTime(threshold.value, audioCtx.currentTime)
+      compressorNode.threshold.setValueAtTime(parseFloat(threshold.value), audioCtx.currentTime)
       thresholdValue.innerText = `${threshold.value}[dB]`
     })
     threshold.dispatchEvent(new Event("input"))
     // Create equalizer gain
     bassEqualizer.addEventListener("input", async function () {
-      bassEqualizerNode.gain.value = bassEqualizer.value
+      bassEqualizerNode.gain.value = parseFloat(bassEqualizer.value)
       bassEqualizerValue.innerText = `${bassEqualizer.value}[dB]`
     })
     bassEqualizer.dispatchEvent(new Event("input"))
     middleEqualizer.addEventListener("input", async function () {
-      middleEqualizerNode.gain.value = middleEqualizer.value
+      middleEqualizerNode.gain.value = parseFloat(middleEqualizer.value)
       middleEqualizerValue.innerText = `${middleEqualizer.value}[dB]`
     })
     middleEqualizer.dispatchEvent(new Event("input"))
     trebleEqualizer.addEventListener("input", async function () {
-      trebleEqualizerNode.gain.value = trebleEqualizer.value
+      trebleEqualizerNode.gain.value = parseFloat(trebleEqualizer.value)
       trebleEqualizerValue.innerText = `${trebleEqualizer.value}[dB]`
     })
     trebleEqualizer.dispatchEvent(new Event("input"))
