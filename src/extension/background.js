@@ -55,6 +55,7 @@ chrome.runtime.onInstalled.addListener(async () => {
     { parentId: "master", id: 'short2movie', title: 'Short To Movie', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
     // 選択時のみ
     { parentId: "master", id: 'separator_select', type: 'separator', contexts: ["selection"] },
+    { parentId: "master", id: 'append_h', title: 'Append Prefix h', contexts: ["selection"] },
     { parentId: "master", id: 'amazon', title: '検索: amazon', contexts: ["selection"] },
     { parentId: "master", id: 'yahoo_auction', title: '検索: ヤフオク', contexts: ["selection"] },
     { parentId: "master", id: 'yahoo_shop', title: '検索: ヤフーshop', contexts: ["selection"] },
@@ -136,6 +137,12 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       })
       return
 
+    case "append_h":
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: function () { window.open(`h${window.getSelection().toString()}`, "_blank") }
+      })
+      return
     case "amazon":
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
