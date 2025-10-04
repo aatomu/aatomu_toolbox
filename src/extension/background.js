@@ -73,9 +73,6 @@ chrome.runtime.onInstalled.addListener(async () => {
       console.error("contextMenus.create", e)
     }
   })
-
-
-
 })
 
 // MARK: menu onClick
