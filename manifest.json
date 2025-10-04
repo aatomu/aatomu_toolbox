@@ -79,8 +79,10 @@
       "matches": [
         "https://www.youtube.com/*"
       ],
+      "css": [
+        "src/youtube.css"
+      ],
       "js": [
-        "src/extension/injection.js",
         "src/youtube.js"
       ]
     },

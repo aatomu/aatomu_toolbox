@@ -11,15 +11,6 @@ body>img#creeper.creeper {
   animation: creeper_rotate 10s linear 0s infinite, fadeOut 2s linear both;
 }
 
-.timestamp {
-  box-sizing: border-box;
-  width: 100%;
-}
-
-.play-speed {
-  width: 100%;
-}
-
 @keyframes fadeOut {
   0% {
     opacity: 1;
