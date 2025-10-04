@@ -227,3 +227,17 @@ chrome.commands.onCommand.addListener((command, tab) => {
       return
   }
 });
+
+// MARK: runtime onMessage
+chrome.runtime.onMessage.addListener(onMessage);
+
+/**
+ * @param {{command:string, arg: any}} message
+ * @param {chrome.runtime.MessageSender} sender - 送信元の情報（タブなど）
+ * @param {function(*): void} sendResponse - 応答を返す関数
+ */
+async function onMessage(message, sender, sendResponse) {
+  console.log(`Message:`, message);
+  switch (message.command) {
+  }
+}
