@@ -39,6 +39,7 @@
   .title {
     min-height: 4lh;
   }
+
   .inline-title {
     font-weight: bolder;
   }
@@ -52,6 +53,10 @@
     vertical-align: middle;
   }
 
+  .input-value {
+    text-decoration: underline;
+  }
+
   .decibel-bar {
     position: relative;
     height: 7px;
@@ -63,7 +68,7 @@
     background-color: white;
   }
 
-  .decibel-compression {
+  .decibel-input {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -71,30 +76,27 @@
     height: 100%;
     width: 75%;
 
-    background-color: orangered;
+    background-color: rgba(255,140,0,1);
   }
 
-  .decibel-current {
+  .decibel-output {
     position: absolute;
     top: 0px;
     left: 0px;
 
     height: 100%;
     width: 50%;
-    background-color: royalblue;
+    background-color: rgba(0,140,255,0.8);
   }
 
-  .volume-current {
-    font-weight: bolder;
-  }
 
-  .volume-compression {
+  .volume-input {
     color: lightgray;
     font-size: 80%;
   }
 
-  .range {
-    width: calc(100% - 20ch);
+  .volume-output {
+    font-weight: bolder;
   }
 
   .graphic {
@@ -150,49 +152,51 @@
   <!-- Volume -->
   <div class="box flex">
     <div class="flex value">
-      <span>Volume Boost: </span>
-      <div style="width: 100%;">
-        <input type="range" id="amplifier" value="1" min="0" max="30" step="0.1" class="range">
-        <span id="amplifierValue"></span>
+      <div>
+        <span>Volume Boost: </span>
+        <span class="input-value" id="amplifierValue"></span>
       </div>
+      <input type="range" id="amplifier" value="1" min="0" max="30" step="0.1" style="width: 100%;">
     </div>
+    <br>
     <div class="flex value">
-      <span>Compression Threshold:</span>
-      <div style="width: 100%;">
-        <input type="range" id="threshold" value="0" min="-100" max="0" step="2" class="range">
-        <span id="thresholdValue"></span>
+      <div>
+        <span>Compression Threshold:</span>
+        <span class="input-value" id="thresholdValue"></span>
       </div>
+      <input type="range" id="threshold" value="0" min="-100" max="0" step="2" style="width: 100%;">
     </div>
+    <br>
     <div class="flex value">
-      <span>Current Volume:</span>
-      <div style="width: 100%;">
-        <div class="range decibel-bar" style="display: inline-block;">
-          <div class="decibel-compression" id="inputPercentage"></div>
-          <div class="decibel-current" id="currentPercentage"></div>
-        </div>
-        <span class="volume-current" id="currentValue"></span>
-        <span class="volume-compression" id="compressionValue"></span>
+      <div>
+        <span>Current Volume:</span>
+        <span class="volume-output" id="volumeOutput"></span>
+        <span class="volume-input" id="volumeInput"></span>
+      </div>
+      <div class="decibel-bar" style="width: 100%; display: inline-block;">
+        <div class="decibel-input" id="volumeInputGraph"></div>
+        <div class="decibel-output" id="volumeOutputGraph"></div>
       </div>
     </div>
   </div>
   <!-- Equalizer -->
   <div class="box flex">
     <span>Equalizer:</span>
-    <span>(Bass):</span>
-    <div style="width: 100%;">
-      <input type="range" id="bassEqualizer" value="0" min="-40" max="40" step="2" class="range">
+    <div>
+      <span>(Bass):</span>
       <span id="bassEqualizerValue"></span>
     </div>
-    <span>(Middle):</span>
-    <div style="width: 100%;">
-      <input type="range" id="middleEqualizer" value="0" min="-40" max="40" step="2" class="range">
+    <input type="range" id="bassEqualizer" value="0" min="-40" max="40" step="2" style="width: 100%;">
+    <div>
+      <span>(Middle):</span>
       <span id="middleEqualizerValue"></span>
     </div>
-    <span>(Treble):</span>
-    <div style="width: 100%;">
-      <input type="range" id="trebleEqualizer" value="0" min="-40" max="40" step="2" class="range">
+    <input type="range" id="middleEqualizer" value="0" min="-40" max="40" step="2" style="width: 100%;">
+    <div>
+      <span>(Treble):</span>
       <span id="trebleEqualizerValue"></span>
     </div>
+    <input type="range" id="trebleEqualizer" value="0" min="-40" max="40" step="2" style="width: 100%;">
   </div>
   <!-- Analyze -->
   <div class="box graphic">
@@ -279,9 +283,9 @@
         <path class="freq-line" id="frequencyBar19"></path>
       </g>
       <path style="stroke:green; ; opacity: 0.2;" id="fftLineInput"></path>
-      <path style="stroke:green;" id="fftLineCurrent"></path>
+      <path style="stroke:green;" id="fftLineOutput"></path>
       <path style="stroke: black; opacity: 0.2;" id="waveLineInput"></path>
-      <path style="stroke: black;" id="waveLineCurrent"></path>
+      <path style="stroke: black;" id="waveLineOutput"></path>
     </svg>
     <!-- Tab preview -->
     <video class="preview" id="preview" muted autoplay></video>

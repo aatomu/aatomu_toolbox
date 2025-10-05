@@ -15,16 +15,16 @@ const amplifierValue = document.getElementById("amplifierValue")
 const threshold = document.getElementById("threshold")
 /** @type {HTMLSpanElement} */
 const thresholdValue = document.getElementById("thresholdValue")
+/** @type {HTMLSpanElement} */
+const volumeInput = document.getElementById("volumeInput")
+/** @type {HTMLSpanElement} */
+const volumeOutput = document.getElementById("volumeOutput")
 /** @type {HTMLDivElement} */
 // @ts-expect-error
-const inputPercentage = document.getElementById("inputPercentage")
+const volumeInputGraph = document.getElementById("volumeInputGraph")
 /** @type {HTMLDivElement} */
 // @ts-expect-error
-const currentPercentage = document.getElementById("currentPercentage")
-/** @type {HTMLSpanElement} */
-const currentValue = document.getElementById("currentValue")
-/** @type {HTMLSpanElement} */
-const compressionValue = document.getElementById("compressionValue")
+const volumeOutputGraph = document.getElementById("volumeOutputGraph")
 /** @type {HTMLInputElement} */
 // @ts-expect-error
 const bassEqualizer = document.getElementById("bassEqualizer")
@@ -49,25 +49,26 @@ const graphArea = document.getElementById("graphArea")
 const fftLineInput = document.getElementById("fftLineInput")
 /** @type {SVGPathElement} */
 // @ts-expect-error
-const fftLineCurrent = document.getElementById("fftLineCurrent")
+const fftLineOutput = document.getElementById("fftLineOutput")
 /** @type {SVGPathElement} */
 // @ts-expect-error
 const waveLineInput = document.getElementById("waveLineInput")
 /** @type {SVGPathElement} */
 // @ts-expect-error
-const waveLineCurrent = document.getElementById("waveLineCurrent")
+const waveLineOutput = document.getElementById("waveLineOutput")
 
 /** @type {HTMLVideoElement} */
 // @ts-expect-error
 const preview = document.getElementById("preview")
 
 let isBoosted = false
+// MARK: onMouseMove
 window.addEventListener("mousemove", async function () {
   if (isBoosted) {
     return
   }
   try {
-    // Audio context
+    // MARK: create AudioCtx()
     const audioCtx = new AudioContext();
     const frequencyMax = audioCtx.sampleRate / 2
     const gainNode = audioCtx.createGain()
@@ -79,7 +80,7 @@ window.addEventListener("mousemove", async function () {
     const compressorNode = audioCtx.createDynamicsCompressor()
     compressorNode.knee.setValueAtTime(10, audioCtx.currentTime) // Threshold to Ratio smoothing width[dB]
     compressorNode.ratio.setValueAtTime(15, audioCtx.currentTime)
-    compressorNode.attack.setValueAtTime(0, audioCtx.currentTime)
+    compressorNode.attack.setValueAtTime(0.005, audioCtx.currentTime)
     compressorNode.release.setValueAtTime(0.5, audioCtx.currentTime)
     const bassEqualizerNode = audioCtx.createBiquadFilter()
     bassEqualizerNode.type = "lowshelf"
@@ -90,19 +91,20 @@ window.addEventListener("mousemove", async function () {
     const trebleEqualizerNode = audioCtx.createBiquadFilter()
     trebleEqualizerNode.type = "highshelf"
     trebleEqualizerNode.frequency.value = 2000
-    const analyzerNodeCurrent = audioCtx.createAnalyser()
-    analyzerNodeCurrent.smoothingTimeConstant = 0.25
-    analyzerNodeCurrent.fftSize = 1024
-    analyzerNodeCurrent.maxDecibels = 0
-    analyzerNodeCurrent.minDecibels = -100
+    const analyzerNodeOutput = audioCtx.createAnalyser()
+    analyzerNodeOutput.smoothingTimeConstant = 0.25
+    analyzerNodeOutput.fftSize = 1024
+    analyzerNodeOutput.maxDecibels = 0
+    analyzerNodeOutput.minDecibels = -100
 
+    //MARK: > FFT config
     const fftFrequencyMax = 8000
     const fftBinLength = Math.round(analyzerNodeInput.frequencyBinCount * fftFrequencyMax / frequencyMax)
     const fftBin = new Uint8Array(fftBinLength)
     const waveBinLength = analyzerNodeInput.frequencyBinCount
     const waveBin = new Float32Array(waveBinLength)
 
-    // Media stream
+    // MARK: Media stream
     const streamId = await chrome.tabCapture.getMediaStreamId({ targetTabId: tabID })
 
     const media = await navigator.mediaDevices.getUserMedia({
@@ -122,9 +124,10 @@ window.addEventListener("mousemove", async function () {
       }
     })
     const track = audioCtx.createMediaStreamSource(media)
-    isBoosted = true
     preview.srcObject = media
+    isBoosted = true
 
+    // MARK: > updateGraph
     function updateGraph() {
       // View area variable
       const areaHeight = graphArea.clientHeight
@@ -133,97 +136,106 @@ window.addEventListener("mousemove", async function () {
       const areaWidth = graphArea.clientWidth
       const fftStepWidth = areaWidth / fftBinLength
       const waveStepWidth = areaWidth / waveBinLength
-
       // Frequency Info Line
       for (let i = 0; i < 20; i++) {
         const frequency = 500 * i
-        // const frequency = 10 * Math.pow(2,i)
         document.getElementById(`frequencyTitle${i}`).innerHTML = `${frequency}Hz`
         document.getElementById(`frequencyBar${i}`).setAttribute("d", `M${(areaWidth / fftFrequencyMax) * frequency},0 L${(areaWidth / fftFrequencyMax) * frequency},${areaHeight}`)
-        // document.getElementById(`frequencyBar${i}`).setAttribute("d", `M${Math.log10(frequency) * fftWidth},0 L${Math.log10(frequency) * fftWidth},${areaHeight}`)
       }
 
-      // Input FFT
+      // MARK: > Input: frequency
       analyzerNodeInput.getByteFrequencyData(fftBin)
       let fftLiner = `M0,${areaHeight - fftBin[0] * fftHeight} `
       for (let i = 1; i < fftBinLength; i++) {
         fftLiner += `L${i * fftStepWidth},${areaHeight - fftBin[i] * fftHeight} `
       }
       fftLineInput.setAttribute("d", fftLiner)
-      // Current FFT
-      analyzerNodeCurrent.getByteFrequencyData(fftBin)
+      // MARK: > Output: frequency
+      analyzerNodeOutput.getByteFrequencyData(fftBin)
       fftLiner = `M0,${areaHeight - fftBin[0] * fftHeight} `
       for (let i = 1; i < fftBinLength; i++) {
         fftLiner += `L${i * fftStepWidth},${areaHeight - fftBin[i] * fftHeight} `
       }
-      fftLineCurrent.setAttribute("d", fftLiner)
+      fftLineOutput.setAttribute("d", fftLiner)
 
-      // Input Wave
+      // MARK: > Input: wave
       analyzerNodeInput.getFloatTimeDomainData(waveBin)
       let waveLiner = `M0,${(areaHeight * 0.5) - waveBin[0] * waveHeight} `
       for (let i = 1; i < waveBinLength; i++) {
         waveLiner += `L${i * waveStepWidth},${(areaHeight * 0.5) - waveBin[i] * waveHeight} `
       }
       waveLineInput.setAttribute("d", waveLiner)
-      // Input Volume by RMS(RootMeanSquare)
+      // MARK: > Input: volume(RMS)
       const inputRMS = Math.sqrt(waveBin.reduce((sum, sample) => {
         sum += sample * sample
         return sum
       }) / waveBin.length)
       const inputDecibel = inputRMS > 0 ? 20 * Math.log10(inputRMS) : analyzerNodeInput.minDecibels
-      // Current Wave
-      analyzerNodeCurrent.getFloatTimeDomainData(waveBin)
+      // MARK: > Output: wave
+      analyzerNodeOutput.getFloatTimeDomainData(waveBin)
       waveLiner = `M0,${(areaHeight * 0.5) - waveBin[0] * waveHeight} `
       for (let i = 1; i < waveBinLength; i++) {
         waveLiner += `L${i * waveStepWidth},${(areaHeight * 0.5) - waveBin[i] * waveHeight} `
       }
-      waveLineCurrent.setAttribute("d", waveLiner)
-      // Current Volume by RMS(RootMeanSquare)
-      const currentRMS = Math.sqrt(waveBin.reduce((sum, sample) => {
+      waveLineOutput.setAttribute("d", waveLiner)
+      // MARK: > Output: volume(RMS)
+      const outputRMS = Math.sqrt(waveBin.reduce((sum, sample) => {
         sum += sample * sample
         return sum
       }) / waveBin.length)
-      const currentDecibel = currentRMS > 0 ? 20 * Math.log10(currentRMS) : analyzerNodeCurrent.minDecibels
+      const outputDecibel = outputRMS > 0 ? 20 * Math.log10(outputRMS) : analyzerNodeOutput.minDecibels
 
-      function decibelToLinearPercent(db, floorDb = -100) {
-        const clampedDb = Math.max(floorDb, db) // 最小値を -100dB に制限
-        const linear = Math.pow(10, clampedDb / 20) // 音圧比（0〜1）
-        return linear * 100                        // パーセント（0〜100）
+      // 対数[dB]を直線[体感音量]
+      function dbToPerceivedLoudnessRatio(db) {
+        // 基準 dB を 0 dBFS (デジタル最大音量)
+        const baseDb = 0
+        const dbDifference = db - baseDb;
+        // ラウドネス比 = 2 ^ (dB差 / 10)
+        // 例えば、-10 dB の場合: 2 ^ (-10 / 10) = 2 ^ (-1) = 0.5 (半分の音量に聞こえる)
+        const ratio = Math.pow(2, dbDifference / 10);
+
+        return ratio; // 0.0 から 1.0 の間の値
       }
-      const decibelRange = analyzerNodeInput.maxDecibels - analyzerNodeInput.minDecibels
-      // const inputVolumePercentage = ((inputDecibel - analyzerNodeInput.minDecibels) / decibelRange) * 100
-      const currentVolumePercentage = ((currentDecibel - analyzerNodeCurrent.minDecibels) / decibelRange) * 100
-      inputPercentage.style.width = `${Math.min(100, decibelToLinearPercent(inputDecibel))}%`
-      currentPercentage.style.width = `${Math.min(100, decibelToLinearPercent(currentDecibel))}%`
-      currentValue.innerText = `${currentDecibel.toFixed(2)}[dB]`
-      compressionValue.innerText = `(${compressorNode.reduction.toFixed(2)}[dB])`
-      if (currentVolumePercentage >= 100) {
-        currentValue.style.color = "DarkRed"
-      } else if (currentVolumePercentage > 95) {
-        currentValue.style.color = "Red"
-      } else if (currentVolumePercentage > 90) {
-        currentValue.style.color = "Yellow"
+
+      // MARK: View volume
+      // > graph
+      const volumeInputRatio = dbToPerceivedLoudnessRatio(inputDecibel)
+      volumeInputGraph.style.width = `${Math.min(volumeInputRatio, 1.00) * 100}%`
+      const volumeOutputRatio = dbToPerceivedLoudnessRatio(outputDecibel)
+      volumeOutputGraph.style.width = `${Math.min(volumeOutputRatio, 1.00) * 100}%`
+      // > text
+      volumeOutput.innerText = `${outputDecibel.toFixed(2)}[dB]`
+      volumeInput.innerText = `(${inputDecibel.toFixed(2)}[dB])`
+      // >> coloring
+      if (volumeOutputRatio >= 1) {
+        volumeOutput.style.color = "DarkRed"
+      } else if (volumeOutputRatio > 0.95) {
+        volumeOutput.style.color = "Red"
+      } else if (volumeOutputRatio > 0.90) {
+        volumeOutput.style.color = "Yellow"
       } else {
-        currentValue.style.color = ""
+        volumeOutput.style.color = ""
       }
+
+      requestAnimationFrame(updateGraph)
     }
 
-    setInterval(updateGraph, 50)
+    updateGraph()
     updateTitle()
     setInterval(updateTitle, 5000)
-    // Create gain setting
+    // MARK: > Create gain setting
     amplifier.addEventListener("input", async function () {
       gainNode.gain.value = parseFloat(amplifier.value)
       amplifierValue.innerText = `x${amplifier.value}`
     })
     amplifier.dispatchEvent(new Event("input"))
-    // Create threshold setting
+    // MARK: > Create threshold setting
     threshold.addEventListener("input", async function () {
       compressorNode.threshold.setValueAtTime(parseFloat(threshold.value), audioCtx.currentTime)
       thresholdValue.innerText = `${threshold.value}[dB]`
     })
     threshold.dispatchEvent(new Event("input"))
-    // Create equalizer gain
+    // MARK: > Create equalizer gain
     bassEqualizer.addEventListener("input", async function () {
       bassEqualizerNode.gain.value = parseFloat(bassEqualizer.value)
       bassEqualizerValue.innerText = `${bassEqualizer.value}[dB]`
@@ -241,15 +253,15 @@ window.addEventListener("mousemove", async function () {
     trebleEqualizer.dispatchEvent(new Event("input"))
 
 
-    // Connect effects
+    // MARK: > Connect effects
     track.
       connect(gainNode).
       connect(analyzerNodeInput).
+      connect(compressorNode).
       connect(bassEqualizerNode).
       connect(middleEqualizerNode).
       connect(trebleEqualizerNode).
-      connect(compressorNode).
-      connect(analyzerNodeCurrent).
+      connect(analyzerNodeOutput).
       connect(audioCtx.destination)
   } catch (e) {
     console.log("Capture Error:")
