@@ -172,12 +172,13 @@ async function youtubeWatch() {
   const adButton = document.querySelector("button.ytp-skip-ad-button")
   if (adButton) {
     if (adButton.style.display != "") return
-    currentVideo.playbackRate = 1.5
+    currentVideo.playbackRate = 3
     if (!data.watch.adSkipped) {
       console.log("Call Ad skip(wait 500~3000ms")
       data.watch.adSkipped = true
       adButton.style.display = "none"
       setTimeout(async () => {
+        currentVideo.playbackRate = 5
         while (currentVideo.readyState > 0) {
           console.log("Waint ad video loading...")
           await new Promise((resolve) => setTimeout(resolve, 100))
