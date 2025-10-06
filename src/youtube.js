@@ -255,4 +255,13 @@ async function youtubeWatch() {
       }
     })
   }
+
+  // MARK: > AFK check
+  const dialog = document.querySelector("tp-yt-paper-dialog:not([aria-hidden])")
+  if (dialog) {
+    const button = document.querySelector("tp-yt-paper-dialog:not([aria-hidden]) button")
+    if (button.getAttribute("aria-label") == "はい") {
+      button.dispatchEvent(new Event("click"))
+    }
+  }
 }
