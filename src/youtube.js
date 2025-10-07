@@ -242,7 +242,7 @@ async function youtubeWatch() {
       /** @type {HTMLButtonElement} */
       const nextCancelButton = endScreen.querySelector("button.ytp-autonav-endscreen-upnext-cancel-button")
       if (isEndScreen && nextCancelButton) {
-        nextCancelButton.dispatchEvent(new Event("click"))
+        nextCancelButton.dispatchEvent(new Event("click",{bubbles:true,cancelable:true}))
       }
 
       // MARK: >> playlist auto next
@@ -251,7 +251,7 @@ async function youtubeWatch() {
       const nextVideo = new URL(nextButton.href)
       if (nextVideo.searchParams.get("list")) {
         console.log("Click playlist next")
-        nextButton.dispatchEvent(new Event("click"))
+        nextButton.dispatchEvent(new Event("click",{bubbles:true,cancelable:true}))
       }
     })
   }
@@ -261,7 +261,7 @@ async function youtubeWatch() {
   if (dialog) {
     const button = document.querySelector("tp-yt-paper-dialog:not([aria-hidden]) button")
     if (button.getAttribute("aria-label") == "はい") {
-      button.dispatchEvent(new Event("click"))
+      button.dispatchEvent(new Event("click",{bubbles:true,cancelable:true}))
     }
   }
 }
