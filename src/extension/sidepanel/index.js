@@ -96,7 +96,7 @@ Symbols.Add("C", "./assets/lapis.png", 3, 7)
 Symbols.Add("D", "./assets/redstone.png", 3, 7)
 Symbols.Add("E", "./assets/gold.png", 3, 7)
 Symbols.Add("F", "./assets/emerald.png", 1, 10)
-Symbols.Add("G", "./assets/diamond.png", 1, 10)
+Symbols.Add("G", "./assets/diamond.png", 0, 10)
 
 // MARK: ReelData
 class Reel {
@@ -141,18 +141,26 @@ class Reel {
   }
 
   /**
-   * 
    * @param {number} count Reel Count
-   */
-  async Pull(count) {
+   * @param {number} luck Last Reel Count
+  */
+  async Pull(count, luck) {
     for (let i = 0; i < count; i++) {
       // Luck依存にする
-      if (count - i === 3 && Math.random() < 0.1) {
-        const symbol = Symbols.GetRandom()
-        for (let x = 0; x < 5; x++) {
-          for (let y = 0; y < 3; y++) {
-            this.reel[x][y] = symbol
-          }
+      if (count - i === 3) {
+        // ランダムインデックス作成
+        const indexList = Array.from({ length: 15 }, (_, i) => [Math.floor(i / 3), i % 3])
+        for (let i = 0; i < indexList.length; i++) {
+          const j = Math.floor(Math.random() * (i + 1))
+
+          const t = indexList[i]
+          indexList[i] = indexList[j]
+          indexList[j] = t
+        }
+
+        const symbol = "G"
+        for (let i = 0; i < luck; i++) {
+          this.reel[indexList[i][0]][indexList[i][1]] = symbol
         }
       }
       this.Shift()
@@ -170,7 +178,7 @@ SlotLever.addEventListener("click", async () => {
   isSpinning = true
   SlotLeverButton.classList.add("pull")
 
-  await ReelData.Pull(10)
+  await ReelData.Pull(10, Math.floor(Math.random() * 15))
 
   SlotLeverButton.classList.remove("pull")
   isSpinning = false
