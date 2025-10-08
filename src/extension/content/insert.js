@@ -61,7 +61,7 @@ async function CloudFlareDomain(name) {
       }
     })
 
-    await sleep(3000)
+    await new Promise((resolve) => setTimeout(resolve, 3000))
   }
   function compare(a, b) {
     var r = 0;
@@ -76,4 +76,3 @@ async function CloudFlareDomain(name) {
   })
 }
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
