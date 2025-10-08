@@ -1,19 +1,164 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>スロットマシン</title>
+  <style>
+    :root {
+      --darker: #19183B;
+      --dark: #708993;
+      --light: #A1C2BD;
+      --lighter: #E7F2EF;
+      --cell-size: 80px;
+      --column-height: calc(var(--cell-size) * 3);
+      --slide-animation: 0.2s;
+    }
 
-  <link href="./style.css" rel="stylesheet">
+    body {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      background-color: var(--darker);
+
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .slot-display {
+      width: min-content;
+      height: min-content;
+      display: flex;
+    }
+
+    .slot-reel {
+      display: grid;
+      grid-template-rows: repeat(3, 1fr);
+      grid-template-columns: repeat(5, 1fr);
+
+      padding: calc(var(--cell-size) / 5);
+
+      border-width: 5px;
+      border-color: var(--light);
+      border-style: solid;
+      border-radius: calc(var(--cell-size) / 5);
+
+      gap: calc(var(--cell-size) / 10);
+    }
+
+    .slot-cell {
+      height: var(--cell-size);
+      width: var(--cell-size);
+      line-height: var(--cell-size);
+      text-align: center;
+
+      border-radius: calc(var(--cell-size) / 5);
+      background-color: var(--dark);
+
+      font-size: calc(var(--cell-size) * 0.7);
+    }
+
+    .slot-lever {
+      height: 100%;
+      width: var(--cell-size);
+
+      position: relative;
+    }
+
+    .slot-lever-bar {
+      position: absolute;
+
+      height: 60%;
+      width: 10%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      border-radius: 5px;
+      background-color: var(--lighter);
+
+    }
+
+    .slot-lever-button {
+
+      position: absolute;
+      width: 50%;
+      aspect-ratio: 1/1;
+
+      left: 50%;
+      top: 20%;
+      transform: translate(-50%, -50%);
+
+      border-radius: 50%;
+
+      background-color: var(--light);
+
+      transition: top 0.25s ease-in-out;
+    }
+
+    .slot-lever-button.pull {
+      top: 80%;
+      transition: top 0.5s ease-in-out;
+    }
+
+    .info-symbol {
+      border-radius: calc(var(--cell-size) / 5);
+      background-color: var(--dark);
+    }
+
+    .info-symbol tr {
+      border-bottom: 5px;
+      border-color: var(--darker);
+      border-style: solid;
+    }
+
+    .info-symbol img {
+      height: calc(var(--cell-size) / 5);
+      width: calc(var(--cell-size) / 5);
+    }
+  </style>
 </head>
 
 <body>
-  <h1>test</h1>
-  <div class="preview-area" id="preview-area">
-    <img class="preview" id="preview">
+  <div class="slot-display">
+    <div id="slot-reel" class="slot-reel">
+      <!-- Column 1 -->
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+      <!-- Column 2 -->
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+      <!-- Column 3 -->
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+      <!-- Column 4 -->
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+      <!-- Column 5 -->
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+      <img class="slot-cell" src="">
+    </div>
+    <div class="slot-lever" id="slot-lever">
+      <div class="slot-lever-bar"></div>
+      <div class="slot-lever-button" id="slot-lever-button"></div>
+    </div>
   </div>
+  <table class="info-symbol">
+    <tbody id="info-symbol">
+
+    </tbody>
+  </table>
 </body>
 
-<script src="./index.js">
-</script>
+<script src="./index.js"></script>
 
 </html>
