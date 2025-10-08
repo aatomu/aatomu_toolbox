@@ -47,6 +47,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   /** @type {chrome.contextMenus.CreateProperties[]} */
   const menuList = [
     // 常時表示
+    { parentId: "master", id: 'jump_extension', title: 'Jump to extension', contexts: ["all"] },
     { parentId: "master", id: 'copy_link', title: 'Copy URL', contexts: ["all"] },
     { parentId: "master", id: 'view_creeper', title: 'View Creeper', type: 'checkbox', contexts: ["all"], checked: config.enableCreeper },
     { parentId: "master", id: 'volume_booster', title: 'Volume Booster', contexts: ["all"] },
