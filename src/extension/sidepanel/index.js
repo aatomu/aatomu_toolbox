@@ -147,10 +147,11 @@ class Reel {
   async Pull(count) {
     for (let i = 0; i < count; i++) {
       // Luck依存にする
-      if (count - i === 3 && Math.random() > 0.7) {
+      if (count - i === 3 && Math.random() < 0.1) {
+        const symbol = Symbols.GetRandom()
         for (let x = 0; x < 5; x++) {
           for (let y = 0; y < 3; y++) {
-            this.reel[x][y] = "A"
+            this.reel[x][y] = symbol
           }
         }
       }
