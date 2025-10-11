@@ -7,3 +7,9 @@ type SlotSymbol = {
     amplifier: number; // 価値に対しての乗数
   };
 };
+
+type ComboLine = {
+  name: string;
+  amplifier: number;
+  pattern: [number, number][];
+};

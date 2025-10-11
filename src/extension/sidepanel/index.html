@@ -62,6 +62,18 @@
       font-size: calc(var(--cell-size) * 0.7);
     }
 
+    @keyframes flash-border {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+      }
+
+      50% {
+        box-shadow: 0 0 0 4px rgba(255, 255, 255, 1);
+      }
+    }
+
     .slot-lever {
       height: 100%;
       width: var(--cell-size);
