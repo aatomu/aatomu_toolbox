@@ -96,7 +96,7 @@ Symbols.Add("C", "./assets/lapis.png", 3, 7)
 Symbols.Add("D", "./assets/redstone.png", 3, 7)
 Symbols.Add("E", "./assets/gold.png", 3, 7)
 Symbols.Add("F", "./assets/emerald.png", 1, 10)
-Symbols.Add("G", "./assets/diamond.png", 0, 10)
+Symbols.Add("G", "./assets/diamond.png", 1, 10)
 
 // MARK: ReelData
 class Reel {
@@ -193,7 +193,7 @@ class Reel {
           indexList[j] = t
         }
 
-        const symbol = "G"
+        const symbol = Symbols.GetRandom()
         for (let i = 0; i < luck; i++) {
           this.reel[indexList[i][0]][indexList[i][1]] = symbol
         }
