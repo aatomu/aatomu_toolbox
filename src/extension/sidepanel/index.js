@@ -275,7 +275,7 @@ class ReelCombo {
     return new Promise((resolve) => {
       img.style.animation = 'none';
       void img.offsetWidth; // リフロー強制
-      img.style.animation = 'flash-border 0.6s ease-in-out';
+      img.style.animation = 'flash-border 0.3s ease-in-out';
 
       img.addEventListener('animationend', () => {
         img.style.animation = '';
