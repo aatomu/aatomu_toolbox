@@ -96,7 +96,6 @@
     }
 
     .slot-lever-button {
-
       position: absolute;
       width: 50%;
       aspect-ratio: 1/1;
@@ -117,20 +116,46 @@
       transition: top 0.5s ease-in-out;
     }
 
-    .info-symbol {
-      border-radius: calc(var(--cell-size) / 5);
+    .info-tables {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: flex-start;
+    }
+
+    .info-table {
+      border-collapse: collapse;
+      color: var(--lighter);
       background-color: var(--dark);
+      border-radius: var(--border);
+      padding: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
-    .info-symbol tr {
-      border-bottom: 5px;
-      border-color: var(--darker);
+    .info-table tr {
+      border-bottom: 1px;
       border-style: solid;
+      border-color: var(--darker);
     }
 
-    .info-symbol img {
-      height: calc(var(--cell-size) / 5);
-      width: calc(var(--cell-size) / 5);
+    .info-table tr:first-child {
+      font-weight: bold;
+    }
+
+    .info-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .info-table td {
+      height: calc(var(--cell-size) / 3);
+      padding: 0px 10px;
+      text-align: center;
+    }
+
+    .info-table img {
+      height: calc(var(--cell-size) / 3);
+      width: calc(var(--cell-size) / 3);
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -164,11 +189,49 @@
       <div class="slot-lever-button" id="slot-lever-button"></div>
     </div>
   </div>
-  <table class="info-symbol">
-    <tbody id="info-symbol">
-
-    </tbody>
-  </table>
+  <div class="info-tables">
+    <table class="info-table">
+      <tbody id="info-symbol">
+        <tr>
+          <td>Icon</td>
+          <td>Chance</td>
+          <td>Amount</td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="info-table">
+      <tbody id="info-combo">
+        <tr>
+          <td>Name</td>
+          <td>Amplifier</td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="info-table">
+      <tbody id="info-value">
+        <tr>
+          <td>Data</td>
+          <td>Value</td>
+        </tr>
+        <tr>
+          <td>Have Coin</td>
+          <td id="info-value-have"></td>
+        </tr>
+        <tr>
+          <td>Bet Coin</td>
+          <td id="info-value-bet"></td>
+        </tr>
+        <tr>
+          <td>Luck</td>
+          <td id="info-value-luck"></td>
+        </tr>
+        <tr>
+          <td>Try</td>
+          <td id="info-value-try"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </body>
 
 <script src="./index.js"></script>
