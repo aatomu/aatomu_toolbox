@@ -11,7 +11,7 @@
       --dark: #708993;
       --light: #A1C2BD;
       --lighter: #E7F2EF;
-      --cell-size: 80px;
+      --cell-size: calc(min(100vh, 100vw) / 8);
       --column-height: calc(var(--cell-size) * 3);
       --border: calc(var(--cell-size) / 5);
       --slide-animation: 0.2s;
@@ -23,11 +23,11 @@
       flex-wrap: nowrap;
       justify-content: center;
       align-items: center;
-      margin: 0;
+      margin: 20px;
       background-color: var(--darker);
 
-      width: 100vw;
-      height: 100vh;
+      width: calc(100vw - 20px * 2);
+      height: calc(100vh - 20px * 2);
 
       gap: var(--border);
     }
@@ -39,8 +39,8 @@
       justify-content: center;
       align-items: center;
 
-      width: 90%;
-      height: var(--cell-size);
+      width: 100%;
+      min-height: var(--cell-size);
 
       border-radius: var(--border);
       background-color: var(--dark);
@@ -141,10 +141,14 @@
     }
 
     .info-tables {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 100%;
+    }
+
+    .info-tables table,
+    .info-tables div {
+      width: 100%;
     }
 
     .info-table {
@@ -180,6 +184,10 @@
       height: calc(var(--cell-size) / 3);
       width: calc(var(--cell-size) / 3);
       vertical-align: middle;
+    }
+
+    .items {
+      width: 100%;
     }
   </style>
 </head>
@@ -232,39 +240,82 @@
         </tr>
       </tbody>
     </table>
-    <table class="info-table">
-      <tbody id="info-value">
-        <tr>
-          <td>Data</td>
-          <td>Value</td>
-        </tr>
-        <tr>
-          <td>Have Coin</td>
-          <td id="info-value-have"></td>
-        </tr>
-        <tr>
-          <td>Bet Coin</td>
-          <td id="info-value-bet"></td>
-        </tr>
-        <tr>
-          <td>Luck</td>
-          <td id="info-value-luck"></td>
-        </tr>
-        <tr>
-          <td>Try</td>
-          <td id="info-value-try"></td>
-        </tr>
-        <tr>
-          <td>Max Combo</td>
-          <td id="info-value-max-combo"></td>
-        </tr>
-        <tr>
-          <td>Max Luck</td>
-          <td id="info-value-max-luck"></td>
-        </tr>
-      </tbody>
-    </table>
+    <div>
+      <table class="info-table">
+        <tbody id="info-value">
+          <tr>
+            <td>Data</td>
+            <td>Value</td>
+          </tr>
+          <tr>
+            <td>Have Coin</td>
+            <td id="info-value-have"></td>
+          </tr>
+          <tr>
+            <td>Ticket</td>
+            <td id="info-value-ticket"></td>
+          </tr>
+          <tr>
+            <td>Mine Cost</td>
+            <td id="info-value-cost"></td>
+          </tr>
+          <tr>
+            <td>Luck</td>
+            <td id="info-value-luck"></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="info-table">
+        <tbody id="info-value">
+          <tr>
+            <td>Max</td>
+            <td>Value</td>
+          </tr>
+          <tr>
+            <td>Mine</td>
+            <td id="info-max-mine"></td>
+          </tr>
+          <tr>
+            <td>Combo</td>
+            <td id="info-max-combo"></td>
+          </tr>
+          <tr>
+            <td>Luck</td>
+            <td id="info-max-luck"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
+  <table class="info-table items">
+    <tbody id="items">
+      <tr>
+        <td>Name</td>
+        <td>Description</td>
+        <td>Ticket</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Purchase</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Purchase</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Purchase</td>
+      </tr>
+    </tbody>
+  </table>
 </body>
 
 <script src="./index.js"></script>

@@ -324,10 +324,10 @@ class ReelBase {
     ["", "", "", "", "", ""],
   ]
 
-  /** @type {{have:number,bet:number}} */
+  /** @type {{have:number,cost:number}} */
   coin = {
     have: 10,
-    bet: 2
+    cost: 2
   }
   /** @type {{current:number,max:number}} */
   luck = {
@@ -335,7 +335,9 @@ class ReelBase {
     max: 0,
   }
   /** @type {number} */
-  try = 0
+  ticket = 0
+  /** @type {number} */
+  mine = 0
   /** @type {number} */
   maxCombo = 0
 
@@ -355,23 +357,28 @@ class ReelBase {
     InfoValueHave.textContent = this.coin.have.toString()
     /** @type {HTMLTableCellElement} */
     // @ts-expect-error
-    const InfoValueBet = document.getElementById("info-value-bet")
-    InfoValueBet.textContent = this.coin.bet.toString()
+    const InfoValueTicket = document.getElementById("info-value-ticket")
+    InfoValueTicket.textContent = this.ticket.toString()
+    /** @type {HTMLTableCellElement} */
+    // @ts-expect-error
+    const InfoValueCost = document.getElementById("info-value-cost")
+    InfoValueCost.textContent = this.coin.cost.toString()
     /** @type {HTMLTableCellElement} */
     // @ts-expect-error
     const InfoValueLuck = document.getElementById("info-value-luck")
     InfoValueLuck.textContent = this.luck.current.toString()
+
     /** @type {HTMLTableCellElement} */
     // @ts-expect-error
-    const InfoValueTry = document.getElementById("info-value-try")
-    InfoValueTry.textContent = this.try.toString()
+    const InfoValueMaxMine = document.getElementById("info-max-mine")
+    InfoValueMaxMine.textContent = this.mine.toString()
     /** @type {HTMLTableCellElement} */
     // @ts-expect-error
-    const InfoValueMaxCombo = document.getElementById("info-value-max-combo")
+    const InfoValueMaxCombo = document.getElementById("info-max-combo")
     InfoValueMaxCombo.textContent = this.maxCombo.toString()
     /** @type {HTMLTableCellElement} */
     // @ts-expect-error
-    const InfoValueMaxLuck = document.getElementById("info-value-max-luck")
+    const InfoValueMaxLuck = document.getElementById("info-max-luck")
     InfoValueMaxLuck.textContent = this.luck.max.toString()
   }
 
@@ -405,7 +412,8 @@ class ReelBase {
   */
   // MARK: > Pull
   async Pull(count, luck) {
-    this.try++
+    this.mine++
+    this.ticket++
     for (let i = 0; i < count; i++) {
       play("reel")
       // 最終結果
@@ -456,11 +464,11 @@ SlotLever.addEventListener("click", async () => {
   isSpinning = true
   SlotLeverButton.classList.add("pull")
 
-  if (Reel.coin.have >= Reel.coin.bet) {
+  if (Reel.coin.have >= Reel.coin.cost) {
     play("pull")
     Symbols.Update()
     Combo.Update()
-    Reel.coin.have -= Reel.coin.bet
+    Reel.coin.have -= Reel.coin.cost
     Reel.Update()
     await Reel.Pull(10, Reel.luck.current)
     Combo.Set(Reel)
@@ -477,7 +485,7 @@ SlotLever.addEventListener("click", async () => {
       amount += (symbol.value.current * symbol.value.amplifier) * combo.amplifier
     }
     Reel.coin.have += amount
-    Reel.coin.bet = 2 + Math.floor(Reel.try / 3)
+    Reel.coin.cost = 2 + Math.floor(Reel.mine / 3)
     Reel.maxCombo = Math.max(Reel.maxCombo, comboResult.length)
     Reel.Update()
   } else {
