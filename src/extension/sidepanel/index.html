@@ -27,6 +27,29 @@
 
       width: 100vw;
       height: 100vh;
+
+      gap: var(--border);
+    }
+
+    .information {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+
+      width: 90%;
+      height: var(--cell-size);
+
+      border-radius: var(--border);
+      background-color: var(--dark);
+
+      font-size: calc(var(--cell-size) * 0.5);
+      color: var(--lighter);
+    }
+
+    .information img {
+      height: 100%;
     }
 
     .slot-display {
@@ -161,6 +184,7 @@
 </head>
 
 <body>
+  <div id="information" class="information"></div>
   <div class="slot-display">
     <div id="slot-reel" class="slot-reel">
       <!-- Column 1 -->
