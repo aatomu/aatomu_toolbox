@@ -2,7 +2,7 @@
 const SlotLever = document.getElementById("slot-lever")
 const SlotLeverButton = document.getElementById("slot-lever-button")
 const SlotReel = document.getElementById("slot-reel")
-const InfoSymbol = document.getElementById("info-symbol")
+const Information = document.getElementById("information")
 
 // MARK: Vars
 let isSpinning
