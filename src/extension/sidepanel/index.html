@@ -41,6 +41,7 @@
 
       width: 100%;
       min-height: var(--cell-size);
+      height: var(--cell-size);
 
       border-radius: var(--border);
       background-color: var(--dark);
@@ -142,12 +143,9 @@
 
     .info-tables {
       display: grid;
+      align-items: start;
+      justify-items: center;
       grid-template-columns: repeat(3, 1fr);
-      width: 100%;
-    }
-
-    .info-tables table,
-    .info-tables div {
       width: 100%;
     }
 
@@ -158,10 +156,22 @@
       border-radius: var(--border);
       padding: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      width: calc(100% - 10px * 2);
+    }
+
+    .info-table-current {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      align-items: center;
+
+      height: 100%;
+      width: 100%;
     }
 
     .info-table tr {
-      border-bottom: 1px;
+      border-width: 0 0 1px 0;
       border-style: solid;
       border-color: var(--darker);
     }
@@ -240,7 +250,7 @@
         </tr>
       </tbody>
     </table>
-    <div>
+    <div class="info-table-current">
       <table class="info-table">
         <tbody id="info-value">
           <tr>
