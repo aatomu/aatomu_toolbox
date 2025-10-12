@@ -136,76 +136,49 @@ class ReelCombo {
     ]
   ]
 
-  // MARK: > constructor
-  constructor() {
-    Symbols.Update()
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 6; j++) {
-        this.reel[i][j] = Symbols.GetRandom()
-      }
-    }
+  constructor() { }
+  /** 
+   * @param {ReelBase} reel
+   * */
+  Set(reel) {
+    this.reel = structuredClone(reel.reel)
   }
 
-  // MARK: > Shift
-  Shift() {
-    for (let i = 0; i < 5; i++) {
-      for (let j = 5; j > 0; j--) {
-        this.reel[i][j] = this.reel[i][j - 1]
+  Update() {
+    /** @type {HTMLTableSectionElement} */
+    // @ts-expect-error
+    const InfoCombo = document.getElementById("info-combo")
+    while (InfoCombo.children.length > 1) {
+      InfoCombo.lastElementChild.remove()
+    }
+
+    for (const comboGroup of this.comboList) {
+      for (const combo of comboGroup) {
+        const tr = document.createElement("tr")
+
+        const name = document.createElement("td")
+        name.textContent = combo.name
+        tr.append(name)
+
+        const amplifier = document.createElement("td")
+        amplifier.textContent = "x" + combo.amplifier.toFixed(2)
+        tr.append(amplifier)
+
+        InfoCombo.append(tr)
       }
     }
-    for (let i = 0; i < 5; i++) {
-      this.reel[i][0] = Symbols.GetRandom()
-    }
-  }
-
-  // MARK: > Place
-  Place() {
-    console.log(JSON.stringify(this.reel))
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < 3; j++) {
-        /** @type {HTMLImageElement} */
-        // @ts-expect-error
-        const img = SlotReel.children[i + j * 5]
-        img.src = Symbols.GetData(this.reel[i][j + 3]).url
-      }
-    }
-  }
-
-  /**
-   * @param {number} count Reel Count
-   * @param {number} luck Last Reel Count
-  */
-  // MARK: > Pull
-  async Pull(count, luck) {
-    for (let i = 0; i < count; i++) {
-      // 最終結果
-      if (count - i === 3) {
-        // ランダムインデックス作成
-        const indexList = Array.from({ length: 15 }, (_, i) => [Math.floor(i / 3), i % 3])
-        // Luck依存にする
-        for (let i = 0; i < indexList.length; i++) {
-          const j = Math.floor(Math.random() * (i + 1))
-
-          const t = indexList[i]
-          indexList[i] = indexList[j]
-          indexList[j] = t
-        }
-
-        const symbol = Symbols.GetRandom()
-        for (let i = 0; i < luck; i++) {
-          this.reel[indexList[i][0]][indexList[i][1]] = symbol
-        }
-      }
-      this.Shift()
-      this.Place()
-      await sleep(100)
-    }
-    await this.Match()
   }
 
   // MARK: > Match
+  /**
+   * @return {Promise<{symbol: string;amplifier: number}[]>} count of comboLine
+   */
   async Match() {
+    /** @type {{ name:string, amplifier:number, pattern: [number,number][], base: [number,number] }[]} */
     const comboLines = []
+    /** @type {{symbol: string;amplifier: number}[]} */
+    const comboResult = []
+
     // 判定
     for (const comboGroup of this.comboList) {
       this.checkReel = structuredClone(this.reel)
@@ -216,7 +189,6 @@ class ReelCombo {
             if (this.match([x, y], combo.pattern)) {
               this.replace([x, y], combo.pattern)
               console.log("Match!!")
-              console.log(JSON.stringify(this.checkReel))
               comboLines.push({ name: combo.name, amplifier: combo.amplifier, pattern: combo.pattern, base: [x, y] })
             }
           }
@@ -226,13 +198,26 @@ class ReelCombo {
 
     // 発光
     comboLines.sort((a, b) => { return a.pattern.length - b.pattern.length })
-    for (const combo of comboLines) {
+    for (let i = 0; i < comboLines.length; i++) {
+      const combo = comboLines[i]
       const comboCell = []
       for (const pos of combo.pattern) {
         comboCell.push(this.flashCell(combo.base[0] + pos[0], combo.base[1] + pos[1]))
       }
+      if (i === comboLines.length - 1) {
+        play("combo_last")
+      } else {
+        play("combo")
+      }
+      const symbol = this.reel[combo.base[0] + combo.pattern[0][0]][combo.base[1] + combo.pattern[0][1] + 3]
+      this.setInformation(symbol, combo.name, combo.amplifier)
+      comboResult.push({
+        symbol: symbol,
+        amplifier: combo.amplifier
+      })
       await Promise.all(comboCell)
     }
+    return comboResult
   }
 
   // MARK: > get
@@ -295,10 +280,158 @@ class ReelCombo {
     })
   }
 
+  /**
+   * 
+   * @param {string} symbol symbol name
+   * @param {string} name combo name
+   * @param {number} amplifier combo amplifier
+   */
+  setInformation(symbol, name, amplifier) {
+    while (Information.children.length > 0) {
+      Information.lastElementChild.remove()
+    }
 
+    const symbol_data = Symbols.GetData(symbol)
+    const img = document.createElement("img")
+    img.src = symbol_data.url
+    Information.append(img)
+
+    const text = document.createElement("span")
+    text.textContent = `${name} +${(symbol_data.value.current * symbol_data.value.amplifier) * amplifier}`
+    Information.append(text)
+
+    const description = document.createElement("span")
+    description.textContent = `(${symbol_data.value.current}*${symbol_data.value.amplifier}*${amplifier})`
+    description.style.fontSize = "30%"
+    Information.append(description)
+  }
 }
-const ReelData = new Reel()
-ReelData.Place()
+
+// MARK: ReelData
+class ReelBase {
+  // MARK: Reel
+  // hidden x3, view x3
+  /** @type {[string,string,string,string,string,string][]} */
+  reel = [
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+    ["", "", "", "", "", ""],
+  ]
+
+  /** @type {{have:number,bet:number}} */
+  coin = {
+    have: 10,
+    bet: 2
+  }
+  /** @type {number} */
+  luck = 0
+  /** @type {number} */
+  try = 0
+
+  // MARK: > constructor
+  constructor() {
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 6; j++) {
+        this.reel[i][j] = Symbols.GetRandom()
+      }
+    }
+  }
+
+  Update() {
+    /** @type {HTMLTableCellElement} */
+    // @ts-expect-error
+    const InfoValueHave = document.getElementById("info-value-have")
+    InfoValueHave.textContent = this.coin.have.toString()
+    /** @type {HTMLTableCellElement} */
+    // @ts-expect-error
+    const InfoValueBet = document.getElementById("info-value-bet")
+    InfoValueBet.textContent = this.coin.bet.toString()
+    /** @type {HTMLTableCellElement} */
+    // @ts-expect-error
+    const InfoValueLuck = document.getElementById("info-value-luck")
+    InfoValueLuck.textContent = this.luck.toString()
+    /** @type {HTMLTableCellElement} */
+    // @ts-expect-error
+    const InfoValueTry = document.getElementById("info-value-try")
+    InfoValueTry.textContent = this.try.toString()
+  }
+
+  // MARK: > Shift
+  Shift() {
+    for (let i = 0; i < 5; i++) {
+      for (let j = 5; j > 0; j--) {
+        this.reel[i][j] = this.reel[i][j - 1]
+      }
+    }
+    for (let i = 0; i < 5; i++) {
+      this.reel[i][0] = Symbols.GetRandom()
+    }
+  }
+
+  // MARK: > Place
+  Place() {
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 3; j++) {
+        /** @type {HTMLImageElement} */
+        // @ts-expect-error
+        const img = SlotReel.children[i + j * 5]
+        img.src = Symbols.GetData(this.reel[i][j + 3]).url
+      }
+    }
+  }
+
+  /**
+   * @param {number} count Reel Count
+   * @param {number} luck Last Reel Count
+  */
+  // MARK: > Pull
+  async Pull(count, luck) {
+    this.try++
+    for (let i = 0; i < count; i++) {
+      play("reel")
+      // 最終結果
+      if (count - i === 3) {
+        // ランダムインデックス作成
+        const indexList = Array.from({ length: 15 }, (_, i) => [Math.floor(i / 3), i % 3])
+        // Luck依存にする
+        for (let i = 0; i < indexList.length; i++) {
+          const j = Math.floor(Math.random() * (i + 1))
+
+          const t = indexList[i]
+          indexList[i] = indexList[j]
+          indexList[j] = t
+        }
+
+        const symbol = Symbols.GetRandom()
+        for (let i = 0; i < luck; i++) {
+          this.reel[indexList[i][0]][indexList[i][1]] = symbol
+        }
+      }
+      this.Shift()
+      this.Place()
+      await sleep(100)
+    }
+  }
+}
+
+// MARK: Initialize
+const Symbols = new ReelSymbols()
+Symbols.Add("A", "./assets/coal.png", 7, 3)
+Symbols.Add("B", "./assets/iron.png", 7, 3)
+Symbols.Add("C", "./assets/lapis.png", 3, 7)
+Symbols.Add("D", "./assets/redstone.png", 3, 7)
+Symbols.Add("E", "./assets/gold.png", 3, 7)
+Symbols.Add("F", "./assets/emerald.png", 1, 10)
+Symbols.Add("G", "./assets/diamond.png", 1, 10)
+Symbols.Update()
+const Reel = new ReelBase()
+Reel.Place()
+Reel.Update()
+const Combo = new ReelCombo()
+Combo.Set(Reel)
+Combo.Update()
 
 // MARK: Slot Lever
 SlotLever.addEventListener("click", async () => {
@@ -306,7 +439,31 @@ SlotLever.addEventListener("click", async () => {
   isSpinning = true
   SlotLeverButton.classList.add("pull")
 
-  await ReelData.Pull(10, Math.floor(Math.random() * 15))
+  if (Reel.coin.have >= Reel.coin.bet) {
+    play("pull")
+    Symbols.Update()
+    Combo.Update()
+    Reel.coin.have -= Reel.coin.bet
+    Reel.Update()
+    await Reel.Pull(10, Reel.luck)
+    Combo.Set(Reel)
+    const comboResult = await Combo.Match()
+    if (comboResult.length >= 3) {
+      Reel.luck = 0
+    } else {
+      Reel.luck++
+    }
+    let amount = 0
+    for (const combo of comboResult) {
+      const symbol = Symbols.GetData(combo.symbol)
+      amount += (symbol.value.current * symbol.value.amplifier) * combo.amplifier
+    }
+    Reel.coin.have += amount
+    Reel.coin.bet = 2 + Math.floor(Reel.try / 2)
+    Reel.Update()
+  } else {
+    play("pull_fail")
+  }
 
   SlotLeverButton.classList.remove("pull")
   isSpinning = false
