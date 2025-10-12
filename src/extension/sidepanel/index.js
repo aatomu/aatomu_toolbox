@@ -463,7 +463,7 @@ SlotLever.addEventListener("click", async () => {
       amount += (symbol.value.current * symbol.value.amplifier) * combo.amplifier
     }
     Reel.coin.have += amount
-    Reel.coin.bet = 2 + Math.floor(Reel.try / 2)
+    Reel.coin.bet = 2 + Math.floor(Reel.try / 3)
     Reel.Update()
   } else {
     play("pull_fail")
