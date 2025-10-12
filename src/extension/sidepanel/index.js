@@ -329,10 +329,15 @@ class ReelBase {
     have: 10,
     bet: 2
   }
-  /** @type {number} */
-  luck = 0
+  /** @type {{current:number,max:number}} */
+  luck = {
+    current: 0,
+    max: 0,
+  }
   /** @type {number} */
   try = 0
+  /** @type {number} */
+  maxCombo = 0
 
   // MARK: > constructor
   constructor() {
@@ -355,11 +360,19 @@ class ReelBase {
     /** @type {HTMLTableCellElement} */
     // @ts-expect-error
     const InfoValueLuck = document.getElementById("info-value-luck")
-    InfoValueLuck.textContent = this.luck.toString()
+    InfoValueLuck.textContent = this.luck.current.toString()
     /** @type {HTMLTableCellElement} */
     // @ts-expect-error
     const InfoValueTry = document.getElementById("info-value-try")
     InfoValueTry.textContent = this.try.toString()
+    /** @type {HTMLTableCellElement} */
+    // @ts-expect-error
+    const InfoValueMaxCombo = document.getElementById("info-value-max-combo")
+    InfoValueMaxCombo.textContent = this.maxCombo.toString()
+    /** @type {HTMLTableCellElement} */
+    // @ts-expect-error
+    const InfoValueMaxLuck = document.getElementById("info-value-max-luck")
+    InfoValueMaxLuck.textContent = this.luck.max.toString()
   }
 
   // MARK: > Shift
@@ -449,13 +462,14 @@ SlotLever.addEventListener("click", async () => {
     Combo.Update()
     Reel.coin.have -= Reel.coin.bet
     Reel.Update()
-    await Reel.Pull(10, Reel.luck)
+    await Reel.Pull(10, Reel.luck.current)
     Combo.Set(Reel)
     const comboResult = await Combo.Match()
-    if (comboResult.length >= 3) {
-      Reel.luck = 0
+    if (comboResult.length > 3) {
+      Reel.luck.current = 0
     } else {
-      Reel.luck++
+      Reel.luck.current++
+      Reel.luck.max = Math.max(Reel.luck.current, Reel.luck.max)
     }
     let amount = 0
     for (const combo of comboResult) {
@@ -464,6 +478,7 @@ SlotLever.addEventListener("click", async () => {
     }
     Reel.coin.have += amount
     Reel.coin.bet = 2 + Math.floor(Reel.try / 3)
+    Reel.maxCombo = Math.max(Reel.maxCombo, comboResult.length)
     Reel.Update()
   } else {
     play("pull_fail")
