@@ -10,6 +10,9 @@ type SlotSymbol = {
 
 type ComboLine = {
   name: string;
-  amplifier: number;
+  amplifier: {
+    base: number;
+    current: number;
+  };
   pattern: [number, number][];
 };

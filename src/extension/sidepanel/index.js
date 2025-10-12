@@ -117,26 +117,26 @@ class ReelCombo {
   // 2dはパターンセット
   comboList = [
     [
-      { name: "Jackpot", amplifier: 10, pattern: [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2], [3, 0], [3, 1], [3, 2], [4, 0], [4, 1], [4, 2]] }
+      { name: "Jackpot", amplifier: { base: 10, current: 10 }, pattern: [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2], [3, 0], [3, 1], [3, 2], [4, 0], [4, 1], [4, 2]] }
     ],
     [
-      { name: "⠒⠒⠂", amplifier: 3, pattern: [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]] },
-      { name: "⠒⠒", amplifier: 2, pattern: [[0, 0], [1, 0], [2, 0], [3, 0]] },
-      { name: "⠒⠂", amplifier: 1, pattern: [[0, 0], [1, 0], [2, 0]] },
+      { name: "⠒⠒⠂", amplifier: { base: 3, current: 3 }, pattern: [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]] },
+      { name: "⠒⠒", amplifier: { base: 2, current: 2 }, pattern: [[0, 0], [1, 0], [2, 0], [3, 0]] },
+      { name: "⠒⠂", amplifier: { base: 1, current: 1 }, pattern: [[0, 0], [1, 0], [2, 0]] },
     ],
     [
-      { name: "⠑⠔⠁", amplifier: 2, pattern: [[0, 0], [1, 1], [2, 2], [3, 1], [4, 0]] }
+      { name: "⠑⠔⠁", amplifier: { base: 3, current: 3 }, pattern: [[0, 0], [1, 1], [2, 2], [3, 1], [4, 0]] }
     ],
-    [{ name: "⠔⠑⠄", amplifier: 2, pattern: [[0, 2], [1, 1], [2, 0], [3, 1], [4, 2]] }
-    ],
-    [
-      { name: "⠸", amplifier: 1, pattern: [[0, 0], [0, 1], [0, 2]] },
+    [{ name: "⠔⠑⠄", amplifier: { base: 3, current: 3 }, pattern: [[0, 2], [1, 1], [2, 0], [3, 1], [4, 2]] }
     ],
     [
-      { name: "⠑⠄", amplifier: 1, pattern: [[0, 0], [1, 1], [2, 2]] },
+      { name: "⠸", amplifier: { base: 1, current: 1 }, pattern: [[0, 0], [0, 1], [0, 2]] },
     ],
     [
-      { name: "⠔⠁", amplifier: 1, pattern: [[0, 2], [1, 1], [2, 0]] },
+      { name: "⠑⠄", amplifier: { base: 1, current: 1 }, pattern: [[0, 0], [1, 1], [2, 2]] },
+    ],
+    [
+      { name: "⠔⠁", amplifier: { base: 1, current: 1 }, pattern: [[0, 2], [1, 1], [2, 0]] },
     ]
   ]
 
@@ -165,7 +165,7 @@ class ReelCombo {
         tr.append(name)
 
         const amplifier = document.createElement("td")
-        amplifier.textContent = "x" + combo.amplifier.toFixed(2)
+        amplifier.textContent = "x" + (combo.amplifier.current).toFixed(2)
         tr.append(amplifier)
 
         InfoCombo.append(tr)
@@ -193,7 +193,7 @@ class ReelCombo {
             if (this.match([x, y], combo.pattern)) {
               this.replace([x, y], combo.pattern)
               console.log("Match!!")
-              comboLines.push({ name: combo.name, amplifier: combo.amplifier, pattern: combo.pattern, base: [x, y] })
+              comboLines.push({ name: combo.name, amplifier: combo.amplifier.current, pattern: combo.pattern, base: [x, y] })
             }
           }
         }
@@ -305,7 +305,7 @@ class ReelCombo {
     Information.append(text)
 
     const description = document.createElement("span")
-    description.textContent = `(${symbol_data.value.current}*${symbol_data.value.amplifier}*${amplifier})`
+    description.textContent = `(${symbol_data.value.current * symbol_data.value.amplifier}*${amplifier})`
     description.style.fontSize = "30%"
     Information.append(description)
   }
