@@ -13,6 +13,7 @@
       --lighter: #E7F2EF;
       --cell-size: 80px;
       --column-height: calc(var(--cell-size) * 3);
+      --border: calc(var(--cell-size) / 5);
       --slide-animation: 0.2s;
     }
 
@@ -68,7 +69,7 @@
       border-width: 5px;
       border-color: var(--light);
       border-style: solid;
-      border-radius: calc(var(--cell-size) / 5);
+      border-radius: var(--border);
 
       gap: calc(var(--cell-size) / 10);
     }
@@ -79,7 +80,7 @@
       line-height: var(--cell-size);
       text-align: center;
 
-      border-radius: calc(var(--cell-size) / 5);
+      border-radius: var(--border);
       background-color: var(--dark);
 
       font-size: calc(var(--cell-size) * 0.7);
