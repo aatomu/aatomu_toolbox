@@ -120,23 +120,23 @@ class ReelCombo {
       { name: "Jackpot", amplifier: 10, pattern: [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2], [3, 0], [3, 1], [3, 2], [4, 0], [4, 1], [4, 2]] }
     ],
     [
-      { name: "横5", amplifier: 3, pattern: [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]] },
-      { name: "横4", amplifier: 2, pattern: [[0, 0], [1, 0], [2, 0], [3, 0]] },
-      { name: "横3", amplifier: 1, pattern: [[0, 0], [1, 0], [2, 0]] },
+      { name: "⠒⠒⠂", amplifier: 3, pattern: [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]] },
+      { name: "⠒⠒", amplifier: 2, pattern: [[0, 0], [1, 0], [2, 0], [3, 0]] },
+      { name: "⠒⠂", amplifier: 1, pattern: [[0, 0], [1, 0], [2, 0]] },
     ],
     [
-      { name: "V", amplifier: 2, pattern: [[0, 0], [1, 1], [2, 2], [3, 1], [4, 0]] }
+      { name: "⠑⠔⠁", amplifier: 2, pattern: [[0, 0], [1, 1], [2, 2], [3, 1], [4, 0]] }
     ],
-    [{ name: "^", amplifier: 2, pattern: [[0, 2], [1, 1], [2, 0], [3, 1], [4, 2]] }
-    ],
-    [
-      { name: "縦", amplifier: 1, pattern: [[0, 0], [0, 1], [0, 2]] },
+    [{ name: "⠔⠑⠄", amplifier: 2, pattern: [[0, 2], [1, 1], [2, 0], [3, 1], [4, 2]] }
     ],
     [
-      { name: "右斜め", amplifier: 1, pattern: [[0, 0], [1, 1], [2, 2]] },
+      { name: "⠸", amplifier: 1, pattern: [[0, 0], [0, 1], [0, 2]] },
     ],
     [
-      { name: "左斜め", amplifier: 1, pattern: [[0, 2], [1, 1], [2, 0]] },
+      { name: "⠑⠄", amplifier: 1, pattern: [[0, 0], [1, 1], [2, 2]] },
+    ],
+    [
+      { name: "⠔⠁", amplifier: 1, pattern: [[0, 2], [1, 1], [2, 0]] },
     ]
   ]
 
