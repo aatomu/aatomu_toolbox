@@ -7,6 +7,17 @@ const InfoSymbol = document.getElementById("info-symbol")
 // MARK: Vars
 let isSpinning
 
+const sounds = new Map()
+sounds.set("pull_fail", "./assets/Fizz.ogg")
+sounds.set("pull", "./assets/Piston_extend_JE3.ogg.mp3")
+sounds.set("reel", "./assets/Click_stereo.ogg.mp3")
+sounds.set("combo", "./assets/Successful_hit.ogg")
+sounds.set("combo_last", "./assets/Random_levelup.ogg")
+
+function play(name) {
+  const sound = new Audio(sounds.get(name))
+  sound.play()
+}
 
 // MARK: ReelSymbol
 class ReelSymbol {
@@ -89,17 +100,7 @@ class ReelSymbol {
   }
 }
 
-const Symbols = new ReelSymbol()
-Symbols.Add("A", "./assets/coal.png", 7, 3)
-Symbols.Add("B", "./assets/iron.png", 7, 3)
-Symbols.Add("C", "./assets/lapis.png", 3, 7)
-Symbols.Add("D", "./assets/redstone.png", 3, 7)
-Symbols.Add("E", "./assets/gold.png", 3, 7)
-Symbols.Add("F", "./assets/emerald.png", 1, 10)
-Symbols.Add("G", "./assets/diamond.png", 1, 10)
-
-// MARK: ReelData
-class Reel {
+class ReelCombo {
   // MARK: Reel
   // hidden x3, view x3
   /** @type {[string,string,string,string,string,string][]} */
