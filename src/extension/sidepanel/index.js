@@ -20,7 +20,7 @@ function play(name) {
 }
 
 // MARK: ReelSymbol
-class ReelSymbol {
+class ReelSymbols {
   /** @type {Map<string, SlotSymbol>} */
   symbols = new Map()
   /** @type {{total:number,list:{value:number,symbol:string}[]}} */
@@ -48,8 +48,12 @@ class ReelSymbol {
   }
 
   Update() {
-    while (InfoSymbol.children.length > 0) {
-      InfoSymbol.children[0].remove()
+    /** @type {HTMLTableSectionElement} */
+    // @ts-expect-error
+    const InfoSymbol = document.getElementById("info-symbol")
+
+    while (InfoSymbol.children.length > 1) {
+      InfoSymbol.lastElementChild.remove()
     }
 
     this.weights.total = 0
