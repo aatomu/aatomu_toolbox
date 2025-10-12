@@ -78,9 +78,9 @@ class ReelSymbols {
       chance.textContent = ((symbol.weight / this.weights.total) * 100).toFixed(2) + "%"
       tr.append(chance)
 
-      const value = document.createElement("td")
-      value.textContent = `${symbol.value.current}(x${symbol.value.amplifier})`
-      tr.append(value)
+      const amount = document.createElement("td")
+      amount.textContent = `${symbol.value.current * symbol.value.amplifier}`
+      tr.append(amount)
 
       InfoSymbol.append(tr)
     }
