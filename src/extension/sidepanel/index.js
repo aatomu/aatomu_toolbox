@@ -104,13 +104,7 @@ class ReelCombo {
   // MARK: Reel
   // hidden x3, view x3
   /** @type {[string,string,string,string,string,string][]} */
-  reel = [
-    ["", "", "", "", "", ""],
-    ["", "", "", "", "", ""],
-    ["", "", "", "", "", ""],
-    ["", "", "", "", "", ""],
-    ["", "", "", "", "", ""],
-  ]
+  reel = []
   /** @type {[string,string,string,string,string,string][]} */
   checkReel = []
   /** @type {ComboLine[][]} */
