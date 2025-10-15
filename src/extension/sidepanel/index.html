@@ -199,6 +199,12 @@
     .items {
       width: 100%;
     }
+
+    .items td:nth-child(2) {
+      border-width: 0 2px 0 2px;
+      border-style: solid;
+      border-color: var(--darker);
+    }
   </style>
 </head>
 
@@ -300,29 +306,30 @@
   </div>
   <table class="info-table items">
     <tbody id="items">
+      <colgroup>
+        <col style="width: 30%;">
+        <col style="width: 55%;">
+        <col style="width: 15%;">
+      </colgroup>
       <tr>
         <td>Name</td>
         <td>Description</td>
-        <td>Ticket</td>
+        <td>Ticket(buy)</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
         <td></td>
       </tr>
       <tr>
         <td></td>
         <td></td>
         <td></td>
-        <td>Purchase</td>
       </tr>
       <tr>
         <td></td>
         <td></td>
         <td></td>
-        <td>Purchase</td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>Purchase</td>
       </tr>
     </tbody>
   </table>
