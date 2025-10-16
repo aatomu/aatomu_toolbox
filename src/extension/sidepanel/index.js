@@ -20,9 +20,46 @@ sounds.set("reel", "./assets/Click_stereo.ogg.mp3")
 sounds.set("combo", "./assets/Successful_hit.ogg")
 sounds.set("combo_last", "./assets/Random_levelup.ogg")
 
+/**
+ * @param {string} name
+ */
 function play(name) {
   const sound = new Audio(sounds.get(name))
   sound.play()
+}
+
+/**
+ * @param {string} id 
+ */
+async function flush(id) {
+  /** @type {HTMLElement?} */
+  const element = document.querySelector(`*[data-id="${id}"]`)
+  if (!element) return
+  return new Promise((resolve) => {
+    element.style.animation = 'none';
+    void element.offsetWidth; // リフロー強制
+    element.style.animation = 'flash-border 0.3s ease-in-out';
+
+    element.addEventListener('animationend', () => {
+      element.style.animation = '';
+      resolve();
+    }, { once: true });
+  })
+}
+
+/**
+ * @param {string} id 
+ * @param {boolean} isRemove
+ */
+function isActive(id, isRemove) {
+  if (ItemEnables.includes(id)) {
+    if (isRemove) {
+      const index = ItemEnables.indexOf(id)
+      ItemEnables[index] = null
+    }
+    return true
+  }
+  return false
 }
 
 // MARK: ReelSymbol
@@ -274,19 +311,7 @@ class ReelCombo {
 
   // MARK: > flashCell
   async flashCell(x, y) {
-    /** @type {HTMLImageElement} */
-    // @ts-expect-error
-    const img = SlotReel.children[x + y * 5]
-    return new Promise((resolve) => {
-      img.style.animation = 'none';
-      void img.offsetWidth; // リフロー強制
-      img.style.animation = 'flash-border 0.3s ease-in-out';
-
-      img.addEventListener('animationend', () => {
-        img.style.animation = '';
-        resolve();
-      }, { once: true });
-    })
+    return flush(`slot-cell-${x + 1}${y + 1}`)
   }
 
   /**
