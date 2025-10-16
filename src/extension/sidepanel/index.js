@@ -567,9 +567,9 @@ const ItemEntry = new Map([
   ["reel.rollback_coin", { name: "Totem of Unding", description: "次のスピンで コンボが3コンボ以下で Betの200%が戻る", cost: 10 }],
 ])
 let ItemRerollCost = 0
-/** @type {(string|null)[]} */
+/** @type {[(string|null),(string|null)]} */
 const ItemShop = [null, null]
-/** @type {string[]} */
+/** @type {(string|null)[]} */
 const ItemEnables = []
 
 // MARK: Slot Lever
