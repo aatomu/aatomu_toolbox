@@ -564,7 +564,7 @@ const ItemEntry = new Map([
   ["symbol.add_weight", { name: "Beacom", description: "次のスピンで コンボが成立した シンボルの出現率 を上昇させる", cost: 5 }],
   ["combo.add_current", { name: "Chest", description: "次のスピンで 成立したコンボの倍率 を上昇させる", cost: 10 }],
   ["reel.rollback_luck", { name: "Red Bed", description: "過去最高のLuckにする", cost: 10 }],
-  ["reel.rollback_coin", { name: "Totem of Unding", description: "次のスピンで コンボが成立しなかったら Betの200%が戻る", cost: 10 }],
+  ["reel.rollback_coin", { name: "Totem of Unding", description: "次のスピンで コンボが3コンボ以下で Betの200%が戻る", cost: 10 }],
 ])
 let ItemRerollCost = 0
 /** @type {(string|null)[]} */
