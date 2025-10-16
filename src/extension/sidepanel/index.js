@@ -537,7 +537,7 @@ ItemReroll.addEventListener("click", () => {
   ItemSecondBuy.textContent = SecondItem.cost.toString()
 
   Reel.ticket -= ItemRerollCost
-  ItemRerollCost += 5
+  ItemRerollCost += 2
   ItemReroll.textContent = ItemRerollCost.toString()
 })
 
