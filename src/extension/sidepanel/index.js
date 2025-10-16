@@ -475,9 +475,17 @@ class ReelBase {
 
 // MARK: Reroll
 ItemFirstBuy.addEventListener("click", () => {
-  if (!ItemShop[0]) return
+  if (!ItemShop[0]) {
+    play("pull_fail")
+    return
+  }
+
   const Item = ItemEntry.get(ItemShop[0])
-  if (Item.cost > Reel.ticket) return
+  if (Item.cost > Reel.ticket) {
+    play("pull_fail")
+    return
+  }
+  play("pull")
 
   console.log("Buy: FirstItem")
   ItemEnables.push(ItemShop[0])
@@ -486,9 +494,17 @@ ItemFirstBuy.addEventListener("click", () => {
   ItemFirstBuy.textContent = ""
 })
 ItemSecondBuy.addEventListener("click", () => {
-  if (!ItemShop[1]) return
+  if (!ItemShop[1]) {
+    play("pull_fail")
+    return
+  }
+
   const Item = ItemEntry.get(ItemShop[1])
-  if (Item.cost > Reel.ticket) return
+  if (Item.cost > Reel.ticket) {
+    play("pull_fail")
+    return
+  }
+  play("pull")
 
   console.log("Buy: SecondItem")
   ItemEnables.push(ItemShop[1])
@@ -497,7 +513,11 @@ ItemSecondBuy.addEventListener("click", () => {
   ItemSecondBuy.textContent = ""
 })
 ItemReroll.addEventListener("click", () => {
-  if (ItemRerollCost > Reel.ticket) return
+  if (ItemRerollCost > Reel.ticket) {
+    play("pull_fail")
+    return
+  }
+  play("pull")
 
   const Items = Array.from(ItemEntry.keys())
   // First
@@ -560,10 +580,17 @@ SlotLever.addEventListener("click", async () => {
 
   if (Reel.coin.have >= Reel.coin.cost) {
     play("pull")
+    while (isActive("reel.rollback_luck", true)) {
+      play("combo_last")
+      Reel.luck.current = Reel.luck.max
+      await flush("info-value-luck")
+    }
+
     Symbols.Update()
     Combo.Update()
     Reel.coin.have -= Reel.coin.cost
     Reel.Update()
+
     await Reel.Pull(10, Reel.luck.current)
     Combo.Set(Reel)
     const comboResult = await Combo.Match()
@@ -578,8 +605,19 @@ SlotLever.addEventListener("click", async () => {
       const symbol = Symbols.GetData(combo.symbol)
       amount += (symbol.value.current * symbol.value.amplifier) * combo.amplifier
     }
+
     Reel.coin.have += amount
+    while (isActive("reel.rollback_luck", true)) {
+      if (comboResult.length > 3) {
+        play("combo_last")
+      } else {
+        play("combo_last")
+        Reel.coin.have += 2 * Reel.coin.cost
+        await flush("info-value-have")
+      }
+    }
     Reel.coin.cost = 2 + Math.floor(Reel.mine / 3)
+
     Reel.maxCombo = Math.max(Reel.maxCombo, comboResult.length)
     Reel.Update()
   } else {
