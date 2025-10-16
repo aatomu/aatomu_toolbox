@@ -110,6 +110,7 @@ class ReelSymbols {
     for (const weight of this.weights.list) {
       const symbol = this.symbols.get(weight.symbol)
       const tr = document.createElement("tr")
+      tr.dataset.id = `symbol-${weight.symbol}`
 
       const nameBody = document.createElement("td")
       const name = document.createElement("img")
@@ -202,6 +203,7 @@ class ReelCombo {
     for (const comboGroup of this.comboList) {
       for (const combo of comboGroup) {
         const tr = document.createElement("tr")
+        tr.dataset.id = `combo-${combo.name}`
 
         const name = document.createElement("td")
         name.textContent = combo.name
