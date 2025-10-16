@@ -225,7 +225,7 @@ class ReelCombo {
   async Match() {
     /** @type {{ name:string, amplifier:number, pattern: [number,number][], base: [number,number] }[]} */
     const comboLines = []
-    /** @type {{symbol: string;amplifier: number}[]} */
+    /** @type {{symbol: string, name: string, amplifier: number}[]} */
     const comboResult = []
 
     // 判定
@@ -261,6 +261,7 @@ class ReelCombo {
       this.setInformation(symbol, combo.name, combo.amplifier)
       comboResult.push({
         symbol: symbol,
+        name: combo.name,
         amplifier: combo.amplifier
       })
       await Promise.all(comboCell)
