@@ -470,8 +470,7 @@ ItemSecondBuy.addEventListener("click", () => {
   ItemSecondBuy.textContent = ""
 })
 ItemReroll.addEventListener("click", () => {
-  const Item = ItemEntry.get("shop.reroll")
-  if (Item.cost > Reel.ticket) return
+  if (ItemRerollCost > Reel.ticket) return
 
   const Items = Array.from(ItemEntry.keys())
   // First
@@ -489,9 +488,9 @@ ItemReroll.addEventListener("click", () => {
   ItemSecondDescription.textContent = SecondItem.description
   ItemSecondBuy.textContent = SecondItem.cost.toString()
 
-  Reel.ticket -= Item.cost
-  Item.cost += 5
-  ItemReroll.textContent = Item.cost.toString()
+  Reel.ticket -= ItemRerollCost
+  ItemRerollCost += 5
+  ItemReroll.textContent = ItemRerollCost.toString()
 })
 
 // MARK: Initialize
@@ -519,8 +518,8 @@ const ItemEntry = new Map([
   ["combo.add_current", { name: "Chest", description: "次のスピンで 成立したコンボの倍率 を上昇させる", cost: 10 }],
   ["reel.rollback_luck", { name: "Red Bed", description: "過去最高のLuckにする", cost: 10 }],
   ["reel.rollback_coin", { name: "Totem of Unding", description: "次のスピンで コンボが成立しなかったら Betの200%が戻る", cost: 10 }],
-  ["shop.reroll", { name: "Reroll", description: "アイテムをリロールする", cost: 0 }],
 ])
+let ItemRerollCost = 0
 /** @type {(string|null)[]} */
 const ItemShop = [null, null]
 /** @type {string[]} */
