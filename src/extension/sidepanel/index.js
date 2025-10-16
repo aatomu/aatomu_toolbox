@@ -3,7 +3,13 @@ const SlotLever = document.getElementById("slot-lever")
 const SlotLeverButton = document.getElementById("slot-lever-button")
 const SlotReel = document.getElementById("slot-reel")
 const Information = document.getElementById("information")
-
+const ItemFirstName = document.getElementById("item-first-name")
+const ItemFirstDescription = document.getElementById("item-first-description")
+const ItemFirstBuy = document.getElementById("item-first-buy")
+const ItemSecondName = document.getElementById("item-second-name")
+const ItemSecondDescription = document.getElementById("item-second-description")
+const ItemSecondBuy = document.getElementById("item-second-buy")
+const ItemReroll = document.getElementById("item-reroll")
 // MARK: Vars
 let isSpinning
 
@@ -189,10 +195,9 @@ class ReelCombo {
       for (const combo of comboGroup) {
         for (let x = 0; x < 5; x++) {
           for (let y = 0; y < 3; y++) {
-            console.log(`Base:[${x},${y}], Pattern Name:"${combo.name}"`)
             if (this.match([x, y], combo.pattern)) {
               this.replace([x, y], combo.pattern)
-              console.log("Match!!")
+              console.log(`Base:[${x},${y}], Pattern Name:"${combo.name}" Match!!`)
               comboLines.push({ name: combo.name, amplifier: combo.amplifier.current, pattern: combo.pattern, base: [x, y] })
             }
           }
@@ -441,6 +446,54 @@ class ReelBase {
   }
 }
 
+// MARK: Reroll
+ItemFirstBuy.addEventListener("click", () => {
+  if (!ItemShop[0]) return
+  const Item = ItemEntry.get(ItemShop[0])
+  if (Item.cost > Reel.ticket) return
+
+  console.log("Buy: FirstItem")
+  ItemEnables.push(ItemShop[0])
+  Reel.ticket -= Item.cost
+  ItemShop[0] = null
+  ItemFirstBuy.textContent = ""
+})
+ItemSecondBuy.addEventListener("click", () => {
+  if (!ItemShop[1]) return
+  const Item = ItemEntry.get(ItemShop[1])
+  if (Item.cost > Reel.ticket) return
+
+  console.log("Buy: SecondItem")
+  ItemEnables.push(ItemShop[1])
+  Reel.ticket -= Item.cost
+  ItemShop[1] = null
+  ItemSecondBuy.textContent = ""
+})
+ItemReroll.addEventListener("click", () => {
+  const Item = ItemEntry.get("shop.reroll")
+  if (Item.cost > Reel.ticket) return
+
+  const Items = Array.from(ItemEntry.keys())
+  // First
+  const FirstItemId = Items[Math.floor(Math.random() * Items.length)]
+  ItemShop[0] = FirstItemId
+  const FirstItem = ItemEntry.get(FirstItemId)
+  ItemFirstName.textContent = FirstItem.name
+  ItemFirstDescription.textContent = FirstItem.description
+  ItemFirstBuy.textContent = FirstItem.cost.toString()
+  // First
+  const SecondItemId = Items[Math.floor(Math.random() * Items.length)]
+  ItemShop[1] = SecondItemId
+  const SecondItem = ItemEntry.get(SecondItemId)
+  ItemSecondName.textContent = SecondItem.name
+  ItemSecondDescription.textContent = SecondItem.description
+  ItemSecondBuy.textContent = SecondItem.cost.toString()
+
+  Reel.ticket -= Item.cost
+  Item.cost += 5
+  ItemReroll.textContent = Item.cost.toString()
+})
+
 // MARK: Initialize
 const Symbols = new ReelSymbols()
 Symbols.Add("A", "./assets/coal.png", 7, 3)
@@ -457,6 +510,21 @@ Reel.Update()
 const Combo = new ReelCombo()
 Combo.Set(Reel)
 Combo.Update()
+
+/** @type {Map<string,AbilityItem>} */
+const ItemEntry = new Map([
+  ["symbol.add_current", { name: "Branch Minig", description: "次のスピンで コンボが成立した シンボルの価値 を基礎価値分、上昇させる", cost: 10 }],
+  ["symbol.add_amplifier", { name: "Fortune", description: "次のスピンで コンボが成立した シンボルの倍率 を上昇させる", cost: 5 }],
+  ["symbol.add_weight", { name: "Beacom", description: "次のスピンで コンボが成立した シンボルの出現率 を上昇させる", cost: 5 }],
+  ["combo.add_current", { name: "Chest", description: "次のスピンで 成立したコンボの倍率 を上昇させる", cost: 10 }],
+  ["reel.rollback_luck", { name: "Red Bed", description: "過去最高のLuckにする", cost: 10 }],
+  ["reel.rollback_coin", { name: "Totem of Unding", description: "次のスピンで コンボが成立しなかったら Betの200%が戻る", cost: 10 }],
+  ["shop.reroll", { name: "Reroll", description: "アイテムをリロールする", cost: 0 }],
+])
+/** @type {(string|null)[]} */
+const ItemShop = [null, null]
+/** @type {string[]} */
+const ItemEnables = []
 
 // MARK: Slot Lever
 SlotLever.addEventListener("click", async () => {

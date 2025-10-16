@@ -16,3 +16,9 @@ type ComboLine = {
   };
   pattern: [number, number][];
 };
+
+type AbilityItem = {
+  name: string;
+  description: string;
+  cost: number;
+};
