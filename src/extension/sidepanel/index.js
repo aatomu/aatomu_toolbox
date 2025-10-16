@@ -279,8 +279,45 @@ class ReelCombo {
         name: combo.name,
         amplifier: combo.amplifier
       })
+      if (ItemCount("symbol.add_current") > 0) {
+        flush(`symbol-${symbol}`)
+        Symbols.GetData(symbol).value.current += Symbols.GetData(symbol).value.base * ItemCount("symbol.add_current")
+        console.log(`Item: symbol.add_current, x${ItemCount("symbol.add_current")}`)
+        Symbols.Update()
+      }
+      if (ItemCount("symbol.add_amplifier") > 0) {
+        flush(`symbol-${symbol}`)
+        Symbols.GetData(symbol).value.amplifier += ItemCount("symbol.add_amplifier")
+        console.log(`Item: symbol.add_amplifier, x${ItemCount("symbol.add_amplifier")}`)
+        Symbols.Update()
+      }
+      if (ItemCount("symbol.add_weight") > 0) {
+        flush(`symbol-${symbol}`)
+        Symbols.GetData(symbol).weight += ItemCount("symbol.add_weight") * 2
+        console.log(`Item: symbol.add_weight, x${ItemCount("symbol.add_weight")}`)
+        Symbols.Update()
+      }
+      if (ItemCount("combo.add_current") > 0) {
+        flush(`combo-${combo.name}`)
+        for (const comboGroup of this.comboList) {
+          for (const comboTarget of comboGroup) {
+            if (comboTarget.name == combo.name) {
+              comboTarget.amplifier.current += comboTarget.amplifier.base * ItemCount("combo.add_current")
+              console.log(`Item: combo.add_current, x${ItemCount("combo.add_current")}`)
+              Combo.Update()
+            }
+          }
+        }
+      }
+
       await Promise.all(comboCell)
     }
+
+    ItemRemoveAll("symbol.add_current")
+    ItemRemoveAll("symbol.add_amplifier")
+    ItemRemoveAll("symbol.add_weight")
+    ItemRemoveAll("combo.add_current")
+
     return comboResult
   }
 
