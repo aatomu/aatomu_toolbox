@@ -49,17 +49,32 @@ async function flush(id) {
 
 /**
  * @param {string} id 
- * @param {boolean} isRemove
  */
-function isActive(id, isRemove) {
-  if (ItemEnables.includes(id)) {
-    if (isRemove) {
-      const index = ItemEnables.indexOf(id)
-      ItemEnables[index] = null
+function ItemCount(id) {
+  return ItemEnables.reduce((sum, current) => {
+    if (current === id) {
+      return sum + 1
     }
-    return true
+    return sum
+  }, 0)
+}
+/**
+ * @param {string} id 
+ */
+function ItemRemove(id) {
+  if (ItemEnables.includes(id)) {
+    const index = ItemEnables.indexOf(id)
+    ItemEnables.splice(index, 1)
   }
-  return false
+}
+/**
+ * @param {string} id 
+ */
+function ItemRemoveAll(id) {
+  while (ItemEnables.includes(id)) {
+    const index = ItemEnables.indexOf(id)
+    ItemEnables.splice(index, 1)
+  }
 }
 
 // MARK: ReelSymbol
@@ -581,8 +596,10 @@ SlotLever.addEventListener("click", async () => {
 
   if (Reel.coin.have >= Reel.coin.cost) {
     play("pull")
-    while (isActive("reel.rollback_luck", true)) {
+    while (ItemCount("reel.rollback_luck") > 0) {
+      ItemRemove("reel.rollback_luck")
       play("combo_last")
+      console.log(`Item: reel.rollback_luck, x${ItemCount("reel.rollback_luck")}`)
       Reel.luck.current = Reel.luck.max
       await flush("info-value-luck")
     }
@@ -608,14 +625,16 @@ SlotLever.addEventListener("click", async () => {
     }
 
     Reel.coin.have += amount
-    while (isActive("reel.rollback_luck", true)) {
+    if (ItemCount("reel.rollback_coin") > 0) {
       if (comboResult.length > 3) {
         play("combo_last")
       } else {
         play("combo_last")
-        Reel.coin.have += 2 * Reel.coin.cost
+        console.log(`Item: reel.rollback_coin, +${2 * Reel.coin.cost * ItemCount("reel.rollback_coin")}`)
+        Reel.coin.have += 2 * Reel.coin.cost * ItemCount("reel.rollback_coin")
         await flush("info-value-have")
       }
+      ItemRemoveAll("reel.rollback_coin")
     }
     Reel.coin.cost = 2 + Math.floor(Reel.mine / 3)
 
