@@ -63,6 +63,11 @@
     background-color: lightgreen;
     transform: translateX(calc(1lh + 3px));
   }
+
+  .config-input {
+    width: 50ch;
+    height:  20lh;
+  }
 </style>
 
 <body>
@@ -74,8 +79,8 @@
   </div>
   <br>
   Extension Setting:<br>
-  <textarea id="config-input"></textarea>
-  <button id="config-save">Save</button>
+  <textarea id="config-input" class="config-input"></textarea><br>
+  <button id="config-save">Save</button><span id="config-message"></span>
 </body>
 
 <script src="./index.js"></script>

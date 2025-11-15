@@ -4,6 +4,8 @@ const configInput = document.getElementById("config-input")
 /** @type {HTMLButtonElement} */
 //@ts-expect-error
 const configSave = document.getElementById("config-save")
+/** @type {HTMLSpanElement} */
+const configMessage = document.getElementById("config-message")
 
 async function onLoaded() {
   // History
@@ -52,11 +54,17 @@ function updateHistory(keyword) {
 document.getElementById("config-save").addEventListener("click", saveConfig)
 
 async function saveConfig() {
-  const oldConfig = chrome.storage.local.get(null)
+  const oldConfig = await chrome.storage.local.get(null)
   const newConfig = JSON.parse(configInput.value)
   if (deepCompare(oldConfig, newConfig)) {
     chrome.storage.local.set(newConfig)
+    configMessage.textContent="Saved!!"
+  } else {
+    configMessage.textContent="Change is nothing!!"
   }
+  setTimeout(() => {
+    configMessage.textContent=""
+  },1000)
 }
 
 /**
@@ -65,6 +73,7 @@ async function saveConfig() {
  * @returns {boolean} スキーマと型が完全に一致すれば true、そうでなければ false。
  */
 function deepCompare(obj1, obj2) {
+  console.log(obj1,obj2)
   const type1 = typeof obj1;
   const type2 = typeof obj2;
 
