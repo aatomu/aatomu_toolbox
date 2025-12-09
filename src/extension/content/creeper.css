@@ -3,15 +3,15 @@ body>img#creeper.creeper {
   bottom: 0;
   left: 0;
   z-index: 32767;
-  width: 2vw !important;
+  height: 80px !important;
   animation: creeper_rotate 10s linear 0s infinite;
 }
 
-.creeper_fade {
-  animation: creeper_rotate 10s linear 0s infinite, fadeOut 2s linear both;
+body>img#creeper.creeper_fade {
+  animation: creeper_rotate 10s linear 0s infinite, creeper_fade 2s linear both;
 }
 
-@keyframes fadeOut {
+@keyframes creeper_fade {
   0% {
     opacity: 1;
     visibility: hidden;
