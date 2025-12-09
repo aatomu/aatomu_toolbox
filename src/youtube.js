@@ -33,6 +33,10 @@ const observer = new MutationObserver((mutations, observer) => {
 
   // MARK: > short
   if (path.startsWith("/shorts")) {
+    clearTimeout(data.shorts.scrollTimeout)
+    data.shorts.scrollTimeout = -1
+    data.shorts.scrollInterval = 5
+
     if (data.intervalId !== -1) return
     data.intervalId = setInterval(youtubeShort, 100)
     return
