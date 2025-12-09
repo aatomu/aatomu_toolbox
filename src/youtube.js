@@ -7,6 +7,11 @@ const data = {
   live: {
     isAccelerated: false
   },
+  shorts: {
+    lastTime: 0,
+    scrollTimeout: -1,
+    scrollInterval: 0
+  },
   watch: {
     adSkipped: false,
     prevSrc: ""
@@ -57,6 +62,29 @@ function youtubeShort() {
     console.log("New toolbox-buttons")
     newToolButton()
   }
+
+  const currentVideo = document.querySelector("video")
+  if (!currentVideo) {
+    return
+  }
+
+  if (currentVideo.currentTime < data.shorts.lastTime && data.shorts.scrollTimeout == -1 && data.shorts.scrollInterval == 0) {
+    console.log("Auto scroll call")
+    data.shorts.scrollTimeout = setTimeout(() => {
+      /** @type {HTMLButtonElement} */
+      const nextBtn = document.querySelector('button[aria-label="次の動画"], button[aria-label="Next"]');
+      if (nextBtn) nextBtn.click();
+      data.shorts.scrollTimeout = -1
+      data.shorts.scrollInterval = 5
+      console.log("scrolled")
+    }, 2500)
+  }
+  if (currentVideo.paused) {
+    clearTimeout(data.shorts.scrollTimeout)
+    data.shorts.scrollTimeout = -1
+  }
+  data.shorts.lastTime = currentVideo.currentTime;
+  if (data.shorts.scrollInterval > 0) data.shorts.scrollInterval--
 }
 
 function newToolButton() {
@@ -235,7 +263,7 @@ async function youtubeWatch() {
       /** @type {HTMLButtonElement} */
       const nextCancelButton = endScreen.querySelector("button.ytp-autonav-endscreen-upnext-cancel-button")
       if (isEndScreen && nextCancelButton) {
-        nextCancelButton.dispatchEvent(new Event("click",{bubbles:true,cancelable:true}))
+        nextCancelButton.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
       }
 
       // MARK: >> playlist auto next
@@ -244,7 +272,7 @@ async function youtubeWatch() {
       const nextVideo = new URL(nextButton.href)
       if (nextVideo.searchParams.get("list")) {
         console.log("Click playlist next")
-        nextButton.dispatchEvent(new Event("click",{bubbles:true,cancelable:true}))
+        nextButton.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
       }
     })
   }
@@ -254,7 +282,7 @@ async function youtubeWatch() {
   if (dialog) {
     const button = document.querySelector("tp-yt-paper-dialog:not([aria-hidden]) button")
     if (button.getAttribute("aria-label") == "はい") {
-      button.dispatchEvent(new Event("click",{bubbles:true,cancelable:true}))
+      button.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
     }
   }
 }
