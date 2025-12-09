@@ -173,16 +173,10 @@ async function youtubeWatch() {
   if (adButton) {
     if (adButton.style.display != "") return
     if (!data.watch.adSkipped) {
+      currentVideo.playbackRate = 5
       console.log("Call Ad skip(wait 500~3000ms")
       data.watch.adSkipped = true
-      adButton.style.display = "none"
       setTimeout(async () => {
-        currentVideo.playbackRate = 5
-        while (currentVideo.readyState > 0) {
-          console.log("Waint ad video loading...")
-          await new Promise((resolve) => setTimeout(resolve, 100))
-        }
-
         currentVideo.currentTime = currentVideo.duration
         data.watch.adSkipped = false
       }, Math.random() * 2500 + 500)
