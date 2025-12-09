@@ -125,22 +125,35 @@ class ReelSymbols {
     for (const weight of this.weights.list) {
       const symbol = this.symbols.get(weight.symbol)
       const tr = document.createElement("tr")
-      tr.dataset.id = `symbol-${weight.symbol}`
+      const td = document.createElement("td")
 
-      const nameBody = document.createElement("td")
-      const name = document.createElement("img")
-      name.src = symbol.url
-      nameBody.append(name)
-      tr.append(nameBody)
+      const trigger = document.createElement("button")
+      trigger.setAttribute("popovertarget", `symbol-${weight.symbol}`)
+      trigger.classList.add("popover-trigger")
+      const icon = document.createElement("img")
+      icon.src = symbol.url
+      trigger.append(icon)
+      td.append(trigger)
 
-      const chance = document.createElement("td")
-      chance.textContent = ((symbol.weight / this.weights.total) * 100).toFixed(2) + "%"
-      tr.append(chance)
+      const status = document.createElement("ul")
+      status.id = `symbol-${weight.symbol}`
+      status.setAttribute("popover", "")
+      status.classList.add("popover-target")
+      const name = document.createElement("li")
+      name.textContent = `Name: ${weight.symbol}`
+      status.append(name)
+      const base = document.createElement("li")
+      base.textContent = `Base: ${symbol.value.base}`
+      status.append(base)
+      const current = document.createElement("li")
+      current.textContent = `Current: ${symbol.value.current}*${symbol.value.amplifier}=${symbol.value.current * symbol.value.amplifier}`
+      status.append(current)
+      const chance = document.createElement("li")
+      chance.textContent = `Chance: ${((symbol.weight / this.weights.total) * 100).toFixed(2)}%`
+      status.append(chance)
+      td.append(status)
 
-      const amount = document.createElement("td")
-      amount.textContent = `${symbol.value.current * symbol.value.amplifier}`
-      tr.append(amount)
-
+      tr.append(td)
       InfoSymbol.append(tr)
     }
   }
@@ -218,16 +231,30 @@ class ReelCombo {
     for (const comboGroup of this.comboList) {
       for (const combo of comboGroup) {
         const tr = document.createElement("tr")
-        tr.dataset.id = `combo-${combo.name}`
+        const td = document.createElement("td")
 
-        const name = document.createElement("td")
-        name.textContent = combo.name
-        tr.append(name)
+        const trigger = document.createElement("button")
+        trigger.setAttribute("popovertarget", `combo-${combo.name}`)
+        trigger.textContent = combo.name
+        trigger.classList.add("popover-trigger")
+        td.append(trigger)
 
-        const amplifier = document.createElement("td")
-        amplifier.textContent = "x" + (combo.amplifier.current).toFixed(2)
-        tr.append(amplifier)
+        const status = document.createElement("ul")
+        status.id = `combo-${combo.name}`
+        status.setAttribute("popover", "")
+        status.classList.add("popover-target")
+        const name = document.createElement("li")
+        name.textContent = `Name: ${combo.name}`
+        status.append(name)
+        const base = document.createElement("li")
+        base.textContent = `Base: x${combo.amplifier.base}`
+        status.append(base)
+        const current = document.createElement("li")
+        current.textContent = `Current: x${combo.amplifier.current}`
+        status.append(current)
+        td.append(status)
 
+        tr.append(td)
         InfoCombo.append(tr)
       }
     }
@@ -595,13 +622,13 @@ ItemReroll.addEventListener("click", () => {
 
 // MARK: Initialize
 const Symbols = new ReelSymbols()
-Symbols.Add("A", "./assets/coal.png", 7, 3)
-Symbols.Add("B", "./assets/iron.png", 7, 3)
-Symbols.Add("C", "./assets/lapis.png", 3, 7)
-Symbols.Add("D", "./assets/redstone.png", 3, 7)
-Symbols.Add("E", "./assets/gold.png", 3, 7)
-Symbols.Add("F", "./assets/emerald.png", 1, 10)
-Symbols.Add("G", "./assets/diamond.png", 1, 10)
+Symbols.Add("Coal", "./assets/coal.png", 7, 3)
+Symbols.Add("Iron", "./assets/iron.png", 7, 3)
+Symbols.Add("Lapis Lazzuli", "./assets/lapis.png", 3, 7)
+Symbols.Add("Redstone", "./assets/redstone.png", 3, 7)
+Symbols.Add("Gold", "./assets/gold.png", 3, 7)
+Symbols.Add("Emerald", "./assets/emerald.png", 1, 10)
+Symbols.Add("Diamond", "./assets/diamond.png", 1, 10)
 Symbols.Update()
 const Reel = new ReelBase()
 Reel.Place()
@@ -673,7 +700,7 @@ SlotLever.addEventListener("click", async () => {
       }
       ItemRemoveAll("reel.rollback_coin")
     }
-    Reel.coin.cost = 2 + Math.floor(Reel.mine / 3)
+    Reel.coin.cost = 2 + Math.floor(Math.pow(2, Math.sqrt(Reel.mine / 2)))
 
     Reel.maxCombo = Math.max(Reel.maxCombo, comboResult.length)
     Reel.Update()

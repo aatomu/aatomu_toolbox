@@ -11,7 +11,7 @@
       --dark: #708993;
       --light: #A1C2BD;
       --lighter: #E7F2EF;
-      --cell-size: calc(min(100vh, 100vw) / 8);
+      --cell-size: calc(min(50vh, 100vw) / 8);
       --column-height: calc(var(--cell-size) * 3);
       --border: calc(var(--cell-size) / 5);
       --slide-animation: 0.2s;
@@ -145,7 +145,7 @@
       display: grid;
       align-items: start;
       justify-items: center;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr 1fr 2fr;
       width: 100%;
     }
 
@@ -156,7 +156,6 @@
       border-radius: var(--border);
       margin: 5px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-      width: calc(100% - 10px * 2);
     }
 
     .info-table-current {
@@ -209,11 +208,33 @@
       border-style: solid;
       border-color: var(--darker);
     }
+
+    .popover-trigger {
+      border: none;
+      color: var(--lighter);
+      background-color: transparent;
+      cursor: pointer;
+    }
+
+    .popover-target {
+      border-collapse: collapse;
+      color: var(--lighter);
+      background-color: var(--dark);
+      border-radius: var(--border);
+      box-shadow: 0 0px 50px rgba(0, 0, 0, 0.5);
+      width: calc(var(--cell-size) * 3);
+    }
+
+    .popover-target::backdrop {
+      background-color: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(5px);
+    }
   </style>
 </head>
 
 <body>
-  <div id="information" class="information"></div>
+  <div id="information" class="information">
+  </div>
   <div class="slot-display">
     <div id="slot-reel" class="slot-reel">
       <!-- Row 1 -->
@@ -244,17 +265,14 @@
     <table class="info-table">
       <tbody id="info-symbol">
         <tr>
-          <td>Icon</td>
-          <td>Chance</td>
-          <td>Amount</td>
+          <td>Symbol</td>
         </tr>
       </tbody>
     </table>
     <table class="info-table">
       <tbody id="info-combo">
         <tr>
-          <td>Name</td>
-          <td>Amplifier</td>
+          <td>Combo</td>
         </tr>
       </tbody>
     </table>
@@ -262,7 +280,7 @@
       <table class="info-table">
         <tbody id="info-value">
           <tr>
-            <td>Data</td>
+            <td>Info</td>
             <td>Value</td>
           </tr>
           <tr>
@@ -270,36 +288,27 @@
             <td id="info-value-have" data-id="info-value-have"></td>
           </tr>
           <tr>
-            <td>Ticket</td>
-            <td id="info-value-ticket"></td>
-          </tr>
-          <tr>
             <td>Mine Cost</td>
             <td id="info-value-cost"></td>
           </tr>
           <tr>
+            <td>Ticket</td>
+            <td id="info-value-ticket"></td>
+          </tr>
+          <tr>
             <td>Luck</td>
-            <td id="info-value-luck" data-id="info-value-luck"></td>
-          </tr>
-        </tbody>
-      </table>
-      <table class="info-table">
-        <tbody id="info-value">
-          <tr>
-            <td>Max</td>
-            <td>Value</td>
+            <td>
+              <span id="info-value-luck" data-id="info-value-luck"></span>/<span id="info-max-luck" data-id="info-max-luck"></span>
+            </td>
           </tr>
           <tr>
-            <td>Mine</td>
+            <td>Total Mine</td>
             <td id="info-max-mine"></td>
           </tr>
           <tr>
-            <td>Combo</td>
+            <td>Max Combo</td>
             <td id="info-max-combo"></td>
           </tr>
-          <tr>
-            <td>Luck</td>
-            <td id="info-max-luck" data-id="info-max-luck"></td>
           </tr>
         </tbody>
       </table>
