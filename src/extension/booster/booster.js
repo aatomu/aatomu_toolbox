@@ -61,15 +61,54 @@ const waveLineOutput = document.getElementById("waveLineOutput")
 // @ts-expect-error
 const preview = document.getElementById("preview")
 
+/** @type {HTMLSpanElement} */
+const statusText = /** @type {HTMLSpanElement} */ (document.getElementById("status"))
+
 let isBoosted = false
-// MARK: onMouseMove
-window.addEventListener("mousemove", async function () {
-  if (isBoosted) {
+let isCapturing = false
+let isCaptureFailed = false
+let animationFrameId = -1
+let titleIntervalId = -1
+/** @type {AudioContext | null} */
+let audioCtx = null
+/** @type {MediaStream | null} */
+let mediaStream = null
+// MARK: ShowStatus()
+/**
+ * @param {string} message
+ */
+function showStatus(message) {
+  statusText.textContent = message
+}
+
+// MARK: StopAll()
+function stopAll() {
+  if (animationFrameId !== -1) {
+    cancelAnimationFrame(animationFrameId)
+    animationFrameId = -1
+  }
+  if (titleIntervalId !== -1) {
+    clearInterval(titleIntervalId)
+    titleIntervalId = -1
+  }
+  mediaStream?.getTracks().forEach((track) => track.stop())
+  mediaStream = null
+  audioCtx?.close().catch((error) => {
+    console.warn("Failed to close AudioContext:", error)
+  })
+  audioCtx = null
+  isBoosted = false
+}
+
+// MARK: StartCapture()
+async function startCapture() {
+  if (isBoosted || isCapturing || isCaptureFailed) {
     return
   }
+  isCapturing = true
   try {
     // MARK: create AudioCtx()
-    const audioCtx = new AudioContext();
+    audioCtx = new AudioContext();
     const frequencyMax = audioCtx.sampleRate / 2
     const gainNode = audioCtx.createGain()
     const analyzerNodeInput = audioCtx.createAnalyser()
@@ -123,9 +162,11 @@ window.addEventListener("mousemove", async function () {
         },
       }
     })
+    mediaStream = media
     const track = audioCtx.createMediaStreamSource(media)
     preview.srcObject = media
     isBoosted = true
+    showStatus("")
 
     // MARK: > updateGraph
     function updateGraph() {
@@ -217,12 +258,12 @@ window.addEventListener("mousemove", async function () {
         volumeOutput.style.color = ""
       }
 
-      requestAnimationFrame(updateGraph)
+      animationFrameId = requestAnimationFrame(updateGraph)
     }
 
     updateGraph()
     updateTitle()
-    setInterval(updateTitle, 5000)
+    titleIntervalId = setInterval(updateTitle, 5000)
     // MARK: > Create gain setting
     amplifier.addEventListener("input", async function () {
       gainNode.gain.value = parseFloat(amplifier.value)
@@ -263,23 +304,36 @@ window.addEventListener("mousemove", async function () {
       connect(trebleEqualizerNode).
       connect(analyzerNodeOutput).
       connect(audioCtx.destination)
-  } catch (e) {
-    console.log("Capture Error:")
-    console.log(e)
+  } catch (error) {
+    console.error("Capture Error:", error)
+    stopAll()
+    isCaptureFailed = true
+    showStatus("Capture failed. Click to retry.")
+  } finally {
+    isCapturing = false
   }
-})
+}
 
+window.addEventListener("mousemove", startCapture)
+window.addEventListener("click", function () {
+  if (!isCaptureFailed) return
+  isCaptureFailed = false
+  showStatus("")
+})
+window.addEventListener("beforeunload", stopAll)
+
+chrome.tabs.onRemoved.addListener((removedTabId) => {
+  if (removedTabId === tabID) window.close()
+})
 
 async function updateTitle() {
   // Update title
   try {
     const tab = await chrome.tabs.get(tabID)
-    console.log(tab)
     document.getElementById("title").innerText = `Boost: ${tab.title}`
     document.getElementById("inlineTitle").innerText = tab.title
-  } catch (e) {
-    console.log("Tab Get Error:")
-    console.log(e)
+  } catch (error) {
+    console.error("Tab Get Error:", error)
     window.close()
   }
 }
