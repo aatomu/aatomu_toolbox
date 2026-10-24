@@ -1,5 +1,9 @@
 {
   "devDependencies": {
-    "@types/chrome": "^0.1.21"
+    "@types/chrome": "^0.1.21",
+    "typescript": "^5.9.3"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p jsconfig.json"
   }
 }
