@@ -12,7 +12,6 @@
     "clipboardWrite",
     "history",
     "scripting",
-    "sidePanel",
     "storage",
     "tabs",
     "tabCapture"
@@ -23,9 +22,6 @@
     },
     "default_title": "aatomu's Toolbox",
     "default_popup": "src/extension/popup/index.html"
-  },
-  "side_panel": {
-    "default_path": "src/extension/sidepanel/index.html"
   },
   "commands": {
     "volume_booster": {
@@ -104,7 +100,6 @@
     {
       "resources": [
         "src/extension/content/creeper.webp",
-        "src/extension/content/insert.js",
         "src/amazon.css",
         "src/google.css"
       ],

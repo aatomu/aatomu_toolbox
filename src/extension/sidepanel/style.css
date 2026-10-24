@@ -1,8 +1,0 @@
-.preview-area {
-  width: 100%;
-  aspect-ratio: 1/1;
-}
-
-.preview {
-  transition: transform 0.1 ease-out;
-}

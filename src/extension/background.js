@@ -51,7 +51,6 @@ chrome.runtime.onInstalled.addListener(async () => {
     { parentId: "master", id: 'copy_link', title: 'Copy URL', contexts: ["all"] },
     { parentId: "master", id: 'view_creeper', title: 'View Creeper', type: 'checkbox', contexts: ["all"], checked: config.enableCreeper },
     { parentId: "master", id: 'volume_booster', title: 'Volume Booster', contexts: ["all"] },
-    { parentId: "master", id: 'open_slot', title: 'Open Slot', contexts: ["all"] },
     // Shortのページのみ
     { parentId: "master", id: 'separator_short', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
     { parentId: "master", id: 'short2movie', title: 'Short To Movie', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
@@ -123,11 +122,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         url: chrome.runtime.getURL("src/extension/booster/index.html") + `?id=${tab.id}`,
         width: booster.width,
         height: booster.height
-      })
-      return
-    case "open_slot":
-      chrome.sidePanel.open({
-        windowId: tab.windowId
       })
       return
 
