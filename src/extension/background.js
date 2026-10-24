@@ -3,6 +3,38 @@ const booster = {
   width: 300
 }
 
+const DefaultExtensionConfig = {
+  enableCreeper: true,
+  youtube: {
+    isLiveAcceleration: false,
+    liveAccelerationRate: 5
+  },
+  amazon: {
+    greeting: "おはー",
+    enableSecret: true,
+    showBuyButton: false
+  },
+  secret: {
+    name: "Atomu",
+    postCode: "minecraft:over_world",
+    address: "Minecraft",
+  },
+}
+
+/** @type {Map<string, (text: string) => string>} */
+const SearchUrlBuilders = new Map([
+  ["amazon", (text) => `https://www.amazon.co.jp/s?k=${encodeURIComponent(text)}`],
+  ["yahoo_auction", (text) => `https://auctions.yahoo.co.jp/search/search?p=${encodeURIComponent(text)}`],
+  ["yahoo_shop", (text) => `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(text)}`],
+  ["kakaku", (text) => `https://kakaku.com/search_results/${encodeURIComponent(text)}/`],
+  ["youtube", (text) => `https://www.youtube.com/results?search_query=${encodeURIComponent(text)}`],
+  ["osu", (text) => `https://osu.ppy.sh/beatmapsets?q=${encodeURIComponent(text)}`],
+  ["googleJP", (text) => `https://www.google.com/search?q=${encodeURIComponent(text)}&gl=jp&hl=ja&pws=0`],
+  ["googleEN", (text) => `https://www.google.com/search?q=${encodeURIComponent(text)}&gl=us&hl=en&pws=0`],
+  ["deepL_jp", (text) => `https://www.deepl.com/translator#ja/en/${encodeURIComponent(text)}`],
+  ["deepL_en", (text) => `https://www.deepl.com/translator#en/ja/${encodeURIComponent(text)}`],
+])
+
 // 消したらService Checker使えない
 console.log("Chrome Addon is Loaded!")
 
@@ -13,7 +45,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   console.log("Init Call")
 
   // MARK: > contextMenu
-  chrome.contextMenus.removeAll()
+  await chrome.contextMenus.removeAll()
   chrome.contextMenus.create({
     id: 'master',
     title: 'atomuの道具箱',
@@ -21,28 +53,16 @@ chrome.runtime.onInstalled.addListener(async () => {
   })
 
   // MARK: > storage
-  // いろんなやつの初期値
-  let config = await chrome.storage.local.get(null)
-  if (Object.keys(config).length === 0) {
-    config = {
-      enableCreeper: true,
-      youtube: {
-        isLiveAcceleration: false,
-        liveAccelerationRate: 5
-      },
-      amazon: {
-        greeting: "おはー",
-        enableSecret: true,
-        showBuyButton: false
-      },
-      secret: {
-        name: "Atomu",
-        postCode: "minecraft:over_world",
-        address: "Minecraft",
-      },
-    }
-    chrome.storage.local.set(config)
+  // 既存の設定を壊さず、足りない初期値を補完する
+  const storedConfig = await chrome.storage.local.get(null)
+  const config = {
+    ...DefaultExtensionConfig,
+    ...storedConfig,
+    youtube: { ...DefaultExtensionConfig.youtube, ...storedConfig.youtube },
+    amazon: { ...DefaultExtensionConfig.amazon, ...storedConfig.amazon },
+    secret: { ...DefaultExtensionConfig.secret, ...storedConfig.secret },
   }
+  await chrome.storage.local.set(config)
 
   /** @type {chrome.contextMenus.CreateProperties[]} */
   const menuList = [
@@ -51,6 +71,9 @@ chrome.runtime.onInstalled.addListener(async () => {
     { parentId: "master", id: 'copy_link', title: 'Copy URL', contexts: ["all"] },
     { parentId: "master", id: 'view_creeper', title: 'View Creeper', type: 'checkbox', contexts: ["all"], checked: config.enableCreeper },
     { parentId: "master", id: 'volume_booster', title: 'Volume Booster', contexts: ["all"] },
+    { parentId: "master", id: 'insert_function', title: '関数の挿入', contexts: ["all"] },
+    { parentId: "insert_function", id: 'insert_check_variable', title: 'Check Variable', contexts: ["all"] },
+    { parentId: "insert_function", id: 'insert_cloudflare_domain', title: 'CloudFlare Domain', contexts: ["all"] },
     // Shortのページのみ
     { parentId: "master", id: 'separator_short', type: 'separator', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
     { parentId: "master", id: 'short2movie', title: 'Short To Movie', contexts: ["all"], documentUrlPatterns: ["*://www.youtube.com/shorts/*"] },
@@ -77,19 +100,61 @@ chrome.runtime.onInstalled.addListener(async () => {
   })
 })
 
+// MARK: storage onChanged
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName !== "local" || !changes.enableCreeper) return
+  chrome.contextMenus.update("view_creeper", {
+    checked: Boolean(changes.enableCreeper.newValue)
+  }).catch((error) => {
+    console.warn("Failed to update creeper context menu:", error)
+  })
+})
+
+// MARK: OpenInNewTab()
+/**
+ * @param {string} url
+ * @param {chrome.tabs.Tab | undefined} tab
+ */
+function openInNewTab(url, tab) {
+  if (!tab) {
+    chrome.tabs.create({ url })
+    return
+  }
+  chrome.tabs.create({ url, index: tab.index + 1 })
+}
+
+// MARK: InjectInsertFunctions()
+/**
+ * @param {number} tabId
+ */
+function injectInsertFunctions(tabId) {
+  return chrome.scripting.executeScript({
+    target: { tabId },
+    world: "MAIN",
+    files: ["src/extension/content/insert.js"],
+  })
+}
+
 // MARK: menu onClick
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   console.log("Context Menu Click:")
   console.log("  Info:", info)
   console.log("  Tab:", tab)
+
+  const selectionText = info.selectionText ?? ""
+  const searchUrlBuilder = SearchUrlBuilders.get(String(info.menuItemId))
+  if (searchUrlBuilder) {
+    if (selectionText === "") return
+    openInNewTab(searchUrlBuilder(selectionText), tab)
+    return
+  }
+
   switch (info.menuItemId) {
     case "jump_extension":
-      chrome.tabs.create({
-        active: true,
-        url: 'chrome://extensions/'
-      }, null)
+      openInNewTab('chrome://extensions/', tab)
       return
     case "copy_link":
+      if (typeof tab?.id !== "number") return
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
         func: function () {
@@ -117,6 +182,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       return
 
     case "volume_booster":
+      if (typeof tab?.id !== "number") return
       chrome.windows.create({
         type: "popup",
         url: chrome.runtime.getURL("src/extension/booster/index.html") + `?id=${tab.id}`,
@@ -127,7 +193,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
     case "short2movie":
       // shortのページ以外で実行しない
-      if (!tab.url.includes("youtube.com/shorts/")) {
+      if (!tab?.url?.includes("youtube.com/shorts/")) {
         return
       }
 
@@ -139,70 +205,42 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       return
 
     case "append_h":
+      if (typeof tab?.id !== "number" || selectionText === "") return
       chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        func: function () { window.open(`h${window.getSelection().toString()}`, "_blank") }
+        func: function (text) { window.open(`h${text}`, "_blank") },
+        args: [selectionText]
       })
       return
-    case "amazon":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://www.amazon.co.jp/s?k=${window.getSelection().toString()}`, "_blank") }
-      })
+
+    case "insert_check_variable":
+      if (typeof tab?.id !== "number") return
+      injectInsertFunctions(tab.id)
+        .then(() => chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          world: "MAIN",
+          func: function () {
+            const toolboxWindow = /** @type {any} */ (window)
+            toolboxWindow.CheckVariable?.()
+          }
+        }))
+        .catch((error) => console.error("Failed to run CheckVariable:", error))
       return
-    case "yahoo_auction":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://auctions.yahoo.co.jp/search/search?p=${window.getSelection().toString()}`, "_blank") }
-      })
-      return
-    case "yahoo_shop":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://shopping.yahoo.co.jp/search?p=${window.getSelection().toString()}`, "_blank") }
-      })
-      return
-    case "kakaku":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://kakaku.com/search_results/${window.getSelection().toString()}/`, "_blank") }
-      })
-      return
-    case "youtube":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://www.youtube.com/results?search_query=${window.getSelection().toString()}`, "_blank") }
-      })
-      return
-    case "osu":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://osu.ppy.sh/beatmapsets?q=${window.getSelection().toString()}`, "_blank") }
-      })
-      return
-    case "googleJP":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://www.google.com/search?q=${window.getSelection().toString()}&gl=jp&hl=ja&pws=0`, "_blank") }
-      })
-      return
-    case "googleEN":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://www.google.com/search?q=${window.getSelection().toString()}&gl=us&hl=en&pws=0`, "_blank") }
-      })
-      return
-    case "deepL_ja":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://www.deepl.com/translator#ja/en/${window.getSelection().toString()}`, "_blank") }
-      })
-      return
-    case "deepL_en":
-      chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: function () { window.open(`https://www.deepl.com/translator#en/ja/${window.getSelection().toString()}`, "_blank") }
-      })
+
+    case "insert_cloudflare_domain":
+      if (typeof tab?.id !== "number") return
+      injectInsertFunctions(tab.id)
+        .then(() => chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          world: "MAIN",
+          func: function () {
+            const name = window.prompt("Domain name")
+            if (!name) return
+            const toolboxWindow = /** @type {any} */ (window)
+            toolboxWindow.CloudFlareDomain?.(name)
+          }
+        }))
+        .catch((error) => console.error("Failed to run CloudFlareDomain:", error))
       return
   }
 })
@@ -212,6 +250,7 @@ chrome.commands.onCommand.addListener((command, tab) => {
   console.log(`Command: ${command}`);
   switch (command) {
     case "volume_booster":
+      if (typeof tab?.id !== "number") return
       chrome.windows.create({
         type: "popup",
         url: chrome.runtime.getURL("src/extension/booster/index.html") + `?id=${tab.id}`,
@@ -221,17 +260,3 @@ chrome.commands.onCommand.addListener((command, tab) => {
       return
   }
 });
-
-// MARK: runtime onMessage
-chrome.runtime.onMessage.addListener(onMessage);
-
-/**
- * @param {{command:string, arg: any}} message
- * @param {chrome.runtime.MessageSender} sender - 送信元の情報（タブなど）
- * @param {function(*): void} sendResponse - 応答を返す関数
- */
-async function onMessage(message, sender, sendResponse) {
-  console.log(`Message:`, message);
-  switch (message.command) {
-  }
-}

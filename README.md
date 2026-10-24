@@ -18,6 +18,7 @@
     - Copy URL: Amazon の場合少し短くなる
     - View Creeper: 各サイト 左下のクリーパーの表示設定
     - Volume Booster: 開いているページの音量を上げる
+    - Insert Function: Check Variable / CloudFlare Domain をページに挿入
   - In Youtube Short / Youtube ショート のみ
     - Short To Movie: Short を youtube 動画に変更する
   - In Selected / 文字選択時 のみ
