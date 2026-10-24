@@ -3,11 +3,12 @@ window.addEventListener("keydown", async function (e) {
   if (document.querySelector(".sc-2e1e8eba-1.hChvXu") && e.key == "Shift") {
     /** @type {HTMLButtonElement} */
     const upperButton = document.querySelector("button.sc-d663dab6-0.ikeQOo")
+    const artistList = document.querySelector("div.sc-21f138d8-4.jvydlf")?.children
+    if (!upperButton || !artistList) return
     // チェック開始
     upperButton.style.backgroundColor = "red"
 
     console.log("Pixiv Following Page!")
-    const artistList = document.querySelector("div.sc-21f138d8-4.jvydlf").children
     const now = (new Date()).getTime()
     for (let i = 0; i < artistList.length; i++) {
       const artist = artistList[i]
