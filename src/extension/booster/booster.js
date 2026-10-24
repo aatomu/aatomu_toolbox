@@ -79,7 +79,7 @@ window.addEventListener("mousemove", async function () {
     analyzerNodeInput.minDecibels = -100
     const compressorNode = audioCtx.createDynamicsCompressor()
     compressorNode.knee.setValueAtTime(10, audioCtx.currentTime) // Threshold to Ratio smoothing width[dB]
-    compressorNode.ratio.setValueAtTime(15, audioCtx.currentTime)
+    compressorNode.ratio.setValueAtTime(20, audioCtx.currentTime)
     compressorNode.attack.setValueAtTime(0.005, audioCtx.currentTime)
     compressorNode.release.setValueAtTime(0.5, audioCtx.currentTime)
     const bassEqualizerNode = audioCtx.createBiquadFilter()

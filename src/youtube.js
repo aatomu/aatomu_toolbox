@@ -14,7 +14,8 @@ const data = {
   },
   watch: {
     adSkipped: false,
-    prevSrc: ""
+    prevSrc: "",
+    isEnded: false,
   }
 }
 
@@ -55,14 +56,14 @@ observer.observe(document, { childList: true, subtree: true })
 // MARK: short()
 function youtubeShort() {
   /** @type {HTMLAnchorElement | null} */
-  const titleLink = document.querySelector("ytd-reel-video-renderer[is-active] a.ytp-title-link")
+  const titleLink = document.querySelector("ytd-reel-video-renderer a.ytp-title-link")
   if (!titleLink) return
 
   // Check match URL,titleLink
   if (titleLink.href !== window.location.href) return
 
   // Check valid toolbox-buttons
-  if (!document.querySelector("ytd-reel-video-renderer[is-active] #toolbox-buttons")) {
+  if (!document.querySelector("#toolbox-buttons")) {
     console.log("New toolbox-buttons")
     newToolButton()
   }
@@ -81,7 +82,7 @@ function youtubeShort() {
       data.shorts.scrollTimeout = -1
       data.shorts.scrollInterval = 5
       console.log("scrolled")
-    }, 2500)
+    }, 500)
   }
   if (currentVideo.paused) {
     clearTimeout(data.shorts.scrollTimeout)
@@ -99,7 +100,7 @@ function newToolButton() {
   }
 
   /** @type {HTMLVideoElement|null} */
-  const currentVideo = document.querySelector("ytd-reel-video-renderer[is-active] video")
+  const currentVideo = document.querySelector("ytd-reel-video-renderer video")
   // Check current video
   if (!currentVideo) {
     setTimeout(newToolButton, 100)
@@ -112,7 +113,9 @@ function newToolButton() {
   }
 
   // Get sidebar
-  const sidebar = document.querySelector("ytd-reel-video-renderer[is-active] #actions") ?? document.querySelector("ytd-reel-video-renderer[is-active] div.ytwReelsPlayerOverlayLayoutViewModelHostActionBar")
+  const adSidebar = document.querySelector("div.ytwReelsPlayerOverlayLayoutViewModelHostActionBar")
+  const normalSidebar = document.querySelector("reel-action-bar-view-model")
+  const sidebar = adSidebar ?? normalSidebar
   if (!sidebar) {
     return
   }
@@ -183,11 +186,11 @@ async function youtubeWatch() {
   const url = new URL(window.location.href)
   const params = new URLSearchParams(url.searchParams)
   const playlist = params.get("list")
-  const title = document.querySelector("div#title").innerHTML
-  if (playlist && title) {
-    const playlistPanelTitle = document.querySelector("#content .title.style-scope.ytd-playlist-panel-renderer").innerHTML
+  const title = document.querySelector("div#title *[title]")
+  if (playlist && title && title.textContent !== "") {
+    const playlistPanelTitle = document.querySelector('a[href^="/playlist"]').textContent
 
-    if (!playlistPanelTitle) {
+    if (playlistPanelTitle === "") {
       console.log("Playlist embed notfound")
       if (data.playlist.reloadInterval > 0) {
         data.playlist.reloadInterval--
@@ -208,10 +211,14 @@ async function youtubeWatch() {
       currentVideo.playbackRate = 5
       console.log("Call Ad skip(wait 500~3000ms")
       data.watch.adSkipped = true
-      setTimeout(async () => {
-        currentVideo.currentTime = currentVideo.duration
-        data.watch.adSkipped = false
-      }, Math.random() * 2500 + 500)
+      // setTimeout(async () => {
+      //   while (isNaN(currentVideo.duration)) {
+      //     await new Promise((r) => setTimeout(r, 500))
+      //     console.log("ad duration loading...")
+      //   }
+      //   currentVideo.currentTime = currentVideo.duration
+      //   data.watch.adSkipped = false
+      // }, Math.random() * 5000 + 500)
     }
     return
   }
@@ -246,39 +253,50 @@ async function youtubeWatch() {
     return
   }
 
+  // MARK: > 閲覧確認
+  const checkViorance = document.querySelector("*[aria-label=理解した上で続行する")
+  if (checkViorance) {
+    checkViorance.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
+  }
+
   // MARK: > movie.new
   if (currentVideo.src != data.watch.prevSrc) {
     data.watch.prevSrc = currentVideo.src
+    data.watch.isEnded = false
     console.log("Found New video")
     // 時間差で実行
     setTimeout(function () {
       currentVideo.playbackRate = 1
       console.log("PlayBack speed force set x1")
     }, 1000)
+    return
+  }
 
-    // MARK: > movie.ended
-    currentVideo.addEventListener("ended", () => {
-      console.log("Video has ended.")
+  // MARK: > movie.ended
+  if (currentVideo.duration - currentVideo.currentTime < 0.5 && !data.watch.isEnded) {
+    data.watch.isEnded = true
+    console.log("Video has ended.")
 
-      // MARK: >> canncel auto next
-      /** @type {HTMLDivElement} */
-      const endScreen = document.querySelector("div.ytp-autonav-endscreen-button-container")
-      const isEndScreen = endScreen.style.display != "none"
-      /** @type {HTMLButtonElement} */
-      const nextCancelButton = endScreen.querySelector("button.ytp-autonav-endscreen-upnext-cancel-button")
-      if (isEndScreen && nextCancelButton) {
-        nextCancelButton.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
-      }
+    // MARK: >> playlist auto next
+    /** @type {HTMLAnchorElement} */
+    const nextButton = document.querySelector("a.ytp-next-button")
+    const nextVideo = new URL(nextButton.href)
+    if (nextVideo.searchParams.get("list")) {
+      console.log("Click playlist next")
+      nextButton.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
+      return
+    }
 
-      // MARK: >> playlist auto next
-      /** @type {HTMLAnchorElement} */
-      const nextButton = document.querySelector("a.ytp-next-button")
-      const nextVideo = new URL(nextButton.href)
-      if (nextVideo.searchParams.get("list")) {
-        console.log("Click playlist next")
-        nextButton.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
-      }
-    })
+    // MARK: >> canncel auto next
+    /** @type {HTMLDivElement} */
+    const endScreen = document.querySelector("div.ytp-autonav-endscreen-button-container")
+    const isEndScreen = endScreen.style.display != "none"
+    /** @type {HTMLButtonElement} */
+    const nextCancelButton = endScreen.querySelector("button.ytp-autonav-endscreen-upnext-cancel-button")
+    if (isEndScreen && nextCancelButton) {
+      nextCancelButton.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
+      return
+    }
   }
 
   // MARK: > AFK check
