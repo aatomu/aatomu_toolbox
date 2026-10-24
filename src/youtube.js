@@ -1,9 +1,6 @@
 // Variable
 const data = {
   intervalId: -1,
-  playlist: {
-    reloadInterval: 0
-  },
   live: {
     isAccelerated: false
   },
@@ -18,6 +15,32 @@ const data = {
     isEnded: false,
   }
 }
+
+const PLAYLIST_RELOAD_KEY = "toolbox.playlistReloadAt"
+const PLAYLIST_RELOAD_INTERVAL_MS = 60 * 1000
+
+/** @type {ConfigYoutube} */
+let youtubeConfig = {
+  isLiveAcceleration: false,
+  liveAccelerationRate: 5
+}
+
+// MARK: LoadConfig()
+async function loadConfig() {
+  try {
+    const config = await chrome.storage.local.get(null)
+    youtubeConfig = config.youtube ?? youtubeConfig
+  } catch (error) {
+    console.warn("Failed to load YouTube config:", error)
+  }
+}
+loadConfig()
+
+// MARK: WatchConfig()
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName !== "local" || !changes.youtube) return
+  youtubeConfig = changes.youtube.newValue ?? youtubeConfig
+})
 
 // MARK: Check URL change
 let pathname = ""
@@ -130,7 +153,7 @@ function newToolButton() {
   const currentTime = document.createElement("input")
   currentTime.type = "text"
   currentTime.classList.add("timestamp")
-  currentTime.pattern = "~[0-9]+\.[0-9]+$"
+  currentTime.pattern = "^[0-9]+\\.[0-9]+$"
   currentTime.addEventListener("click", () => {
     currentVideo.pause()
   })
@@ -151,6 +174,7 @@ function newToolButton() {
   durationTime.type = "text"
   durationTime.classList.add("timestamp")
   currentVideo.addEventListener("timeupdate", () => {
+    if (Number.isNaN(currentVideo.duration)) return
     durationTime.value = currentVideo.duration.toFixed(2).padStart(6, "0")
   })
   buttons.appendChild(durationTime)
@@ -188,16 +212,16 @@ async function youtubeWatch() {
   const playlist = params.get("list")
   const title = document.querySelector("div#title *[title]")
   if (playlist && title && title.textContent !== "") {
-    const playlistPanelTitle = document.querySelector('a[href^="/playlist"]').textContent
+    const playlistPanelTitle = document.querySelector('a[href^="/playlist"]')?.textContent
 
-    if (playlistPanelTitle === "") {
+    if (!playlistPanelTitle) {
       console.log("Playlist embed notfound")
-      if (data.playlist.reloadInterval > 0) {
-        data.playlist.reloadInterval--
-      } else {
+      // リロードで変数が消えるため、sessionStorage で多重リロードを防ぐ
+      const lastReloadAt = Number(sessionStorage.getItem(PLAYLIST_RELOAD_KEY) ?? "0")
+      if (Date.now() - lastReloadAt >= PLAYLIST_RELOAD_INTERVAL_MS) {
         console.log("Window Reload Because By Playlist Panel Notfound")
+        sessionStorage.setItem(PLAYLIST_RELOAD_KEY, String(Date.now()))
         window.location.reload()
-        data.playlist.reloadInterval = 5000
       }
     }
   }
@@ -222,6 +246,11 @@ async function youtubeWatch() {
     }
     return
   }
+  if (data.watch.adSkipped) {
+    // 広告終了後に加速を戻す
+    data.watch.adSkipped = false
+    currentVideo.playbackRate = 1
+  }
 
 
   // MARK: > live
@@ -229,13 +258,15 @@ async function youtubeWatch() {
   if (liveText) {
     /** @type {HTMLButtonElement} */
     const jumpToLiveButton = document.querySelector("button.ytp-live-badge.ytp-button")
-    const isDelayed = (jumpToLiveButton.disabled == false)
     /** @type {HTMLDivElement} */
     const videoToolBar = document.querySelector(".ytp-chrome-bottom")
+    if (!jumpToLiveButton || !videoToolBar) return
 
-    const config = await chrome.storage.local.get(null)
-    if (isDelayed && !data.live.isAccelerated && config.youtube.isLiveAcceleration) {
-      const acceleration = config.youtube.liveAccelerationRate
+    const isDelayed = (jumpToLiveButton.disabled == false)
+
+    const liveConfig = youtubeConfig
+    if (isDelayed && !data.live.isAccelerated && liveConfig.isLiveAcceleration) {
+      const acceleration = liveConfig.liveAccelerationRate ?? 1
 
       data.live.isAccelerated = true
       currentVideo.playbackRate = acceleration
@@ -254,7 +285,7 @@ async function youtubeWatch() {
   }
 
   // MARK: > 閲覧確認
-  const checkViorance = document.querySelector("*[aria-label=理解した上で続行する")
+  const checkViorance = document.querySelector('*[aria-label="理解した上で続行する"]')
   if (checkViorance) {
     checkViorance.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
   }
@@ -280,6 +311,7 @@ async function youtubeWatch() {
     // MARK: >> playlist auto next
     /** @type {HTMLAnchorElement} */
     const nextButton = document.querySelector("a.ytp-next-button")
+    if (!nextButton) return
     const nextVideo = new URL(nextButton.href)
     if (nextVideo.searchParams.get("list")) {
       console.log("Click playlist next")
@@ -290,6 +322,7 @@ async function youtubeWatch() {
     // MARK: >> canncel auto next
     /** @type {HTMLDivElement} */
     const endScreen = document.querySelector("div.ytp-autonav-endscreen-button-container")
+    if (!endScreen) return
     const isEndScreen = endScreen.style.display != "none"
     /** @type {HTMLButtonElement} */
     const nextCancelButton = endScreen.querySelector("button.ytp-autonav-endscreen-upnext-cancel-button")
@@ -303,7 +336,7 @@ async function youtubeWatch() {
   const dialog = document.querySelector("tp-yt-paper-dialog:not([aria-hidden])")
   if (dialog) {
     const button = document.querySelector("tp-yt-paper-dialog:not([aria-hidden]) button")
-    if (button.getAttribute("aria-label") == "はい") {
+    if (button?.getAttribute("aria-label") == "はい") {
       button.dispatchEvent(new Event("click", { bubbles: true, cancelable: true }))
     }
   }
