@@ -1,25 +1,27 @@
-body>img#creeper.creeper {
+img#creeper.creeper {
   position: fixed;
   bottom: 0;
   left: 0;
   z-index: 32767;
   height: 80px !important;
+  width: auto !important;
+  pointer-events: auto;
   animation: creeper_rotate 10s linear 0s infinite;
 }
 
-body>img#creeper.creeper_fade {
+img#creeper.creeper_fade {
   animation: creeper_rotate 10s linear 0s infinite, creeper_fade 2s linear both;
 }
 
 @keyframes creeper_fade {
   0% {
     opacity: 1;
-    visibility: hidden;
+    visibility: visible;
   }
 
   100% {
     opacity: 0;
-    display: none;
+    visibility: hidden;
   }
 }
 
