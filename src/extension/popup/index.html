@@ -1,86 +1,158 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style>
-  body {
-    width: 720px;
-    height: 480px;
-    font-size: 15px;
-  }
+<html lang="ja">
 
-  .title {
-    white-space: nowrap;
-    text-align: center;
-  }
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 720px;
+      max-height: 580px;
+      margin: 12px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
 
-  .historyArea {
-    height: 15lh;
-    overflow: scroll;
-    white-space: nowrap;
-  }
+    .title {
+      margin: 8px 0 12px;
+      white-space: nowrap;
+      text-align: center;
+    }
 
-  .historyArea>a {
-    color: black;
-  }
+    .panel {
+      margin-bottom: 12px;
+    }
 
-  .secretSettings {
-    display: flex;
-    flex-direction: row;
-  }
+    .historyArea {
+      height: 10lh;
+      overflow: scroll;
+      white-space: nowrap;
+    }
 
-  .secretSettingsList {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: space-around;
-  }
+    .historyArea>a {
+      color: black;
+    }
 
-  .switch {
-    margin-top: 1px;
-    margin-bottom: 1px;
-    height: calc(1lh - 2px);
-    width: 2lh;
+    .settings-grid {
+      display: grid;
+      grid-template-columns: max-content minmax(0, 1fr);
+      align-items: center;
+      gap: 6px 10px;
+    }
 
-    box-sizing: border-box;
-    border-radius: 1lh;
-    border-color: black;
-    border-width: 2px;
-    border-style: solid;
-  }
+    .settings-grid input[type="text"],
+    .settings-grid input[type="number"] {
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-  .switch input[type="checkbox"] {
-    display: none;
-  }
+    .group-title {
+      grid-column: 1 / -1;
+      margin-top: 6px;
+      border-bottom: 1px solid #ccc;
+      font-weight: bold;
+    }
 
-  .switch div {
-    height: calc(1lh - 6px);
-    width: calc(1lh - 6px);
-    border-radius: 1lh;
-    background-color: red;
-    transition: 0.2s;
-  }
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
 
-  .switch input[type="checkbox"]:checked~div {
-    background-color: lightgreen;
-    transform: translateX(calc(1lh + 3px));
-  }
+    .message {
+      color: green;
+    }
 
-  .config-input {
-    width: 50ch;
-    height:  20lh;
-  }
-</style>
+    .switch {
+      margin-top: 1px;
+      margin-bottom: 1px;
+      height: calc(1lh - 2px);
+      width: 2lh;
+
+      box-sizing: border-box;
+      border-radius: 1lh;
+      border-color: black;
+      border-width: 2px;
+      border-style: solid;
+    }
+
+    .switch input[type="checkbox"] {
+      display: none;
+    }
+
+    .switch div {
+      height: calc(1lh - 6px);
+      width: calc(1lh - 6px);
+      border-radius: 1lh;
+      background-color: red;
+      transition: 0.2s;
+    }
+
+    .switch input[type="checkbox"]:checked~div {
+      background-color: lightgreen;
+      transform: translateX(calc(1lh + 3px));
+    }
+  </style>
+</head>
 
 <body>
-  <h1 class="title" style="white-space: nowrap;">aatomu's Toolbox</h1>
-  Extension Buffer Use:<span id="ExtensionBufferUseValue">????</span>/1,024,000[Byte]
-  <br><br>
-  WebSite History <input id="searchInput" type="text" placeholder="Search Word"><br>
-  <div class="historyArea" id="history">
-  </div>
-  <br>
-  Extension Setting:<br>
-  <textarea id="config-input" class="config-input"></textarea><br>
-  <button id="config-save">Save</button><span id="config-message"></span>
+  <h1 class="title">aatomu's Toolbox</h1>
+
+  <section class="panel">
+    Extension Buffer Use:<span id="ExtensionBufferUseValue">????</span>/1,024,000[Byte]
+    <br><br>
+    WebSite History <input id="searchInput" type="text" placeholder="Search Word"><br>
+    <div class="historyArea" id="history">
+    </div>
+  </section>
+
+  <form id="settings-form" class="panel">
+    Extension Setting:
+    <div class="settings-grid">
+      <span>Show Creeper</span>
+      <label class="switch">
+        <input id="enable-creeper" type="checkbox">
+        <div></div>
+      </label>
+
+      <span class="group-title">YouTube</span>
+      <span>Live Acceleration</span>
+      <label class="switch">
+        <input id="youtube-live-acceleration" type="checkbox">
+        <div></div>
+      </label>
+      <label for="youtube-live-acceleration-rate">Acceleration Rate</label>
+      <input id="youtube-live-acceleration-rate" type="number" min="1" max="16" step="0.5">
+
+      <span class="group-title">Amazon</span>
+      <span>Secret Mode</span>
+      <label class="switch">
+        <input id="amazon-enable-secret" type="checkbox">
+        <div></div>
+      </label>
+      <span>Show Buy Button</span>
+      <label class="switch">
+        <input id="amazon-show-buy-button" type="checkbox">
+        <div></div>
+      </label>
+      <label for="amazon-greeting">Greeting</label>
+      <input id="amazon-greeting" type="text">
+
+      <span class="group-title">User</span>
+      <label for="secret-name">Name</label>
+      <input id="secret-name" type="text">
+      <label for="secret-post-code">Post Code</label>
+      <input id="secret-post-code" type="text">
+      <label for="secret-address">Address</label>
+      <input id="secret-address" type="text">
+    </div>
+    <div class="actions">
+      <button id="config-save" type="submit">Save</button>
+      <span id="config-message" class="message"></span>
+    </div>
+  </form>
 </body>
 
 <script src="./index.js"></script>
+
+</html>
